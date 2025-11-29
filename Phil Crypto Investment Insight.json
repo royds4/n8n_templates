@@ -9,11 +9,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        512,
-        736
+        -4288,
+        -864
       ],
       "typeVersion": 1,
-      "id": "799980a3-d508-4772-8b3c-bb2d268ead01",
+      "id": "4f9c4f6f-4c7e-4664-b10f-57a0cbf0fd70",
       "name": "Sticky Note"
     },
     {
@@ -23,10 +23,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        928,
-        928
+        -3872,
+        -672
       ],
-      "id": "fcc5dd7f-d73a-4f53-9e0a-6f1fa7803b63",
+      "id": "3e320bfd-afb5-4836-b06c-78150c62a305",
       "name": "Merge"
     },
     {
@@ -38,11 +38,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        3216,
-        736
+        -1584,
+        -864
       ],
       "typeVersion": 1,
-      "id": "58d34928-0e89-4fbd-9352-cd074c65fe81",
+      "id": "e225eb66-a321-4768-903f-24f9bbad4246",
       "name": "Sticky Note2"
     },
     {
@@ -52,10 +52,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        4544,
-        1280
+        -256,
+        -320
       ],
-      "id": "ee84f0b5-bc2b-4b4d-958e-d67ef26f5908",
+      "id": "5c8659c1-e62f-4562-9bdb-85e702ec1b6e",
       "name": "Merge5"
     },
     {
@@ -65,10 +65,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3904,
-        1360
+        -896,
+        -240
       ],
-      "id": "eefb4b20-1786-4071-ab2a-6d0b78bfb289",
+      "id": "7999c800-70f8-4fc3-a08b-5bb053a0c1e9",
       "name": "Clean Merge3"
     },
     {
@@ -85,36 +85,36 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1120,
-        1344
+        -5920,
+        -256
       ],
-      "id": "0d5d7c90-bdf0-4dda-902b-0c2685d8714c",
+      "id": "4129d2c4-bd73-4cd0-858d-8e3c74a923e6",
       "name": "Schedule Trigger"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst series = getYahooSeries('^TNX');\nconst current = series[series.length - 1];\nconst prev30 = series[series.length - 30] || current;\nconst prev90 = series[series.length - 90] || current;\nconst prev180 = series[series.length - 180] || current;\nresult = {\n    indicator: \"treasury_yield\",\n    current: current,\n    change_30d: current - prev30,\n    change_90d: current - prev90,\n    change_180d: current - prev180,\n    direction: current > prev30 ? \"up\" : \"down\"\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst yahooData = $('Fetch Yahoo').first().json;\n\n\n// Parsers & Helpers\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nlet result = {};\n\nconst series = getYahooSeries('^TNX');\nconst current = series[series.length - 1];\nconst prev30 = series[series.length - 30] || current;\nconst prev90 = series[series.length - 90] || current;\nconst prev180 = series[series.length - 180] || current;\nresult = {\n    indicator: \"treasury_yield\",\n    current: current,\n    change_30d: current - prev30,\n    change_90d: current - prev90,\n    change_180d: current - prev180,\n    direction: current > prev30 ? \"up\" : \"down\"\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
-        896
+        -4176,
+        -704
       ],
-      "id": "0c9c8d45-a847-479a-9d61-2c93ab825f4e",
+      "id": "768434c9-1ec7-41d2-ae27-eb3313f5972d",
       "name": "treasury_yield"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst series = getYahooSeries('^IRX'); // 13 Week T-Bill as proxy\nconst current = series[series.length - 1];\nconst prev90 = series[series.length - 90] || current; // ~3m\nconst prev180 = series[series.length - 180] || current; // ~6m\nresult = {\n    indicator: \"fed_funds_rate\",\n    current: current,\n    change_3m: current - prev90,\n    change_6m: current - prev180,\n    note: \"Using ^IRX (13 Week T-Bill) as proxy\"\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst yahooData = $('Fetch Yahoo').first().json;\n\n\n// Parsers & Helpers\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\n\nlet result = {};\n\nconst series = getYahooSeries('^IRX'); // 13 Week T-Bill as proxy\nconst current = series[series.length - 1];\nconst prev90 = series[series.length - 90] || current; // ~3m\nconst prev180 = series[series.length - 180] || current; // ~6m\nresult = {\n    indicator: \"fed_funds_rate\",\n    current: current,\n    change_3m: current - prev90,\n    change_6m: current - prev180,\n    note: \"Using ^IRX (13 Week T-Bill) as proxy\"\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
-        1040
+        -4176,
+        -560
       ],
-      "id": "273690f3-58da-4fed-8d09-73ae7dc97cb8",
+      "id": "b6a695d0-736a-47fe-9760-c5f63cdddb96",
       "name": "fed_funds_rate"
     },
     {
@@ -124,73 +124,60 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
-        1184
+        -4176,
+        -416
       ],
-      "id": "e269d6d3-04e3-4dd2-a96b-0eb1203e20a7",
+      "id": "0c96f8d4-2b72-48eb-8137-ac67fc8a46c7",
       "name": "macro_news_summary"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nresult = {\n    indicator: \"btc_overview\",\n    price: parseFloat(binanceTicker.lastPrice),\n    change_24h: parseFloat(binanceTicker.priceChangePercent)\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\n\n\nlet result = {};\n\nresult = {\n    indicator: \"btc_overview\",\n    price: parseFloat(binanceTicker.lastPrice),\n    change_24h: parseFloat(binanceTicker.priceChangePercent)\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
-        1328
+        -4176,
+        -272
       ],
-      "id": "babae566-e9a7-456d-8789-880be1b1fe14",
+      "id": "32ab4dd6-d5d6-4d0c-83d8-0507d257cfa4",
       "name": "btc_overview"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst series = getYahooSeries('GC=F');\nconst current = series[series.length - 1];\nconst prev7 = series[series.length - 7] || current;\nconst prev30 = series[series.length - 30] || current;\nconst prev90 = series[series.length - 90] || current;\nresult = {\n    indicator: \"gold_price_trend\",\n    change_7d: ((current - prev7)/prev7)*100,\n    change_30d: ((current - prev30)/prev30)*100,\n    change_90d: ((current - prev90)/prev90)*100\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "// Access Fetch Nodes\nconst yahooData = $('Fetch Yahoo').first().json;\n\n// Parsers & Helpers\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\n\nlet result = {};\n\nconst series = getYahooSeries('GC=F');\nconst current = series[series.length - 1];\nconst prev7 = series[series.length - 7] || current;\nconst prev30 = series[series.length - 30] || current;\nconst prev90 = series[series.length - 90] || current;\nresult = {\n    indicator: \"gold_price_trend\",\n    change_7d: ((current - prev7)/prev7)*100,\n    change_30d: ((current - prev30)/prev30)*100,\n    change_90d: ((current - prev90)/prev90)*100\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
-        1632
+        -4176,
+        192
       ],
-      "id": "4efb3439-6d00-4882-bf57-dd368500ed4c",
+      "id": "75043319-02f6-47be-b4ae-67c733c8cc9c",
       "name": "gold_price_trend"
-    },
-    {
-      "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nresult = {\n    indicator: \"m2_money_supply\",\n    yoy_change: \"not provided\",\n    note: \"Real-time M2 data not available in free sources\"\n};\n\nreturn [{ json: result }];\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        624,
-        1776
-      ],
-      "id": "6d08e955-c228-43fd-b85f-a69c99448e1b",
-      "name": "m2_money_supply"
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1120,
-        1152
+        -5920,
+        -448
       ],
-      "id": "9ce4e469-9f93-488b-8102-c0ff99bf1b35",
-      "name": "When clicking \u2018Execute workflow\u2019"
+      "id": "e11e145e-f4cc-40c7-bfbd-a0e4fc29bd90",
+      "name": "When clicking ‘Execute workflow’"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst series = getYahooSeries('DX-Y.NYB');\nconst current = series[series.length - 1];\nresult = {\n    indicator: \"dxy_proxy\",\n    value: current\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst yahooData = $('Fetch Yahoo').first().json;\n\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\n\nlet result = {};\n\nconst series = getYahooSeries('DX-Y.NYB');\nconst current = series[series.length - 1];\nresult = {\n    indicator: \"dxy_proxy\",\n    value: current\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
-        1472
+        -4176,
+        32
       ],
-      "id": "c93bce2b-13e5-4ef0-bf72-3c07e079b7a4",
+      "id": "2fec67e0-81ca-4911-8d9d-0261d861f4af",
       "name": "dxy_proxy"
     },
     {
@@ -202,76 +189,76 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -720,
-        736
+        -5520,
+        -864
       ],
       "typeVersion": 1,
-      "id": "d195914d-a501-4f58-b501-4f91e9ea8eff",
+      "id": "b70da9c1-72be-4cc8-abf9-1045a58236ac",
       "name": "Sticky Note3"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst series = getYahooSeries('CL=F');\nconst current = series[series.length - 1];\nconst prev7 = series[series.length - 7] || current;\nconst prev30 = series[series.length - 30] || current;\nresult = {\n    indicator: \"crude_oil_trend\",\n    price: current,\n    change_7d: ((current - prev7)/prev7)*100,\n    change_30d: ((current - prev30)/prev30)*100\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst yahooData = $('Fetch Yahoo').first().json;\n\n\n// Parsers & Helpers\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\n\nlet result = {};\n\nconst series = getYahooSeries('CL=F');\nconst current = series[series.length - 1];\nconst prev7 = series[series.length - 7] || current;\nconst prev30 = series[series.length - 30] || current;\nresult = {\n    indicator: \"crude_oil_trend\",\n    price: current,\n    change_7d: ((current - prev7)/prev7)*100,\n    change_30d: ((current - prev30)/prev30)*100\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
-        1920
+        -4176,
+        336
       ],
-      "id": "34dcac15-61fb-4b19-9c08-dc93d7e3f3f7",
+      "id": "38c600e8-cb27-47d2-a6e3-210a3962e972",
       "name": "crude_oil_trend"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\n// Check moving averages or simple trend\nconst ma50 = sma(closesDaily, 50);\nconst trend = currentPrice > ma50 ? \"bullish\" : \"bearish\";\nresult = {\n    indicator: \"btc_price_trend\",\n    price: currentPrice,\n    trend: trend\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\n\n\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\n\n\n// Indicator Logic\nlet result = {};\n\n// Check moving averages or simple trend\nconst ma50 = sma(closesDaily, 50);\nconst trend = currentPrice > ma50 ? \"bullish\" : \"bearish\";\nresult = {\n    indicator: \"btc_price_trend\",\n    price: currentPrice,\n    trend: trend\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3360,
-        1152
+        -1440,
+        -448
       ],
-      "id": "ef84e3ef-07ea-411d-a089-98e6558ca50c",
+      "id": "781fd789-4fca-4d12-9db5-3f10e966409b",
       "name": "btc_price_trend"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst val = rsi(closesDaily, 14);\nresult = {\n    indicator: \"rsi14\",\n    value: val\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst binanceDailyItems = $('Fetch Binance Daily').all();\n\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\n\n\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\n\n// Indicator Logic\n\nlet result = {};\n\nconst val = rsi(closesDaily, 14);\nresult = {\n    indicator: \"rsi14\",\n    value: val\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3360,
-        1008
+        -1440,
+        -592
       ],
-      "id": "a13150cd-18dc-4799-8c87-91e19be48123",
+      "id": "d3a82050-1212-4480-97d0-07bdbb289632",
       "name": "rsi14"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst fng = fearGreed.data ? fearGreed.data[0] : { value: 50, value_classification: \"Neutral\" };\nresult = {\n    indicator: \"fear_greed_index_trend\",\n    value: parseInt(fng.value),\n    sentiment: fng.value_classification\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst fearGreed = $('Fetch FearGreed').first().json;\n\n\n// Parsers & Helpers\n\n// Indicator Logic\nlet result = {};\n\nconst fng = fearGreed.data ? fearGreed.data[0] : { value: 50, value_classification: \"Neutral\" };\nresult = {\n    indicator: \"fear_greed_index_trend\",\n    value: parseInt(fng.value),\n    sentiment: fng.value_classification\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3360,
-        1296
+        -1440,
+        -304
       ],
-      "id": "05a5cfeb-a888-49da-b142-5d6ee83c14ca",
+      "id": "0c6db624-8135-468a-b771-a14fd57804c5",
       "name": "fear_greed_index_trend"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\n// Binance funding rate is usually small number (e.g. 0.0001)\nconst rate = parseFloat(binanceFutures.lastFundingRate || 0);\nresult = {\n    indicator: \"btc_funding_rate\",\n    value: rate\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst binanceFutures = $('Fetch Binance Futures').first().json;\n\n// Parsers & Helpers\nlet result = {};\n\n// Binance funding rate is usually small number (e.g. 0.0001)\nconst rate = parseFloat(binanceFutures.lastFundingRate || 0);\nresult = {\n    indicator: \"btc_funding_rate\",\n    value: rate\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3360,
-        1440
+        -1440,
+        -160
       ],
-      "id": "fb66247e-4a53-4d05-99c8-16bae3988e18",
+      "id": "6b7eb0ac-261f-43fb-80c6-8a5a033026cc",
       "name": "btc_funding_rate"
     },
     {
@@ -281,166 +268,114 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3360,
-        1744
+        -1440,
+        160
       ],
-      "id": "2d495af5-121b-4925-a88e-d114435f6f78",
+      "id": "d7b97ce8-2bfe-4e8c-b2c7-e87f99a036ef",
       "name": "crypto_news_summary"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst oi = parseFloat(binanceOI.openInterest || 0);\nresult = {\n    indicator: \"btc_open_interest\",\n    value: oi\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\n\nconst binanceOI = $('Fetch Binance OI').first().json;\n\n\n// Parsers & Helpers\n\n\nlet result = {};\n\nconst oi = parseFloat(binanceOI.openInterest || 0);\nresult = {\n    indicator: \"btc_open_interest\",\n    value: oi\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3360,
-        1600
+        -1440,
+        16
       ],
-      "id": "354bc4d6-caea-4b96-812f-6f83a0748d5d",
+      "id": "92b7c77b-c9ce-433d-852b-35af4e06508d",
       "name": "btc_open_interest"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst ma200w = sma(closesWeekly, 200);\nconst dist = ((currentPrice - ma200w) / ma200w) * 100;\nresult = {\n    indicator: \"btc_200wma_distance\",\n    distance_percent: dist\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\n\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\n\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nlet result = {};\n\nconst ma200w = sma(closesWeekly, 200);\nconst dist = ((currentPrice - ma200w) / ma200w) * 100;\nresult = {\n    indicator: \"btc_200wma_distance\",\n    distance_percent: dist\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1808,
-        1072
+        -2784,
+        -592
       ],
-      "id": "6d41ee1f-bd5f-4fd6-93cf-17ac6d6bc7ca",
+      "id": "0268b0ba-3af3-4cb1-8222-a2b42e5f530f",
       "name": "btc_200wma_distance"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst currentRsi = rsi(closesDaily, 14);\nconst prevRsi = rsi(closesDaily.slice(0, -1), 14);\nresult = {\n    indicator: \"rsi14_trend\",\n    trend: currentRsi > prevRsi ? \"rising\" : \"falling\"\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst binanceDailyItems = $('Fetch Binance Daily').all();\n\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\n\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\n\n\nlet result = {};\n\nconst currentRsi = rsi(closesDaily, 14);\nconst prevRsi = rsi(closesDaily.slice(0, -1), 14);\nresult = {\n    indicator: \"rsi14_trend\",\n    trend: currentRsi > prevRsi ? \"rising\" : \"falling\"\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1808,
-        1216
+        -2784,
+        -480
       ],
-      "id": "a0864860-c4a7-4318-918d-01e8be60979a",
+      "id": "52196330-875a-4f12-b056-b26e665afda0",
       "name": "rsi14_trend"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst ema20w = ema(closesWeekly, 20);\nconst sma21w = sma(closesWeekly, 21);\nresult = {\n    indicator: \"bull_market_support_band\",\n    support_level: (ema20w + sma21w) / 2, // Average of the band\n    description: \"20W EMA / 21W SMA\"\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\n\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\n\nconst closesWeekly = getCloses(binanceWeeklyItems);\n\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nconst ema20w = ema(closesWeekly, 20);\nconst sma21w = sma(closesWeekly, 21);\nresult = {\n    indicator: \"bull_market_support_band\",\n    support_level: (ema20w + sma21w) / 2, // Average of the band\n    description: \"20W EMA / 21W SMA\"\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1808,
-        1360
+        -2784,
+        -352
       ],
-      "id": "a7eb61bc-4e54-4d29-8628-bbc947901361",
+      "id": "29f2e783-df29-431d-8ad6-d3de64b068ee",
       "name": "bull_market_support_band"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst val = sma(closesWeekly, 50);\nresult = {\n    indicator: \"50wma\",\n    value: val\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\n\n\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\n\nconst closesWeekly = getCloses(binanceWeeklyItems);\n\n\n\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\n\n// Indicator Logic\n\nlet result = {};\n\nconst val = sma(closesWeekly, 50);\nresult = {\n    indicator: \"50wma\",\n    value: val\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1808,
-        1520
+        -2784,
+        -208
       ],
-      "id": "68e8b539-d4fb-4a1f-b5ce-f4cef34ff475",
+      "id": "c9d9eb4f-a0a9-4627-b745-7b31c21b223f",
       "name": "50wma"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nresult = {\n    indicator: \"btc_dominance_trend\",\n    dominance: \"not provided\",\n    note: \"Requires aggregate market cap data not available in free simple sources\"\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst binanceDailyItems = $('Fetch Binance Daily').all();\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\n\nlet result = {};\n\nconst ma50 = sma(closesDaily, 50);\nconst ma200 = sma(closesDaily, 200);\nresult = {\n    indicator: \"ma50_ma200_trend\",\n    status: (ma50 > ma200) ? \"bullish\" : \"bearish\",\n    description: \"MA50 vs MA200\"\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1808,
-        1680
+        -2784,
+        -80
       ],
-      "id": "1fe0467c-d3a3-47dc-b906-cc294c93f0e2",
-      "name": "btc_dominance_trend"
-    },
-    {
-      "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst ma50 = sma(closesDaily, 50);\nconst ma200 = sma(closesDaily, 200);\nresult = {\n    indicator: \"ma50_ma200_trend\",\n    status: (ma50 > ma200) ? \"bullish\" : \"bearish\",\n    description: \"MA50 vs MA200\"\n};\n\nreturn [{ json: result }];\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2016,
-        992
-      ],
-      "id": "c4f4b750-4d47-4528-a902-5a97b5c6d339",
+      "id": "1e5191f9-74cd-457e-919b-a028edb5da66",
       "name": "ma50_ma200_trend"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\n// Approximate basis: Futures Price - Spot Price. Or Funding Rate?\n// Usually basis is price diff. We don't have Futures Price easily without another call.\n// But we have Funding Rate.\nresult = {\n    indicator: \"btc_futures_basis\",\n    basis: \"not provided\",\n    note: \"Requires Futures Mark Price\"\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst binanceDailyItems = $('Fetch Binance Daily').all();\n\n\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\n\nlet result = {};\n\nconst dma111 = sma(closesDaily, 111);\nconst dma350x2 = sma(closesDaily, 350) * 2;\nresult = {\n    indicator: \"pi_cycle_top\",\n    is_top: dma111 > dma350x2,\n    description: \"111DMA vs 350DMA*2\"\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2016,
-        1136
+        -2784,
+        48
       ],
-      "id": "65919dd1-7071-4577-814b-bd222e396919",
-      "name": "btc_futures_basis"
-    },
-    {
-      "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nconst dma111 = sma(closesDaily, 111);\nconst dma350x2 = sma(closesDaily, 350) * 2;\nresult = {\n    indicator: \"pi_cycle_top\",\n    is_top: dma111 > dma350x2,\n    description: \"111DMA vs 350DMA*2\"\n};\n\nreturn [{ json: result }];\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2016,
-        1280
-      ],
-      "id": "f2f9a504-7a37-4e93-bd44-736f659c4cc5",
+      "id": "cb851938-d3ce-4147-b8f3-6c7667b665d4",
       "name": "pi_cycle_top"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\n// Simple placeholder logic or rough calc\nresult = {\n    indicator: \"rainbow_chart\",\n    zone: \"HODL\",\n    note: \"Calculated zone approximation\"\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n\n\n\nlet result = {};\n\n// Next halving approx April 2028?\n// Last halving April 2024.\nconst now = new Date();\nconst lastHalving = new Date('2024-04-19');\nconst nextHalving = new Date('2028-04-19');\nconst totalTime = nextHalving - lastHalving;\nconst elapsedTime = now - lastHalving;\nconst progress = (elapsedTime / totalTime) * 100;\nresult = {\n    indicator: \"halving_cycle\",\n    progress_percent: progress,\n    phase: \"post-halving\"\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2016,
-        1424
+        -2784,
+        208
       ],
-      "id": "68bb511e-baa3-4c68-bb4a-33988b84152b",
-      "name": "rainbow_chart"
-    },
-    {
-      "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\nresult = {\n    indicator: \"stock_to_flow\",\n    fair_value: 100000, \n    scarcity: \"intact\",\n    note: \"Model projection\"\n};\n\nreturn [{ json: result }];\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2016,
-        1568
-      ],
-      "id": "7b18c026-2afe-4454-ae98-90ff32b2da1d",
-      "name": "stock_to_flow"
-    },
-    {
-      "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\nconst binanceOI = $('Fetch Binance OI').first().json;\nconst yahooData = $('Fetch Yahoo').first().json;\nconst fearGreed = $('Fetch FearGreed').first().json;\nconst cryptoPanic = $('Fetch CryptoPanic').first().json; // This might be a string (XML)\nconst googleNews = $('Fetch Google News').first().json; // String (XML)\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst closesWeekly = getCloses(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\nfunction getYahooSeries(symbol) {\n    try {\n        const result = yahooData.spark.result.find(r => r.symbol === symbol);\n        if (!result || !result.response) return [];\n        return result.response[0].indicators.quote[0].close;\n    } catch (e) { return []; }\n}\n\nfunction rsi(values, period) {\n    if (values.length < period + 1) return 50;\n    let gains = 0;\n    let losses = 0;\n\n    // Calculate initial average gain/loss (SMA)\n    for (let i = 0; i < period; i++) {\n        const diff = values[i + 1] - values[i];\n        if (diff > 0) {\n            gains += diff;\n        } else {\n            losses -= diff;\n        }\n    }\n\n    let avgGain = gains / period;\n    let avgLoss = losses / period;\n\n    // Calculate smoothed averages using Wilder's method\n    for (let i = period; i < values.length - 1; i++) {\n        const diff = values[i + 1] - values[i];\n        let currentGain = 0;\n        let currentLoss = 0;\n        if (diff > 0) {\n            currentGain = diff;\n        } else {\n            currentLoss = -diff;\n        }\n\n        avgGain = ((avgGain * (period - 1)) + currentGain) / period;\n        avgLoss = ((avgLoss * (period - 1)) + currentLoss) / period;\n    }\n\n    if (avgLoss === 0) return 100;\n    const rs = avgGain / avgLoss;\n    return 100 - (100 / (1 + rs));\n}\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction ema(values, period) {\n    if (values.length < period) return 0;\n    const k = 2 / (period + 1);\n    let ema = values[0]; // Start with the first value\n    // Iterate from the second value to the end\n    for (let i = 1; i < values.length; i++) {\n        ema = values[i] * k + ema * (1 - k);\n    }\n    return ema;\n}\n\n// Indicator Logic\nlet result = {};\n\nlet result = {};\n\n// Next halving approx April 2028?\n// Last halving April 2024.\nconst now = new Date();\nconst lastHalving = new Date('2024-04-19');\nconst nextHalving = new Date('2028-04-19');\nconst totalTime = nextHalving - lastHalving;\nconst elapsedTime = now - lastHalving;\nconst progress = (elapsedTime / totalTime) * 100;\nresult = {\n    indicator: \"halving_cycle\",\n    progress_percent: progress,\n    phase: \"post-halving\"\n};\n\nreturn [{ json: result }];\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2016,
-        1728
-      ],
-      "id": "ae2899d3-879f-49ed-8322-f1e49c3a179c",
+      "id": "0a579769-3364-4326-aecd-88256d91bf66",
       "name": "halving_cycle"
     },
     {
@@ -452,11 +387,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1632,
-        736
+        -3168,
+        -864
       ],
       "typeVersion": 1,
-      "id": "d5da7622-0da3-4048-8c64-8e4914f1e74c",
+      "id": "742fed7c-b9ba-4c6b-9365-9a5b88581646",
       "name": "Sticky Note4"
     },
     {
@@ -466,10 +401,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        2304,
-        1088
+        -2496,
+        -512
       ],
-      "id": "35a58de5-1be8-4047-a45e-0eb3ad92e22e",
+      "id": "cb2a96d4-8571-48c0-8353-0eccd0ff7bd7",
       "name": "Merge Meso"
     },
     {
@@ -479,23 +414,23 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        2288,
-        1808
+        -2464,
+        32
       ],
-      "id": "ecc33131-356f-4b73-9f95-b79c4071300c",
+      "id": "50e35e66-acc4-4c3e-897f-c8e4b77862b1",
       "name": "Merge Top&Bottom"
     },
     {
       "parameters": {
-        "jsCode": "// === Unified Market Insights Cleaner (no message / biweekly) ===\n// Mode: Run Once for All Items\nconst items = $input.all();\n\nlet macro, meso, micro, news, topbottom;\n\n// --- Helper to extract content from different formats ---\nfunction pickContent(d) {\n  return (\n    d?.choices?.[0]?.message?.content ??\n    d?.message?.content ??\n    d?.content ??\n    null\n  );\n}\n\n// --- Text classifier (keeps your original labels) ---\nfunction classify(text) {\n  if (!text || typeof text !== \"string\") return;\n  const t = text.toLowerCase();\n\n  if (!macro && (t.startsWith(\"macro \") || t.includes(\"macro market analysis\")))\n    macro = text;\n  else if (\n    !meso &&\n    (t.includes(\"meso market analysis\") || t.includes(\"price & trend (weekly)\"))\n  )\n    meso = text;\n  else if (\n    !micro &&\n    (t.includes(\"micro market analysis\") ||\n      (t.includes(\"snapshot\") && t.includes(\"delta_7d\")))\n  )\n    micro = text;\n  else if (\n    !news &&\n    (t.includes(\"today's crypto news summary\") ||\n      t.includes(\"not\u00edcias\") ||\n      t.includes(\"news\"))\n  )\n    news = text;\n  else if (\n    !topbottom &&\n    (t.includes(\"top & bottom watchout\") ||\n      t.includes(\"top and bottom watchout\") ||\n      t.includes(\"bull top & bear bottom\") ||\n      t.includes(\"bull top and bear bottom\") ||\n      t.includes(\"cycle turning point watch\"))\n  )\n    topbottom = text;\n}\n\n// --- Main loop ---\nfor (const it of items) {\n  const j = it.json;\n\n  // \ud83e\udde9 GPT analysis blocks (arrays)\n  if (Array.isArray(j.data)) {\n    for (const d of j.data) classify(pickContent(d));\n  }\n\n  // \ud83e\udde9 Direct content blocks\n  const text = pickContent(j);\n  if (text) classify(text);\n\n  // \ud83d\udcf0 News API blocks\n  if (j.indicator === \"crypto_news_summary\" && j.summary) {\n    news =\n      `Today's Crypto News Summary\\n` +\n      `Source: ${j.source || \"Unknown\"} | Sentiment: ${\n        j.general_sentiment || \"N/A\"\n      } (${j.sentiment_score || \"-\"})\\n\\n` +\n      j.summary;\n  }\n}\n\n// --- Build output only with existing fields ---\nconst out = {};\nif (macro) out.macro = macro;\nif (meso) out.meso = meso;\nif (micro) out.micro = micro;\nif (news) out.news = news;\nif (topbottom) out.topbottom = topbottom;\n\nreturn [{ json: out }];\n"
+        "jsCode": "// === Unified Market Insights Cleaner (no message / biweekly) ===\n// Mode: Run Once for All Items\nconst items = $input.all();\n\nlet macro, meso, micro, news, topbottom;\n\n// --- Helper to extract content from different formats ---\nfunction pickContent(d) {\n  return (\n    d?.choices?.[0]?.message?.content ??\n    d?.message?.content ??\n    d?.content ??\n    null\n  );\n}\n\n// --- Text classifier (keeps your original labels) ---\nfunction classify(text) {\n  if (!text || typeof text !== \"string\") return;\n  const t = text.toLowerCase();\n\n  if (!macro && (t.startsWith(\"macro \") || t.includes(\"macro market analysis\")))\n    macro = text;\n  else if (\n    !meso &&\n    (t.includes(\"meso market analysis\") || t.includes(\"price & trend (weekly)\"))\n  )\n    meso = text;\n  else if (\n    !micro &&\n    (t.includes(\"micro market analysis\") ||\n      (t.includes(\"snapshot\") && t.includes(\"delta_7d\")))\n  )\n    micro = text;\n  else if (\n    !news &&\n    (t.includes(\"today's crypto news summary\") ||\n      t.includes(\"notícias\") ||\n      t.includes(\"news\"))\n  )\n    news = text;\n  else if (\n    !topbottom &&\n    (t.includes(\"top & bottom watchout\") ||\n      t.includes(\"top and bottom watchout\") ||\n      t.includes(\"bull top & bear bottom\") ||\n      t.includes(\"bull top and bear bottom\") ||\n      t.includes(\"cycle turning point watch\"))\n  )\n    topbottom = text;\n}\n\n// --- Main loop ---\nfor (const it of items) {\n  const j = it.json;\n\n  // 🧩 GPT analysis blocks (arrays)\n  if (Array.isArray(j.data)) {\n    for (const d of j.data) classify(pickContent(d));\n  }\n\n  // 🧩 Direct content blocks\n  const text = pickContent(j);\n  if (text) classify(text);\n\n  // 📰 News API blocks\n  if (j.indicator === \"crypto_news_summary\" && j.summary) {\n    news =\n      `Today's Crypto News Summary\\n` +\n      `Source: ${j.source || \"Unknown\"} | Sentiment: ${\n        j.general_sentiment || \"N/A\"\n      } (${j.sentiment_score || \"-\"})\\n\\n` +\n      j.summary;\n  }\n}\n\n// --- Build output only with existing fields ---\nconst out = {};\nif (macro) out.macro = macro;\nif (meso) out.meso = meso;\nif (micro) out.micro = micro;\nif (news) out.news = news;\nif (topbottom) out.topbottom = topbottom;\n\nreturn [{ json: out }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4736,
-        1328
+        -64,
+        -272
       ],
-      "id": "ec26f5ef-cfdc-494b-a8c0-84cfa57caca6",
+      "id": "a50c7e4c-86ef-40c7-b180-1d7e557b1fcd",
       "name": "Data Clean and Debug"
     },
     {
@@ -507,11 +442,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        5184,
-        1200
+        384,
+        -400
       ],
       "typeVersion": 1,
-      "id": "9086cd36-8f1a-412e-8021-45114d101b9e",
+      "id": "59f9e867-411f-4621-ae2f-0f5a64fdad51",
       "name": "Sticky Note6"
     },
     {
@@ -521,10 +456,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1104,
-        960
+        -3696,
+        -640
       ],
-      "id": "e7d0fc32-a802-4c96-8add-6148dfb21c6c",
+      "id": "0849ead7-d66c-4929-9012-0ff86bf31d7f",
       "name": "Clean Merge"
     },
     {
@@ -532,10 +467,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        2480,
-        1376
+        -2320,
+        -224
       ],
-      "id": "889b1d29-46c8-4e80-94bc-a54394496876",
+      "id": "e0cf48b2-8cd9-477d-be97-77be1630908c",
       "name": "Merge2"
     },
     {
@@ -545,10 +480,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2672,
-        1376
+        -2128,
+        -224
       ],
-      "id": "1618f4ca-0411-4bcf-bf01-b1513c9de92d",
+      "id": "d8edc60d-951d-48b0-bfd6-0341d608ea32",
       "name": "Clean Merge2"
     },
     {
@@ -558,10 +493,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        3696,
-        1296
+        -1104,
+        -304
       ],
-      "id": "0607e447-ac1a-4e7b-8e4f-a48d15bd51a3",
+      "id": "97502045-92b7-4d7b-b5dd-0af7d2fd4de1",
       "name": "Merge3"
     },
     {
@@ -572,10 +507,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -640,
-        1024
+        -5440,
+        -576
       ],
-      "id": "758de9cd-3d0e-455c-92a1-aa4296ed2703",
+      "id": "85065caa-2de6-469a-9e13-a88f3cf81620",
       "name": "Fetch Binance Ticker"
     },
     {
@@ -586,24 +521,28 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -432,
-        1024
+        -5440,
+        -432
       ],
-      "id": "04536ea6-eb54-424d-b43c-a83d3e92f5ae",
+      "id": "6031660a-799f-4ea7-a8f8-82e1b78fa02e",
       "name": "Fetch Binance Daily"
     },
     {
       "parameters": {
-        "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1w&limit=300",
-        "options": {}
+        "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1w&limit=210",
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -16,
-        1024
+        -5440,
+        -288
       ],
-      "id": "09e6afaf-1ea6-4a1e-91a8-9813423383dd",
+      "id": "c6ad4607-9c2f-4e4d-8d55-5d733d3f894c",
       "name": "Fetch Binance Weekly"
     },
     {
@@ -614,10 +553,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        352,
-        1024
+        -5088,
+        -352
       ],
-      "id": "6062928b-4c46-4903-b971-25b4bc68e3b5",
+      "id": "a91fb611-ee5a-4350-b647-84e9e70bf166",
       "name": "Fetch Binance Futures"
     },
     {
@@ -628,10 +567,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -656,
-        1424
+        -5440,
+        -112
       ],
-      "id": "48bf10a2-9aab-40e1-a7a1-f2aae6d566d8",
+      "id": "c386d6b7-30c2-4ee0-bd1e-91840c588333",
       "name": "Fetch Binance OI"
     },
     {
@@ -642,10 +581,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -432,
-        1424
+        -5440,
+        192
       ],
-      "id": "a40dead1-8e28-4011-8ddc-bd7f3c640c72",
+      "id": "93c96439-43d4-4b55-8345-d390107f5254",
       "name": "Fetch Yahoo"
     },
     {
@@ -656,10 +595,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -208,
-        1424
+        -5440,
+        32
       ],
-      "id": "457336a5-fe0f-466b-bdc9-947c54e120d8",
+      "id": "57ccb7bc-f364-4cd6-b838-28b5ff7f3d8f",
       "name": "Fetch FearGreed"
     },
     {
@@ -672,10 +611,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -16,
-        1424
+        -5424,
+        352
       ],
-      "id": "003c31f5-2058-4692-b3b2-a83003e5bdd6",
+      "id": "9e4d767d-252f-4e9a-b431-5932371bc73c",
       "name": "Fetch CryptoPanic"
     },
     {
@@ -688,10 +627,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        176,
-        1424
+        -5088,
+        -48
       ],
-      "id": "37d34d72-1473-4d8b-a6c6-63a5ce79c083",
+      "id": "57a6987b-76fa-4315-ba54-183e8fca218d",
       "name": "Fetch Google News"
     },
     {
@@ -703,10 +642,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        5280,
-        1328
+        480,
+        -272
       ],
-      "id": "ff144416-b874-46a9-b12e-5bf0e4ee87e3",
+      "id": "4db0a9f2-0de2-431a-a079-397402637d26",
       "name": "Send a text message",
       "webhookId": "3705f81f-3ea1-4a0c-895f-3c9091fca9a0",
       "credentials": {
@@ -736,10 +675,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        2928,
-        1232
+        -1872,
+        -368
       ],
-      "id": "5d50d246-144b-400a-95d3-ad518245f7c7",
+      "id": "dd4fec19-9ce2-4f1b-91b5-f7bb23911ffe",
       "name": "Top & Bottom Watchout1",
       "credentials": {
         "googlePalmApi": {
@@ -759,7 +698,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a senior crypto market strategist.\n\nGoal: Compress the meso-level BTC snapshot in the JSON into a concise daily trading brief used alongside a separate MICRO timing model. Be a signal filter, not a narrative.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY values present in the JSON; if absent, write \"not provided\".\n- Prefer implications over raw stats (e.g., \u201cscarcity intact\u201d instead of listing stock/flow/block_reward numbers).\n- Price & Trend must reference only what\u2019s in JSON (e.g., Bull Market Support Band: 20W EMA / 21W SMA, 50W MA). Do NOT invent 50D/200D if missing.\n- Momentum: use RSI if present; otherwise \"not provided\".\n- Cycle: compare price vs S2F fair_value and state rainbow zone; mention halving progress and composite/phase if present.\n- Dominance: report latest level and micro/meso/macro trend labels if present; state rotation implication.\n- Levels: list bull band (20W EMA / 21W SMA) and 50W MA as Support; include Resistance ONLY if explicitly provided; else \"not provided\".\n- Outlook: give a 2\u20134 week bias and a 3\u20136 month view tied to the levels above.\n- Triggers: one Bull and one Bear condition, explicitly tied to those levels (e.g., weekly close > band; weekly close < 50W MA).\n- Keep it actionable and compact. Plain language. No markdown, no tables.\n- Word cap: 300 words total. Use \"$\" in prices and make it easy to read with unequivocal terms and concepts (eg. Bitcoin Dominance instead of BTC.D)\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"BTC Meso Market Analysis\"\nmesoBrief:\nPrice & Trend: [...]\nMomentum: [...]\nCycle (S2F & Rainbow): [...]\nOn-chain/Issuance: [...]\nDominance & Rotation: [...]\nLevels:\n- Support: [...]\n- Resistance: [...]\nOutlook:\n- 2\u20134 weeks: [...]\n- 3\u20136 months: [...]\ntriggers:\n- Bull: [...]\n- Bear: [...]\nmesoBias: \"mildly-bullish\" | \"neutral\" | \"mildly-bearish\"\nhorizon: [\"weeks\",\"months\"]"
+              "content": "=You are a senior crypto market strategist.\n\nGoal: Compress the meso-level BTC snapshot in the JSON into a concise daily trading brief used alongside a separate MICRO timing model. Be a signal filter, not a narrative.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY values present in the JSON; if absent, write \"not provided\".\n- Prefer implications over raw stats (e.g., “scarcity intact” instead of listing stock/flow/block_reward numbers).\n- Price & Trend must reference only what’s in JSON (e.g., Bull Market Support Band: 20W EMA / 21W SMA, 50W MA). Do NOT invent 50D/200D if missing.\n- Momentum: use RSI if present; otherwise \"not provided\".\n- Cycle: compare price vs S2F fair_value and state rainbow zone; mention halving progress and composite/phase if present.\n- Dominance: report latest level and micro/meso/macro trend labels if present; state rotation implication.\n- Levels: list bull band (20W EMA / 21W SMA) and 50W MA as Support; include Resistance ONLY if explicitly provided; else \"not provided\".\n- Outlook: give a 2–4 week bias and a 3–6 month view tied to the levels above.\n- Triggers: one Bull and one Bear condition, explicitly tied to those levels (e.g., weekly close > band; weekly close < 50W MA).\n- Keep it actionable and compact. Plain language. No markdown, no tables.\n- Word cap: 300 words total. Use \"$\" in prices and make it easy to read with unequivocal terms and concepts (eg. Bitcoin Dominance instead of BTC.D)\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"BTC Meso Market Analysis\"\nmesoBrief:\nPrice & Trend: [...]\nMomentum: [...]\nCycle (S2F & Rainbow): [...]\nOn-chain/Issuance: [...]\nDominance & Rotation: [...]\nLevels:\n- Support: [...]\n- Resistance: [...]\nOutlook:\n- 2–4 weeks: [...]\n- 3–6 months: [...]\ntriggers:\n- Bull: [...]\n- Bear: [...]\nmesoBias: \"mildly-bullish\" | \"neutral\" | \"mildly-bearish\"\nhorizon: [\"weeks\",\"months\"]"
             }
           ]
         },
@@ -768,10 +707,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        2928,
-        1520
+        -1872,
+        -80
       ],
-      "id": "38d98a0d-e022-41b9-bafa-ada1ced719d9",
+      "id": "1fe25910-037b-47b7-b03f-e51799df58e0",
       "name": "BTC Meso Market Analysis1",
       "credentials": {
         "googlePalmApi": {
@@ -791,7 +730,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a quantitative analyst.  \nYour task is to interpret the JSON dataset provided below \u2014 it represents the latest *micro-level indicators* for a specific crypto asset.\n\n\u26a0\ufe0f Important:\n- Do NOT infer, speculate, or reference macro, meso, or external market context.\n- Only describe what is explicitly shown in the data.\n- If a metric is missing or null, omit it.\n- Keep the tone factual, concise, and technical.\n- Do not provide recommendations, outlooks, or predictions.\n- Your only goal is to organize and summarize the data clearly.\n\nGive your analysis a clear title: \"BTC Micro Market Analysis\"\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n"
+              "content": "=You are a quantitative analyst.  \nYour task is to interpret the JSON dataset provided below — it represents the latest *micro-level indicators* for a specific crypto asset.\n\n⚠️ Important:\n- Do NOT infer, speculate, or reference macro, meso, or external market context.\n- Only describe what is explicitly shown in the data.\n- If a metric is missing or null, omit it.\n- Keep the tone factual, concise, and technical.\n- Do not provide recommendations, outlooks, or predictions.\n- Your only goal is to organize and summarize the data clearly.\n\nGive your analysis a clear title: \"BTC Micro Market Analysis\"\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n"
             }
           ]
         },
@@ -800,10 +739,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        4096,
-        1360
+        -704,
+        -240
       ],
-      "id": "c230cdd5-b7ce-4991-a810-078095564528",
+      "id": "2fe4a6f7-12fd-4e9b-8b53-50dc132860c0",
       "name": "Micro Market Analysis",
       "credentials": {
         "googlePalmApi": {
@@ -823,7 +762,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro \u201cwind\u201d implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  \u2022 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  \u2022 Fed Funds (current; 3m and 6m change)  \n  \u2022 M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  \u2022 USD via dxy_proxy (if absent: \"USD: not provided\")  \n  \u2022 Gold (7d/30d/90d % changes)  \n  \u2022 WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates \u2191 while long yields \u2193).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
+              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro “wind” implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  • 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  • Fed Funds (current; 3m and 6m change)  \n  • M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  • USD via dxy_proxy (if absent: \"USD: not provided\")  \n  • Gold (7d/30d/90d % changes)  \n  • WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates ↑ while long yields ↓).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
             }
           ]
         },
@@ -832,10 +771,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        1296,
-        960
+        -3504,
+        -640
       ],
-      "id": "f260381e-4a23-42b5-8b9f-eb985406c538",
+      "id": "1bc073a6-995d-4fed-abcc-3fb73330e722",
       "name": "Micro Market Analysis1",
       "credentials": {
         "googlePalmApi": {
@@ -855,7 +794,7 @@
         "messages": {
           "values": [
             {
-              "content": "=Imagine you are a crypto market analyst. You don\u2019t give advice about short-term movements \u2014 only about opportunities to accumulate or exit from a cycle perspective.\n\nIf there are key levels to watch, you may mention them as long as they are relevant to the mid-term cycle investment strategy. \n\nThe overall rule is: if there\u2019s still time left in the bull run and a consolidation opportunity appears, you may want to accumulate. If the market is overextended or a major reversal into a bear market seems near, you may want to exit.\n\nThe main goal is to make great entries and exits at cycle tops and bottoms, while navigating bull and bear phases through local opportunities.\n\nIf key levels are in sight, or the base case suggests that supports or resistances are coming soon, manage current entries or exits with that base case in mind \u2014 assuming there\u2019s a chance it might happen and acting accordingly.\n\nI don\u2019t want confusing \u201cifs.\u201d I want to know what to do now, focusing only on your strongest base case for the cycle. \n\nI don\u2019t want local trims or nibbles, and I don\u2019t care about short-term wins or losses. I just want to take advantage of the market cycle on a macro level.\n\nConsider the current picture and the most likely base case, and act accordingly \u2014 without adding extra conditions.\n\nAssume I may or may not have already entered the market; refer to both possibilities clearly, including specific price levels or zones that might be of interest.\n\nMention altcoins briefly.\n\nMention relevant news briefly for additional context on sentiment.\n\nWrite a single, simple, easy-to-follow paragraph \u2014 no bullet points \u2014 using a natural, informal tone, as if explaining to a friend.\n\nAt the end, add a short, dense, and technical justification labeled \u201cReasoning:\u201d, separated with a double line break. \n\nINPUT:\n{{ $json.macro }}\n{{ $json.meso }}\n{{ $json.micro }}\n{{ $json.news }}\n{{ $json.topbottom }}"
+              "content": "=Imagine you are a crypto market analyst. You don’t give advice about short-term movements — only about opportunities to accumulate or exit from a cycle perspective.\n\nIf there are key levels to watch, you may mention them as long as they are relevant to the mid-term cycle investment strategy. \n\nThe overall rule is: if there’s still time left in the bull run and a consolidation opportunity appears, you may want to accumulate. If the market is overextended or a major reversal into a bear market seems near, you may want to exit.\n\nThe main goal is to make great entries and exits at cycle tops and bottoms, while navigating bull and bear phases through local opportunities.\n\nIf key levels are in sight, or the base case suggests that supports or resistances are coming soon, manage current entries or exits with that base case in mind — assuming there’s a chance it might happen and acting accordingly.\n\nI don’t want confusing “ifs.” I want to know what to do now, focusing only on your strongest base case for the cycle. \n\nI don’t want local trims or nibbles, and I don’t care about short-term wins or losses. I just want to take advantage of the market cycle on a macro level.\n\nConsider the current picture and the most likely base case, and act accordingly — without adding extra conditions.\n\nAssume I may or may not have already entered the market; refer to both possibilities clearly, including specific price levels or zones that might be of interest.\n\nMention altcoins briefly.\n\nMention relevant news briefly for additional context on sentiment.\n\nWrite a single, simple, easy-to-follow paragraph — no bullet points — using a natural, informal tone, as if explaining to a friend.\n\nAt the end, add a short, dense, and technical justification labeled “Reasoning:”, separated with a double line break. \n\nINPUT:\n{{ $json.macro }}\n{{ $json.meso }}\n{{ $json.micro }}\n{{ $json.news }}\n{{ $json.topbottom }}"
             }
           ]
         },
@@ -864,10 +803,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        4928,
-        1328
+        128,
+        -272
       ],
-      "id": "806f1af6-846d-49b4-a318-96876e33e496",
+      "id": "0e786b3f-21d1-4faf-b5ab-dd02e6ba3483",
       "name": "Market Stance1",
       "credentials": {
         "googlePalmApi": {
@@ -883,10 +822,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2016,
-        1888
+        -2784,
+        336
       ],
-      "id": "graham-value-check-node",
+      "id": "e57ec4aa-96a6-4f48-95ea-d1cab93efb11",
       "name": "graham_value_check"
     },
     {
@@ -896,11 +835,63 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        5500,
-        1328
+        704,
+        -272
       ],
-      "id": "update-telegram-time-node",
+      "id": "b98f79ac-272f-4f9c-9687-e74bfbb12e1c",
       "name": "Update Last Telegram Time"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -3488,
+        160
+      ],
+      "id": "30c3af27-fb3e-4b28-8646-74be40a512a3",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    data: items.map(i => i.json)\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3328,
+        176
+      ],
+      "id": "f6f7f6b2-b422-4127-a587-46ace6169beb",
+      "name": "Clean Merge1"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -3488,
+        352
+      ],
+      "id": "2c4d5fed-961d-40a1-b2d2-595d2a7e088b",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    data: items.map(i => i.json)\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3328,
+        368
+      ],
+      "id": "dccd5b68-b8da-42d9-879a-de98319d547a",
+      "name": "Clean Merge4"
     }
   ],
   "pinData": {},
@@ -1014,22 +1005,51 @@
         ]
       ]
     },
-    "m2_money_supply": {
-      "main": [
-        [
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 6
-          }
-        ]
-      ]
-    },
-    "When clicking \u2018Execute workflow\u2019": {
+    "When clicking ‘Execute workflow’": {
       "main": [
         [
           {
             "node": "Fetch Binance Ticker",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Yahoo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch CryptoPanic",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch FearGreed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance OI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance Weekly",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance Daily",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance Futures",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Google News",
             "type": "main",
             "index": 0
           }
@@ -1168,17 +1188,6 @@
         ]
       ]
     },
-    "btc_dominance_trend": {
-      "main": [
-        [
-          {
-            "node": "Merge Meso",
-            "type": "main",
-            "index": 4
-          }
-        ]
-      ]
-    },
     "ma50_ma200_trend": {
       "main": [
         [
@@ -1190,17 +1199,6 @@
         ]
       ]
     },
-    "btc_futures_basis": {
-      "main": [
-        [
-          {
-            "node": "Merge Top&Bottom",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
     "pi_cycle_top": {
       "main": [
         [
@@ -1208,28 +1206,6 @@
             "node": "Merge Top&Bottom",
             "type": "main",
             "index": 2
-          }
-        ]
-      ]
-    },
-    "rainbow_chart": {
-      "main": [
-        [
-          {
-            "node": "Merge Top&Bottom",
-            "type": "main",
-            "index": 3
-          }
-        ]
-      ]
-    },
-    "stock_to_flow": {
-      "main": [
-        [
-          {
-            "node": "Merge Top&Bottom",
-            "type": "main",
-            "index": 4
           }
         ]
       ]
@@ -1331,7 +1307,17 @@
       "main": [
         [
           {
-            "node": "Fetch Binance Daily",
+            "node": "btc_overview",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Merge4",
             "type": "main",
             "index": 0
           }
@@ -1342,7 +1328,27 @@
       "main": [
         [
           {
-            "node": "Fetch Binance Weekly",
+            "node": "rsi14_trend",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ma50_ma200_trend",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "rsi14",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "pi_cycle_top",
             "type": "main",
             "index": 0
           }
@@ -1353,7 +1359,17 @@
       "main": [
         [
           {
-            "node": "Fetch Binance Futures",
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "bull_market_support_band",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "50wma",
             "type": "main",
             "index": 0
           }
@@ -1364,7 +1380,12 @@
       "main": [
         [
           {
-            "node": "Fetch Binance OI",
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          },
+          {
+            "node": "btc_funding_rate",
             "type": "main",
             "index": 0
           }
@@ -1375,7 +1396,7 @@
       "main": [
         [
           {
-            "node": "Fetch Yahoo",
+            "node": "btc_open_interest",
             "type": "main",
             "index": 0
           }
@@ -1383,39 +1404,6 @@
       ]
     },
     "Fetch Yahoo": {
-      "main": [
-        [
-          {
-            "node": "Fetch FearGreed",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Fetch FearGreed": {
-      "main": [
-        [
-          {
-            "node": "Fetch CryptoPanic",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Fetch CryptoPanic": {
-      "main": [
-        [
-          {
-            "node": "Fetch Google News",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Fetch Google News": {
       "main": [
         [
           {
@@ -1429,12 +1417,7 @@
             "index": 0
           },
           {
-            "node": "macro_news_summary",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "btc_overview",
+            "node": "dxy_proxy",
             "type": "main",
             "index": 0
           },
@@ -1444,107 +1427,40 @@
             "index": 0
           },
           {
-            "node": "m2_money_supply",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "dxy_proxy",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "crude_oil_trend",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "btc_price_trend",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "rsi14",
-            "type": "main",
-            "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "Fetch FearGreed": {
+      "main": [
+        [
           {
             "node": "fear_greed_index_trend",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "btc_funding_rate",
-            "type": "main",
-            "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "Fetch CryptoPanic": {
+      "main": [
+        [
           {
             "node": "crypto_news_summary",
             "type": "main",
             "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "Fetch Google News": {
+      "main": [
+        [
           {
-            "node": "btc_open_interest",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "btc_200wma_distance",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "rsi14_trend",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "bull_market_support_band",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "50wma",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "btc_dominance_trend",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "ma50_ma200_trend",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "btc_futures_basis",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "pi_cycle_top",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "rainbow_chart",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "stock_to_flow",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "halving_cycle",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "graham_value_check",
+            "node": "macro_news_summary",
             "type": "main",
             "index": 0
           }
@@ -1627,13 +1543,62 @@
           }
         ]
       ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Clean Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Merge1": {
+      "main": [
+        [
+          {
+            "node": "btc_200wma_distance",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "graham_value_check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Clean Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Merge4": {
+      "main": [
+        [
+          {
+            "node": "btc_price_trend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "33c31e7a-ade6-4194-9925-72d4fbbd7f26",
+  "versionId": "22111b10-b878-48ad-a12b-46752a0d240b",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "a8748a89ba0a07ced721aa28816660fdc66500ea257b33db469e712184fd16c7"
