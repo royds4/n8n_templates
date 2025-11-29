@@ -771,7 +771,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro \u201cwind\u201d implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  \u2022 Liquidity Fuel (USDT 30d trend)\n  \u2022 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  \u2022 Fed Funds (current; 3m and 6m change)  \n  \u2022 M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  \u2022 USD via dxy_proxy (if absent: \"USD: not provided\")  \n  \u2022 Gold (7d/30d/90d % changes)  \n  \u2022 WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates \u2191 while long yields \u2193).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
+              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro \u201cwind\u201d implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  \u2022 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  \u2022 Fed Funds (current; 3m and 6m change)  \n  \u2022 M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  \u2022 USD via dxy_proxy (if absent: \"USD: not provided\")  \n  \u2022 Gold (7d/30d/90d % changes)  \n  \u2022 WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates \u2191 while long yields \u2193).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
             }
           ]
         },
@@ -935,34 +935,6 @@
       "id": "de4f0d17-1b0a-4e69-8440-c9905f1e269a",
       "name": "Fetch Hashrate",
       "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "url": "https://api.coingecko.com/api/v3/coins/tether/market_chart?vs_currency=usd&days=90&interval=daily",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        -5440,
-        640
-      ],
-      "id": "96f4c5ef-c11d-4d4a-8d6a-1f4b0fe8ce0a",
-      "name": "Fetch Liquidity",
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst data = $('Fetch Liquidity').first().json;\n\n// Parsers & Helpers\nlet result = {};\n\nif (data && data.market_caps && Array.isArray(data.market_caps)) {\n    const caps = data.market_caps;\n    // CoinGecko market_caps is [[timestamp, value], ...]\n    // Sorted oldest to newest\n    \n    const current = caps[caps.length - 1][1];\n    const prev30 = caps[caps.length - 31] ? caps[caps.length - 31][1] : caps[0][1];\n    const prev90 = caps[0][1]; // Approx 90 days ago given API call\n    \n    const change30d = ((current - prev30) / prev30) * 100;\n    const change90d = ((current - prev90) / prev90) * 100;\n    \n    const status = change30d > 0 ? \"Expansion\" : \"Contraction\";\n    const implication = change30d > 0 ? \"Fuel entering ecosystem\" : \"Liquidity exit\";\n    \n    result = {\n        indicator: \"usdt_liquidity\",\n        market_cap: current,\n        trend_30d_percent: change30d,\n        trend_90d_percent: change90d,\n        status: status,\n        implication: implication\n    };\n} else {\n     result = {\n        indicator: \"usdt_liquidity\",\n        error: \"No data\"\n    };\n}\n\nreturn [{ json: result }];\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -4176,
-        500
-      ],
-      "id": "3e752b17-c960-4057-a3a2-d7c23c29bdf6",
-      "name": "liquidity_trend"
     }
   ],
   "pinData": {},
@@ -1131,11 +1103,6 @@
           },
           {
             "node": "Fetch Hashrate",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Liquidity",
             "type": "main",
             "index": 0
           }
@@ -1697,28 +1664,6 @@
             "node": "Merge1",
             "type": "main",
             "index": 4
-          }
-        ]
-      ]
-    },
-    "Fetch Liquidity": {
-      "main": [
-        [
-          {
-            "node": "liquidity_trend",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "liquidity_trend": {
-      "main": [
-        [
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 6
           }
         ]
       ]
