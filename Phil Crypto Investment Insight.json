@@ -4,16 +4,16 @@
     {
       "parameters": {
         "content": "## Macro Context \n",
-        "height": 1360,
+        "height": 1680,
         "width": 1120
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -4288,
-        -864
+        1712,
+        -288
       ],
       "typeVersion": 1,
-      "id": "4f9c4f6f-4c7e-4664-b10f-57a0cbf0fd70",
+      "id": "9f2a5678-0595-49c2-9f3c-03c7e836732e",
       "name": "Sticky Note"
     },
     {
@@ -23,26 +23,26 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -3872,
-        -672
+        2144,
+        592
       ],
-      "id": "3e320bfd-afb5-4836-b06c-78150c62a305",
+      "id": "ed0ded9a-ee4d-4f8b-aeb4-78cba5c8b2f2",
       "name": "Merge"
     },
     {
       "parameters": {
         "content": "## Micro Context\n",
-        "height": 1360,
+        "height": 1680,
         "width": 1200,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -1584,
-        -864
+        4416,
+        -288
       ],
       "typeVersion": 1,
-      "id": "e225eb66-a321-4768-903f-24f9bbad4246",
+      "id": "0535b62b-f0e0-4b45-a8e2-0a5c098f3dac",
       "name": "Sticky Note2"
     },
     {
@@ -52,10 +52,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -256,
-        -320
+        5744,
+        256
       ],
-      "id": "5c8659c1-e62f-4562-9bdb-85e702ec1b6e",
+      "id": "9623d67c-6667-4666-8e1a-51c50196a4e8",
       "name": "Merge5"
     },
     {
@@ -65,10 +65,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -896,
-        -240
+        5104,
+        336
       ],
-      "id": "7999c800-70f8-4fc3-a08b-5bb053a0c1e9",
+      "id": "c97ec585-8abb-470b-b728-bb08ec7aa2ea",
       "name": "Clean Merge3"
     },
     {
@@ -76,8 +76,8 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 1,
-              "triggerAtMinute": 10
+              "triggerAtHour": 8,
+              "triggerAtMinute": 30
             }
           ]
         }
@@ -85,10 +85,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -5920,
-        -256
+        80,
+        320
       ],
-      "id": "4129d2c4-bd73-4cd0-858d-8e3c74a923e6",
+      "id": "d7cc2a21-0a93-4010-9662-c18f4d6eb2ba",
       "name": "Schedule Trigger"
     },
     {
@@ -98,10 +98,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        -704
+        1824,
+        -128
       ],
-      "id": "768434c9-1ec7-41d2-ae27-eb3313f5972d",
+      "id": "0c408b90-7d71-427b-b87a-b20d16010252",
       "name": "treasury_yield"
     },
     {
@@ -111,10 +111,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        -560
+        1824,
+        16
       ],
-      "id": "b6a695d0-736a-47fe-9760-c5f63cdddb96",
+      "id": "0bad947a-5a7d-4d4e-bd33-f7d9e8a9ba19",
       "name": "fed_funds_rate"
     },
     {
@@ -124,10 +124,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        -416
+        1824,
+        160
       ],
-      "id": "0c96f8d4-2b72-48eb-8137-ac67fc8a46c7",
+      "id": "b51aa0c6-5165-4e45-a61f-0ee4b8023a52",
       "name": "macro_news_summary"
     },
     {
@@ -137,10 +137,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        -272
+        1824,
+        304
       ],
-      "id": "32ab4dd6-d5d6-4d0c-83d8-0507d257cfa4",
+      "id": "1f83fe68-0776-42df-a4ae-092fbe45f423",
       "name": "btc_overview"
     },
     {
@@ -150,10 +150,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        192
+        1824,
+        768
       ],
-      "id": "75043319-02f6-47be-b4ae-67c733c8cc9c",
+      "id": "005ac16e-5152-49c2-b056-75754a6a8f97",
       "name": "gold_price_trend"
     },
     {
@@ -161,11 +161,11 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -5920,
-        -448
+        80,
+        128
       ],
-      "id": "e11e145e-f4cc-40c7-bfbd-a0e4fc29bd90",
-      "name": "When clicking \u2018Execute workflow\u2019"
+      "id": "78189cd1-9a02-4db2-b304-87e3cce82404",
+      "name": "When clicking ‘Execute workflow’"
     },
     {
       "parameters": {
@@ -174,26 +174,26 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        32
+        1824,
+        608
       ],
-      "id": "2fec67e0-81ca-4911-8d9d-0261d861f4af",
+      "id": "77412eca-409d-49b6-b8c2-e19afbd71d49",
       "name": "dxy_proxy"
     },
     {
       "parameters": {
         "content": "## Real Data Sources\n\nThis workflow is now configured to fetch live data from:\n\n- **Binance**: BTC Price & Candles\n- **Yahoo Finance**: Gold, Oil, Yields\n- **Alternative.me**: Fear & Greed\n- **CryptoPanic**: Crypto News\n- **Google News**: Macro/Trump News",
-        "height": 1360,
+        "height": 1680,
         "width": 1232,
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -5520,
-        -864
+        480,
+        -288
       ],
       "typeVersion": 1,
-      "id": "b70da9c1-72be-4cc8-abf9-1045a58236ac",
+      "id": "50bdaeab-109c-4a4d-b602-d7ea60fa363f",
       "name": "Sticky Note3"
     },
     {
@@ -203,10 +203,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        336
+        1824,
+        912
       ],
-      "id": "38c600e8-cb27-47d2-a6e3-210a3962e972",
+      "id": "9c0e14af-d9c1-4c26-bb6a-78dfc0b72564",
       "name": "crude_oil_trend"
     },
     {
@@ -216,10 +216,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        -448
+        4560,
+        128
       ],
-      "id": "781fd789-4fca-4d12-9db5-3f10e966409b",
+      "id": "c545763a-eba0-453a-92fb-61c65ca9f4a8",
       "name": "btc_price_trend"
     },
     {
@@ -229,10 +229,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        -592
+        4560,
+        -16
       ],
-      "id": "d3a82050-1212-4480-97d0-07bdbb289632",
+      "id": "f0b262c4-727c-448d-8dcf-41533ce15ddc",
       "name": "rsi14"
     },
     {
@@ -242,10 +242,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        -304
+        4560,
+        272
       ],
-      "id": "0c6db624-8135-468a-b771-a14fd57804c5",
+      "id": "a54fb482-4a88-4db7-9096-d6957d6629c0",
       "name": "fear_greed_index_trend"
     },
     {
@@ -255,10 +255,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        -160
+        4560,
+        416
       ],
-      "id": "6b7eb0ac-261f-43fb-80c6-8a5a033026cc",
+      "id": "48cc4c35-c14e-46bb-aa26-5b26ee1360f7",
       "name": "btc_funding_rate"
     },
     {
@@ -268,10 +268,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        160
+        4560,
+        736
       ],
-      "id": "d7b97ce8-2bfe-4e8c-b2c7-e87f99a036ef",
+      "id": "cdebb76a-888f-4364-aba5-25a567de4d80",
       "name": "crypto_news_summary"
     },
     {
@@ -281,10 +281,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        16
+        4560,
+        592
       ],
-      "id": "92b7c77b-c9ce-433d-852b-35af4e06508d",
+      "id": "5535e11b-9159-4c2c-857a-3c4236cc5784",
       "name": "btc_open_interest"
     },
     {
@@ -294,10 +294,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -592
+        3216,
+        -16
       ],
-      "id": "0268b0ba-3af3-4cb1-8222-a2b42e5f530f",
+      "id": "60acac36-4a6e-4b8a-b0d1-f3514f413686",
       "name": "btc_200wma_distance"
     },
     {
@@ -307,10 +307,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -480
+        3216,
+        96
       ],
-      "id": "52196330-875a-4f12-b056-b26e665afda0",
+      "id": "8ff2b94c-305b-4783-be2f-00763c6d7acd",
       "name": "rsi14_trend"
     },
     {
@@ -320,10 +320,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -352
+        3216,
+        224
       ],
-      "id": "29f2e783-df29-431d-8ad6-d3de64b068ee",
+      "id": "0b33f467-27e4-4c25-a54d-c4c109062187",
       "name": "bull_market_support_band"
     },
     {
@@ -333,10 +333,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -208
+        3216,
+        368
       ],
-      "id": "c9d9eb4f-a0a9-4627-b745-7b31c21b223f",
+      "id": "438d9c67-6db0-4efa-b22b-4649fbe3cb44",
       "name": "50wma"
     },
     {
@@ -346,10 +346,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -80
+        3216,
+        496
       ],
-      "id": "1e5191f9-74cd-457e-919b-a028edb5da66",
+      "id": "a8448f1d-a25f-4e3e-9150-c687d39ad017",
       "name": "ma50_ma200_trend"
     },
     {
@@ -359,10 +359,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        48
+        3216,
+        624
       ],
-      "id": "cb851938-d3ce-4147-b8f3-6c7667b665d4",
+      "id": "3b59b66c-b624-4a0c-8a07-95bbf3e29e4a",
       "name": "pi_cycle_top"
     },
     {
@@ -372,26 +372,26 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        208
+        3216,
+        784
       ],
-      "id": "0a579769-3364-4326-aecd-88256d91bf66",
+      "id": "60d1182b-de4d-4a47-830a-674f6e0931c5",
       "name": "halving_cycle"
     },
     {
       "parameters": {
         "content": "## Meso Context\n\n",
-        "height": 1360,
+        "height": 1680,
         "width": 1584,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -3168,
-        -864
+        2832,
+        -288
       ],
       "typeVersion": 1,
-      "id": "742fed7c-b9ba-4c6b-9365-9a5b88581646",
+      "id": "959ee87f-303f-4a19-b780-2f3466daf807",
       "name": "Sticky Note4"
     },
     {
@@ -401,10 +401,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -2496,
-        -512
+        3504,
+        64
       ],
-      "id": "cb2a96d4-8571-48c0-8353-0eccd0ff7bd7",
+      "id": "8f7991a6-5504-4c03-bbfc-1e23f86783e4",
       "name": "Merge Meso"
     },
     {
@@ -414,23 +414,23 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -2464,
-        32
+        3536,
+        608
       ],
-      "id": "50e35e66-acc4-4c3e-897f-c8e4b77862b1",
+      "id": "b6e24dcb-51df-40f1-a6f8-dc32a3977977",
       "name": "Merge Top&Bottom"
     },
     {
       "parameters": {
-        "jsCode": "// === Unified Market Insights Cleaner ===\n// Mode: Run Once for All Items\nconst items = $input.all();\nlet macro, meso, micro, news, topbottom;\n\n// --- Helper: Robustly extract text from various AI JSON structures --- \nfunction pickContent(d) { \n    if (!d) return null;\n\n    // 1. Google Gemini / PaLM (Structure: content.parts[0].text) \n    if (d.content?.parts?.[0]?.text) { \n        return d.content.parts[0].text; \n    }\n\n    // 2. OpenAI / Standard (Structure: choices[0].message.content) \n    if (d.choices?.[0]?.message?.content) { \n        return d.choices[0].message.content; \n    }\n\n    // 3. Direct Message (Anthropic/Other) \n    if (d.message?.content) { \n        return d.message.content; \n    }\n\n    // 4. Fallback: Content is already a simple string \n    if (typeof d.content === 'string') { \n        return d.content; \n    }\n\n    return null; \n}\n\n// --- Classifier: Identify the section based on text keywords --- \nfunction classify(text) { \n    if (!text || typeof text !== \"string\") return; \n    const t = text.toLowerCase();\n\n    if (!macro && (t.includes(\"macro market analysis\") || t.startsWith(\"macro \"))) { \n        macro = text; \n    } else if (!meso && (t.includes(\"meso market analysis\") || t.includes(\"price & trend\"))) { \n        meso = text; \n    } else if (!micro && (t.includes(\"micro market analysis\") || t.includes(\"volatility squeeze\"))) { \n        micro = text; \n    } else if (!news && (t.includes(\"crypto news summary\") || t.includes(\"sentiment:\"))) { \n        news = text; \n    } else if (!topbottom && (t.includes(\"top & bottom\") || t.includes(\"cycle turning point\"))) { \n        topbottom = text; \n    } \n}\n\n// --- Main Loop --- \nfor (const it of items) { \n    const j = it.json;\n\n    // Scenario A: Input is an Aggregated Array (from a Merge node) \n    if (Array.isArray(j.data)) { \n        for (const d of j.data) { \n            // Try to classify AI text \n            classify(pickContent(d));\n\n            // Check for News object inside aggregation\n            if (d.indicator === \"crypto_news_summary\" && d.summary) {\n                news = `Today's Crypto News Summary\\nSource: ${d.source || \"RSS\"} | Sentiment: ${d.general_sentiment || \"N/A\"}\\n\\n${d.summary}`;\n            }\n        } \n    }\n\n    // Scenario B: Input is Single Item \n    classify(pickContent(j));\n\n    // Check for News object directly \n    if (j.indicator === \"crypto_news_summary\" && j.summary) { \n        news = `Today's Crypto News Summary\\nSource: ${j.source || \"RSS\"} | Sentiment: ${j.general_sentiment || \"N/A\"}\\n\\n${j.summary}`; \n    } \n}\n\n// --- Extract Raw Metrics & Metadata --- \nconst getJson = (name) => { try { return $(name).first().json; } catch(e) { return {}; } };\n\nconst graham = getJson('graham_value_check');\nconst liquidity = getJson('liquidity_trend');\nconst yieldData = getJson('treasury_yield');\n\n// Regex to extract Macro Bias from the macro text report\nlet macroBias = \"Mixed\";\nif (macro) {\n    const match = macro.match(/macroBias:\\s*[\"']?([^\"'\\n\\r\\]]+)[\"']?/i);\n    if (match) macroBias = match[1];\n}\n\nconst metrics = {\n    verdict: graham.verdict || \"Neutral\",\n    verdict_emojis: \"\ud83d\ude10\", \n    drawdown: graham.drawdown_percent ? Math.round(graham.drawdown_percent) + \"%\" : \"N/A\",\n    hashrate_trend: graham.hashrate_trend || \"N/A\",\n    graham_valuation: graham.verdict || \"N/A\",\n    liquidity_trend: liquidity.status || \"N/A\",\n    yield10y: yieldData.current ? yieldData.current.toFixed(2) + \"%\" : \"N/A\",\n    macro_bias: macroBias,\n    date: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })\n};\n\n// Simple Emoji Logic\nconst v = metrics.verdict.toLowerCase();\nif (v.includes(\"buy\") || v.includes(\"accumulate\") || v.includes(\"value\")) metrics.verdict_emojis = \"\ud83d\udfe2\";\nelse if (v.includes(\"sell\") || v.includes(\"overvalued\") || v.includes(\"bear\")) metrics.verdict_emojis = \"\ud83d\udd34\";\n\n// --- Output Construction --- \nconst out = {}; \nif (macro) out.macro = macro; \nif (meso) out.meso = meso; \nif (micro) out.micro = micro; \nif (news) out.news = news; \nif (topbottom) out.topbottom = topbottom;\nout.metrics = metrics;\n\nreturn [{ json: out }];\n"
+        "jsCode": "// === Unified Market Insights Cleaner ===\n// Mode: Run Once for All Items\nconst items = $input.all();\nlet macro, meso, micro, news, topbottom;\n\n// --- Helper: Robustly extract text from various AI JSON structures --- \nfunction pickContent(d) { \n    if (!d) return null;\n\n    // 1. Google Gemini / PaLM (Structure: content.parts[0].text) \n    if (d.content?.parts?.[0]?.text) { \n        return d.content.parts[0].text; \n    }\n\n    // 2. OpenAI / Standard (Structure: choices[0].message.content) \n    if (d.choices?.[0]?.message?.content) { \n        return d.choices[0].message.content; \n    }\n\n    // 3. Direct Message (Anthropic/Other) \n    if (d.message?.content) { \n        return d.message.content; \n    }\n\n    // 4. Fallback: Content is already a simple string \n    if (typeof d.content === 'string') { \n        return d.content; \n    }\n\n    return null; \n}\n\n// --- Classifier: Identify the section based on text keywords --- \nfunction classify(text) { \n    if (!text || typeof text !== \"string\") return; \n    const t = text.toLowerCase();\n\n    if (!macro && (t.includes(\"macro market analysis\") || t.startsWith(\"macro \"))) { \n        macro = text; \n    } else if (!meso && (t.includes(\"meso market analysis\") || t.includes(\"price & trend\"))) { \n        meso = text; \n    } else if (!micro && (t.includes(\"micro market analysis\") || t.includes(\"volatility squeeze\"))) { \n        micro = text; \n    } else if (!news && (t.includes(\"crypto news summary\") || t.includes(\"sentiment:\"))) { \n        news = text; \n    } else if (!topbottom && (t.includes(\"top & bottom\") || t.includes(\"cycle turning point\"))) { \n        topbottom = text; \n    } \n}\n\n// --- Main Loop --- \nfor (const it of items) { \n    const j = it.json;\n\n    // Scenario A: Input is an Aggregated Array (from a Merge node) \n    if (Array.isArray(j.data)) { \n        for (const d of j.data) { \n            // Try to classify AI text \n            classify(pickContent(d));\n\n            // Check for News object inside aggregation\n            if (d.indicator === \"crypto_news_summary\" && d.summary) {\n                news = `Today's Crypto News Summary\\nSource: ${d.source || \"RSS\"} | Sentiment: ${d.general_sentiment || \"N/A\"}\\n\\n${d.summary}`;\n            }\n        } \n    }\n\n    // Scenario B: Input is Single Item \n    classify(pickContent(j));\n\n    // Check for News object directly \n    if (j.indicator === \"crypto_news_summary\" && j.summary) { \n        news = `Today's Crypto News Summary\\nSource: ${j.source || \"RSS\"} | Sentiment: ${j.general_sentiment || \"N/A\"}\\n\\n${j.summary}`; \n    } \n}\n\n// --- Extract Raw Metrics & Metadata --- \nconst getJson = (name) => { try { return $(name).first().json; } catch(e) { return {}; } };\n\nconst graham = getJson('graham_value_check');\nconst liquidity = getJson('liquidity_trend');\nconst yieldData = getJson('treasury_yield');\n\n// Regex to extract Macro Bias from the macro text report\nlet macroBias = \"Mixed\";\nif (macro) {\n    const match = macro.match(/macroBias:\\s*[\"']?([^\"'\\n\\r\\]]+)[\"']?/i);\n    if (match) macroBias = match[1];\n}\n\nconst metrics = {\n    verdict: graham.verdict || \"Neutral\",\n    verdict_emojis: \"😐\", \n    drawdown: graham.drawdown_percent ? Math.round(graham.drawdown_percent) + \"%\" : \"N/A\",\n    hashrate_trend: graham.hashrate_trend || \"N/A\",\n    graham_valuation: graham.verdict || \"N/A\",\n    liquidity_trend: liquidity.status || \"N/A\",\n    yield10y: yieldData.current ? yieldData.current.toFixed(2) + \"%\" : \"N/A\",\n    macro_bias: macroBias,\n    date: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })\n};\n\n// Simple Emoji Logic\nconst v = metrics.verdict.toLowerCase();\nif (v.includes(\"buy\") || v.includes(\"accumulate\") || v.includes(\"value\")) metrics.verdict_emojis = \"🟢\";\nelse if (v.includes(\"sell\") || v.includes(\"overvalued\") || v.includes(\"bear\")) metrics.verdict_emojis = \"🔴\";\n\n// --- Output Construction --- \nconst out = {}; \nif (macro) out.macro = macro; \nif (meso) out.meso = meso; \nif (micro) out.micro = micro; \nif (news) out.news = news; \nif (topbottom) out.topbottom = topbottom;\nout.metrics = metrics;\n\nreturn [{ json: out }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -64,
-        -272
+        5936,
+        304
       ],
-      "id": "a50c7e4c-86ef-40c7-b180-1d7e557b1fcd",
+      "id": "c4f79d60-b5be-47cb-932c-2be0fe199db1",
       "name": "Data Clean and Debug"
     },
     {
@@ -442,11 +442,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        384,
-        -400
+        6384,
+        176
       ],
       "typeVersion": 1,
-      "id": "59f9e867-411f-4621-ae2f-0f5a64fdad51",
+      "id": "5c51a0d8-ea90-4522-9f03-5d129ab93fb5",
       "name": "Sticky Note6"
     },
     {
@@ -456,10 +456,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -3696,
-        -640
+        2352,
+        688
       ],
-      "id": "0849ead7-d66c-4929-9012-0ff86bf31d7f",
+      "id": "42e3d36a-1a5c-4f59-bdb1-fadd69afa3ca",
       "name": "Clean Merge"
     },
     {
@@ -467,10 +467,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -2320,
-        -224
+        3680,
+        352
       ],
-      "id": "e0cf48b2-8cd9-477d-be97-77be1630908c",
+      "id": "0840217d-c299-4cfe-a576-f4b3e46998bd",
       "name": "Merge2"
     },
     {
@@ -480,10 +480,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2128,
-        -224
+        3872,
+        352
       ],
-      "id": "d8edc60d-951d-48b0-bfd6-0341d608ea32",
+      "id": "792b3325-3122-4f6f-b60b-a5d5c5991075",
       "name": "Clean Merge2"
     },
     {
@@ -493,10 +493,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -1104,
-        -304
+        4896,
+        272
       ],
-      "id": "97502045-92b7-4d7b-b5dd-0af7d2fd4de1",
+      "id": "18329509-3e96-4666-a1b7-7932af15e0d0",
       "name": "Merge3"
     },
     {
@@ -507,10 +507,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -576
+        560,
+        0
       ],
-      "id": "85065caa-2de6-469a-9e13-a88f3cf81620",
+      "id": "4dd1e2b9-a078-4ca1-8e70-190ba7804316",
       "name": "Fetch Binance Ticker",
       "continueOnFail": true
     },
@@ -522,10 +522,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -432
+        560,
+        144
       ],
-      "id": "6031660a-799f-4ea7-a8f8-82e1b78fa02e",
+      "id": "2f2be288-d5f5-43d7-98c7-a75618db4911",
       "name": "Fetch Binance Daily",
       "continueOnFail": true
     },
@@ -541,10 +541,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -288
+        560,
+        288
       ],
-      "id": "c6ad4607-9c2f-4e4d-8d55-5d733d3f894c",
+      "id": "dd565e48-a2bc-46ca-b67f-f494ac2ae31e",
       "name": "Fetch Binance Weekly",
       "continueOnFail": true
     },
@@ -556,10 +556,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5088,
-        -352
+        912,
+        224
       ],
-      "id": "a91fb611-ee5a-4350-b647-84e9e70bf166",
+      "id": "1166c76e-8e14-422d-9255-ceb2cb8bf9e7",
       "name": "Fetch Binance Futures",
       "continueOnFail": true
     },
@@ -571,10 +571,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -112
+        560,
+        464
       ],
-      "id": "c386d6b7-30c2-4ee0-bd1e-91840c588333",
+      "id": "923ffcca-b38b-4f31-850a-b839f89e6820",
       "name": "Fetch Binance OI",
       "continueOnFail": true
     },
@@ -586,10 +586,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        192
+        560,
+        768
       ],
-      "id": "93c96439-43d4-4b55-8345-d390107f5254",
+      "id": "7842b651-118a-4ccd-9671-67be99369019",
       "name": "Fetch Yahoo",
       "continueOnFail": true
     },
@@ -601,10 +601,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        32
+        560,
+        608
       ],
-      "id": "57ccb7bc-f364-4cd6-b838-28b5ff7f3d8f",
+      "id": "e99bf1e9-149c-4d03-a71c-a09c92740392",
       "name": "Fetch FearGreed",
       "continueOnFail": true
     },
@@ -618,10 +618,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5424,
-        352
+        576,
+        928
       ],
-      "id": "9e4d767d-252f-4e9a-b431-5932371bc73c",
+      "id": "0971ff73-5ea4-4880-8d56-0dd8fd0e4ccb",
       "name": "Fetch CryptoPanic",
       "continueOnFail": true
     },
@@ -635,10 +635,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5088,
-        -48
+        912,
+        528
       ],
-      "id": "57a6987b-76fa-4315-ba54-183e8fca218d",
+      "id": "2623234f-50b0-415b-ad2e-76a3e907c622",
       "name": "Fetch Google News",
       "continueOnFail": true
     },
@@ -646,15 +646,17 @@
       "parameters": {
         "chatId": "-1003480857416",
         "text": "={{ $json.content.parts[0].text }}",
-        "additionalFields": {}
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        480,
-        -272
+        6480,
+        304
       ],
-      "id": "4db0a9f2-0de2-431a-a079-397402637d26",
+      "id": "69898e0f-377f-41c5-9594-0a7bde629b23",
       "name": "Send a text message",
       "webhookId": "3705f81f-3ea1-4a0c-895f-3c9091fca9a0",
       "credentials": {
@@ -684,10 +686,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -1872,
-        -368
+        4128,
+        208
       ],
-      "id": "dd4fec19-9ce2-4f1b-91b5-f7bb23911ffe",
+      "id": "398b9e12-100f-4d91-af38-fc18d76d051a",
       "name": "Top & Bottom Watchout1",
       "credentials": {
         "googlePalmApi": {
@@ -707,7 +709,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a senior crypto market strategist.\n\nGoal: Compress the meso-level BTC snapshot in the JSON into a concise daily trading brief used alongside a separate MICRO timing model. Be a signal filter, not a narrative.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY values present in the JSON; if absent, write \"not provided\".\n- Prefer implications over raw stats (e.g., \u201cscarcity intact\u201d instead of listing stock/flow/block_reward numbers).\n- Price & Trend must reference only what\u2019s in JSON (e.g., Bull Market Support Band: 20W EMA / 21W SMA, 50W MA). Do NOT invent 50D/200D if missing.\n- Momentum: use RSI if present; otherwise \"not provided\".\n- Cycle: compare price vs S2F fair_value and state rainbow zone; mention halving progress and composite/phase if present.\n- Dominance: report latest level and micro/meso/macro trend labels if present; state rotation implication.\n- Levels: list bull band (20W EMA / 21W SMA) and 50W MA as Support; include Resistance ONLY if explicitly provided; else \"not provided\".\n- Outlook: give a 2\u20134 week bias and a 3\u20136 month view tied to the levels above.\n- Triggers: one Bull and one Bear condition, explicitly tied to those levels (e.g., weekly close > band; weekly close < 50W MA).\n- Keep it actionable and compact. Plain language. No markdown, no tables.\n- Word cap: 300 words total. Use \"$\" in prices and make it easy to read with unequivocal terms and concepts (eg. Bitcoin Dominance instead of BTC.D)\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"BTC Meso Market Analysis\"\nmesoBrief:\nPrice & Trend: [...]\nMomentum: [...]\nCycle (S2F & Rainbow): [...]\nOn-chain/Issuance: [...]\nDominance & Rotation: [...]\nLevels:\n- Support: [...]\n- Resistance: [...]\nOutlook:\n- 2\u20134 weeks: [...]\n- 3\u20136 months: [...]\ntriggers:\n- Bull: [...]\n- Bear: [...]\nmesoBias: \"mildly-bullish\" | \"neutral\" | \"mildly-bearish\"\nhorizon: [\"weeks\",\"months\"]"
+              "content": "=You are a senior crypto market strategist.\n\nGoal: Compress the meso-level BTC snapshot in the JSON into a concise daily trading brief used alongside a separate MICRO timing model. Be a signal filter, not a narrative.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY values present in the JSON; if absent, write \"not provided\".\n- Prefer implications over raw stats (e.g., “scarcity intact” instead of listing stock/flow/block_reward numbers).\n- Price & Trend must reference only what’s in JSON (e.g., Bull Market Support Band: 20W EMA / 21W SMA, 50W MA). Do NOT invent 50D/200D if missing.\n- Momentum: use RSI if present; otherwise \"not provided\".\n- Cycle: compare price vs S2F fair_value and state rainbow zone; mention halving progress and composite/phase if present.\n- Dominance: report latest level and micro/meso/macro trend labels if present; state rotation implication.\n- Levels: list bull band (20W EMA / 21W SMA) and 50W MA as Support; include Resistance ONLY if explicitly provided; else \"not provided\".\n- Outlook: give a 2–4 week bias and a 3–6 month view tied to the levels above.\n- Triggers: one Bull and one Bear condition, explicitly tied to those levels (e.g., weekly close > band; weekly close < 50W MA).\n- Keep it actionable and compact. Plain language. No markdown, no tables.\n- Word cap: 300 words total. Use \"$\" in prices and make it easy to read with unequivocal terms and concepts (eg. Bitcoin Dominance instead of BTC.D)\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"BTC Meso Market Analysis\"\nmesoBrief:\nPrice & Trend: [...]\nMomentum: [...]\nCycle (S2F & Rainbow): [...]\nOn-chain/Issuance: [...]\nDominance & Rotation: [...]\nLevels:\n- Support: [...]\n- Resistance: [...]\nOutlook:\n- 2–4 weeks: [...]\n- 3–6 months: [...]\ntriggers:\n- Bull: [...]\n- Bear: [...]\nmesoBias: \"mildly-bullish\" | \"neutral\" | \"mildly-bearish\"\nhorizon: [\"weeks\",\"months\"]"
             }
           ]
         },
@@ -716,10 +718,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -1872,
-        -80
+        4128,
+        496
       ],
-      "id": "1fe25910-037b-47b7-b03f-e51799df58e0",
+      "id": "106397bc-07b1-4397-90b9-c6c191a5b954",
       "name": "BTC Meso Market Analysis1",
       "credentials": {
         "googlePalmApi": {
@@ -739,7 +741,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a quantitative analyst.  \nYour task is to interpret the JSON dataset provided below \u2014 it represents the latest *micro-level indicators* for a specific crypto asset.\n\n\u26a0\ufe0f Important:\n- Do NOT infer, speculate, or reference macro, meso, or external market context.\n- Only describe what is explicitly shown in the data.\n- If a metric is missing or null, omit it.\n- Keep the tone factual, concise, and technical.\n- Do not provide recommendations, outlooks, or predictions.\n- Your only goal is to organize and summarize the data clearly.\n\nGive your analysis a clear title: \"BTC Micro Market Analysis\"\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n"
+              "content": "=You are a quantitative analyst.  \nYour task is to interpret the JSON dataset provided below — it represents the latest *micro-level indicators* for a specific crypto asset.\n\n⚠️ Important:\n- Do NOT infer, speculate, or reference macro, meso, or external market context.\n- Only describe what is explicitly shown in the data.\n- If a metric is missing or null, omit it.\n- Keep the tone factual, concise, and technical.\n- Do not provide recommendations, outlooks, or predictions.\n- Your only goal is to organize and summarize the data clearly.\n\nGive your analysis a clear title: \"BTC Micro Market Analysis\"\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n"
             }
           ]
         },
@@ -748,10 +750,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -704,
-        -240
+        5296,
+        336
       ],
-      "id": "2fe4a6f7-12fd-4e9b-8b53-50dc132860c0",
+      "id": "b0ebfb73-cc96-4448-80a1-16eea326445b",
       "name": "Micro Market Analysis",
       "credentials": {
         "googlePalmApi": {
@@ -771,7 +773,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro \u201cwind\u201d implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  \u2022 Liquidity Fuel (USDT 30d trend)\n  \u2022 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  \u2022 Fed Funds (current; 3m and 6m change)  \n  \u2022 M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  \u2022 USD via dxy_proxy (if absent: \"USD: not provided\")  \n  \u2022 Gold (7d/30d/90d % changes)  \n  \u2022 WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates \u2191 while long yields \u2193).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
+              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro “wind” implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  • Liquidity Fuel (USDT 30d trend)\n  • 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  • Fed Funds (current; 3m and 6m change)  \n  • M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  • USD via dxy_proxy (if absent: \"USD: not provided\")  \n  • Gold (7d/30d/90d % changes)  \n  • WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates ↑ while long yields ↓).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
             }
           ]
         },
@@ -780,10 +782,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -3504,
-        -640
+        2544,
+        688
       ],
-      "id": "1bc073a6-995d-4fed-abcc-3fb73330e722",
+      "id": "ea55fbcc-d31b-4404-816c-6f943a0f2d5f",
       "name": "Micro Market Analysis1",
       "credentials": {
         "googlePalmApi": {
@@ -803,7 +805,7 @@
         "messages": {
           "values": [
             {
-              "content": "=Act as the Chief Editor of the \"Institutional Genesis Report\".\nYour task is to synthesize the provided metrics and analysis into a final HTML report for Telegram.\n\nCRITICAL HTML RULES:\n\nNEVER use the '&' character on its own. You MUST write it as '&amp;' every single time.\n\nBAD: \"S&P 500\"\n\nGOOD: \"S&amp;P 500\"\n\nBAD: \"MACRO & LIQUIDITY\"\n\nGOOD: \"MACRO &amp; LIQUIDITY\"\n\nDo not use Markdown (bold). Use only HTML tags (<b>, <i>, <code>).\n\nEscape < and > as &lt; and &gt;.\n\nInput Data:\nMETRICS:\n{{JSON.stringify($json.metrics)}}\n\nANALYSIS SUMMARIES:\n{{$json.macro}}\n{{$json.meso}}\n{{$json.micro}}\n{{$json.topbottom}}\n\nNEWS:\n{{$json.news}}\n\nInstructions:\n\nWrite a \"Tactical Stance\" (1 concise paragraph). Use <b>bold</b> for price levels.\n\nWrite an \"Analyst Rationale\" (1 dense technical sentence).\n\nSelect the top 3 most relevant News headlines.\n\nOutput the result using this EXACT HTML template (do not change the structure, just fill the slots):\n\n<b>\ud83d\udcc5 INSTITUTIONAL GENESIS REPORT</b> <i>{{$json.metrics.date}}</i>\n\n<b>\ud83d\uded1 CYCLE SIGNAL:</b> {{$json.metrics.verdict_emojis}} <b>{{$json.metrics.verdict}}</b>\n\n\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\n\n<b>\ud83c\udf0a MACRO &amp; LIQUIDITY</b> \u2022 <b>Regime:</b> {{$json.metrics.macro_bias}} \u2022 <b>Liquidity:</b> {{$json.metrics.liquidity_trend}} \u2022 <b>10Y Yield:</b> <code>{{$json.metrics.yield10y}}</code>\n\n<b>\ud83c\udfd7 FUNDAMENTALS (Graham)</b> \u2022 <b>Valuation:</b> {{$json.metrics.graham_valuation}} \u2022 <b>Drawdown:</b> <code>{{$json.metrics.drawdown}}</code> \u2022 <b>Hashrate:</b> {{$json.metrics.hashrate_trend}}\n\n\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\n\n<b>\ud83c\udfaf TACTICAL STANCE</b> [Insert Your Escaped Tactical Stance Here]\n\n<b>\ud83e\udde0 ANALYST RATIONALE</b> <i>[Insert Your Escaped Rationale Here]</i>\n\n\ud83d\udcf0 <b>HEADLINES</b> [Insert Top 3 Headlines as bullet points. Ensure no naked '&' symbols exist here!]\n"
+              "content": "=Act as the Chief Editor of the \"Institutional Genesis Report\".\nYour task is to synthesize the provided metrics and analysis into a final HTML report for Telegram.\n\nCRITICAL HTML RULES:\n\nNEVER use the '&' character on its own. You MUST write it as '&amp;' every single time.\n\nBAD: \"S&P 500\"\n\nGOOD: \"S&amp;P 500\"\n\nBAD: \"MACRO & LIQUIDITY\"\n\nGOOD: \"MACRO &amp; LIQUIDITY\"\n\nDo not use Markdown (bold). Use only HTML tags (<b>, <i>, <code>).\n\nEscape < and > as &lt; and &gt;.\n\nInput Data:\nMETRICS:\n{{JSON.stringify($json.metrics)}}\n\nANALYSIS SUMMARIES:\n{{$json.macro}}\n{{$json.meso}}\n{{$json.micro}}\n{{$json.topbottom}}\n\nNEWS:\n{{$json.news}}\n\nInstructions:\n\nWrite a \"Tactical Stance\" (1 concise paragraph). Use <b>bold</b> for price levels.\n\nWrite an \"Analyst Rationale\" (1 dense technical sentence).\n\nSelect the top 3 most relevant News headlines.\n\nOutput the result using this EXACT HTML template (do not change the structure, just fill the slots):\n\n<b>📅 INSTITUTIONAL GENESIS REPORT</b> <i>{{$json.metrics.date}}</i>\n\n<b>🛑 CYCLE SIGNAL:</b> {{$json.metrics.verdict_emojis}} <b>{{$json.metrics.verdict}}</b>\n\n➖➖➖➖➖➖➖➖➖➖➖\n\n<b>🌊 MACRO &amp; LIQUIDITY</b> • <b>Regime:</b> {{$json.metrics.macro_bias}} • <b>Liquidity:</b> {{$json.metrics.liquidity_trend}} • <b>10Y Yield:</b> <code>{{$json.metrics.yield10y}}</code>\n\n<b>🏗 FUNDAMENTALS (Graham)</b> • <b>Valuation:</b> {{$json.metrics.graham_valuation}} • <b>Drawdown:</b> <code>{{$json.metrics.drawdown}}</code> • <b>Hashrate:</b> {{$json.metrics.hashrate_trend}}\n\n➖➖➖➖➖➖➖➖➖➖➖\n\n<b>🎯 TACTICAL STANCE</b> [Insert Your Escaped Tactical Stance Here]\n\n<b>🧠 ANALYST RATIONALE</b> <i>[Insert Your Escaped Rationale Here]</i>\n\n📰 <b>HEADLINES</b> [Insert Top 3 Headlines as bullet points. Ensure no naked '&' symbols exist here!]\n"
             }
           ]
         },
@@ -812,10 +814,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        128,
-        -272
+        6128,
+        304
       ],
-      "id": "0e786b3f-21d1-4faf-b5ab-dd02e6ba3483",
+      "id": "bc27f9ef-7896-46a3-8e36-2e4fc1a46858",
       "name": "Market Stance1",
       "credentials": {
         "googlePalmApi": {
@@ -831,10 +833,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        336
+        3216,
+        912
       ],
-      "id": "e57ec4aa-96a6-4f48-95ea-d1cab93efb11",
+      "id": "5e9c87b6-3e72-4349-9085-09a72a893923",
       "name": "graham_value_check"
     },
     {
@@ -844,10 +846,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        704,
-        -272
+        6704,
+        304
       ],
-      "id": "b98f79ac-272f-4f9c-9687-e74bfbb12e1c",
+      "id": "7a36d5a3-c75f-4371-950a-185404064109",
       "name": "Update Last Telegram Time"
     },
     {
@@ -857,10 +859,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -3488,
-        160
+        2400,
+        304
       ],
-      "id": "30c3af27-fb3e-4b28-8646-74be40a512a3",
+      "id": "0f5cb81f-ef87-4596-b253-c5e992fd914c",
       "name": "Merge1"
     },
     {
@@ -870,10 +872,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -3328,
-        176
+        2656,
+        352
       ],
-      "id": "f6f7f6b2-b422-4127-a587-46ace6169beb",
+      "id": "60c96291-a270-408f-b8a5-c6b1ab922b12",
       "name": "Clean Merge1"
     },
     {
@@ -883,10 +885,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -3488,
-        352
+        2384,
+        -224
       ],
-      "id": "2c4d5fed-961d-40a1-b2d2-595d2a7e088b",
+      "id": "455cc135-cd9e-4a3a-bb68-0f0f9d7b7fd0",
       "name": "Merge4"
     },
     {
@@ -896,10 +898,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -3328,
-        368
+        2672,
+        -208
       ],
-      "id": "dccd5b68-b8da-42d9-879a-de98319d547a",
+      "id": "3d14450b-52b3-44b2-a6f0-39cdd6d62d90",
       "name": "Clean Merge4"
     },
     {
@@ -914,10 +916,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -150
+        912,
+        400
       ],
-      "id": "1ce71369-99d0-4dd3-8e0c-5b15fa1d0783",
+      "id": "f502f4e8-3c49-4d8e-8e3b-c3625c55503c",
       "name": "Fetch ETHBTC Weekly",
       "continueOnFail": true
     },
@@ -929,10 +931,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        500
+        560,
+        1088
       ],
-      "id": "de4f0d17-1b0a-4e69-8440-c9905f1e269a",
+      "id": "d3edca95-22b5-4e06-aa70-d4d007cb28ed",
       "name": "Fetch Hashrate",
       "continueOnFail": true
     },
@@ -944,10 +946,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        640
+        560,
+        1216
       ],
-      "id": "96f4c5ef-c11d-4d4a-8d6a-1f4b0fe8ce0a",
+      "id": "a1af758a-4a91-438d-bbe6-2f89f0757c24",
       "name": "Fetch Liquidity",
       "continueOnFail": true
     },
@@ -958,10 +960,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        500
+        1824,
+        1088
       ],
-      "id": "3e752b17-c960-4057-a3a2-d7c23c29bdf6",
+      "id": "2c7b878d-e0c9-417b-ace8-6ddf9fc2b024",
       "name": "liquidity_trend"
     }
   ],
@@ -1076,7 +1078,7 @@
         ]
       ]
     },
-    "When clicking \u2018Execute workflow\u2019": {
+    "When clicking ‘Execute workflow’": {
       "main": [
         [
           {
@@ -1722,13 +1724,79 @@
           }
         ]
       ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Binance Ticker",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance Daily",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance Weekly",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch ETHBTC Weekly",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch FearGreed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Yahoo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch CryptoPanic",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Hashrate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Liquidity",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance OI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance Futures",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Google News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "22111b10-b878-48ad-a12b-46752a0d240b",
+  "versionId": "3ab85095-0f17-4f8b-abbf-1cdf5a6ec0a4",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "a8748a89ba0a07ced721aa28816660fdc66500ea257b33db469e712184fd16c7"
