@@ -165,7 +165,7 @@
         -448
       ],
       "id": "e11e145e-f4cc-40c7-bfbd-a0e4fc29bd90",
-      "name": "When clicking ‘Execute workflow’"
+      "name": "When clicking \u2018Execute workflow\u2019"
     },
     {
       "parameters": {
@@ -211,7 +211,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceDailyItems = $('Fetch Binance Daily').all();\n\n\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    return items.map(i => parseFloat(i.json[4]));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\n\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\n\n\n// Indicator Logic\nlet result = {};\n\n// Check moving averages or simple trend\nconst ma50 = sma(closesDaily, 50);\nconst trend = currentPrice > ma50 ? \"bullish\" : \"bearish\";\nresult = {\n    indicator: \"btc_price_trend\",\n    price: currentPrice,\n    trend: trend\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json || {};\n// Use safe access to handle potential failures\nconst binanceDailyNode = $('Fetch Binance Daily').all();\nconst binanceDailyItems = binanceDailyNode.length > 0 ? binanceDailyNode.map(i => i.json).filter(i => i) : [];\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    if (!items || items.length === 0) return [];\n    // item is usually array [time, open, high, low, close, ...]\n    // Filter out invalid items (like error objects)\n    return items\n        .filter(i => Array.isArray(i) && i.length > 4)\n        .map(i => parseFloat(i[4]))\n        .filter(n => !isNaN(n));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice || 0);\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction stdDev(values, period, average) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const squareDiffs = slice.map(value => Math.pow(value - average, 2));\n    const avgSquareDiff = squareDiffs.reduce((a, b) => a + b, 0) / period;\n    return Math.sqrt(avgSquareDiff);\n}\n\n// Indicator Logic\nlet result = {};\n\nif (closesDaily.length >= 20) {\n    const ma50 = sma(closesDaily, 50);\n    const ma20 = sma(closesDaily, 20);\n    const sd20 = stdDev(closesDaily, 20, ma20);\n    \n    const upper = ma20 + (2 * sd20);\n    const lower = ma20 - (2 * sd20);\n    \n    // BBW: (Upper - Lower) / Middle\n    const bbw = (ma20 !== 0) ? (upper - lower) / ma20 : 0;\n    \n    // Volatility Squeeze: Check if BBW is near 6-month low\n    let minBBW = 9999;\n    let bbwHistory = [];\n    const lookback = 180;\n    \n    // We calculate BBW history\n    for (let i = 0; i < lookback; i++) {\n        let idx = closesDaily.length - 1 - i;\n        if (idx < 20) break;\n        \n        let slice = closesDaily.slice(idx - 19, idx + 1);\n        let avg = slice.reduce((a, b) => a + b, 0) / 20;\n        \n        // Optimize: we just need avg for BBW calc? No we need SD.\n        // Doing full SD calc 180 times is fine for n8n code node (JS is fast enough).\n        let sqDiffs = slice.map(v => Math.pow(v - avg, 2));\n        let sd = Math.sqrt(sqDiffs.reduce((a, b) => a + b, 0) / 20);\n        \n        let u = avg + 2 * sd;\n        let l = avg - 2 * sd;\n        if (avg !== 0) {\n            bbwHistory.push((u - l) / avg);\n        }\n    }\n    \n    if (bbwHistory.length > 0) {\n        minBBW = Math.min(...bbwHistory);\n        // \"Near 6-month low\": Within 10% of the minimum\n        result.volatility_squeeze = bbw <= (minBBW * 1.10);\n    } else {\n        result.volatility_squeeze = false;\n    }\n    \n    result.bbw = bbw;\n\n    const trend = currentPrice > ma50 ? \"bullish\" : \"bearish\";\n    result.indicator = \"btc_price_trend\";\n    result.price = currentPrice;\n    result.trend = trend;\n} else {\n     // Handle missing data or API failure\n     result = {\n        indicator: \"btc_price_trend\",\n        price: currentPrice,\n        trend: \"neutral\",\n        error: \"Insufficient data\"\n    };\n}\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -422,7 +422,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// === Unified Market Insights Cleaner (no message / biweekly) ===\n// Mode: Run Once for All Items\nconst items = $input.all();\n\nlet macro, meso, micro, news, topbottom;\n\n// --- Helper to extract content from different formats ---\nfunction pickContent(d) {\n  return (\n    d?.choices?.[0]?.message?.content ??\n    d?.message?.content ??\n    d?.content ??\n    null\n  );\n}\n\n// --- Text classifier (keeps your original labels) ---\nfunction classify(text) {\n  if (!text || typeof text !== \"string\") return;\n  const t = text.toLowerCase();\n\n  if (!macro && (t.startsWith(\"macro \") || t.includes(\"macro market analysis\")))\n    macro = text;\n  else if (\n    !meso &&\n    (t.includes(\"meso market analysis\") || t.includes(\"price & trend (weekly)\"))\n  )\n    meso = text;\n  else if (\n    !micro &&\n    (t.includes(\"micro market analysis\") ||\n      (t.includes(\"snapshot\") && t.includes(\"delta_7d\")))\n  )\n    micro = text;\n  else if (\n    !news &&\n    (t.includes(\"today's crypto news summary\") ||\n      t.includes(\"notícias\") ||\n      t.includes(\"news\"))\n  )\n    news = text;\n  else if (\n    !topbottom &&\n    (t.includes(\"top & bottom watchout\") ||\n      t.includes(\"top and bottom watchout\") ||\n      t.includes(\"bull top & bear bottom\") ||\n      t.includes(\"bull top and bear bottom\") ||\n      t.includes(\"cycle turning point watch\"))\n  )\n    topbottom = text;\n}\n\n// --- Main loop ---\nfor (const it of items) {\n  const j = it.json;\n\n  // 🧩 GPT analysis blocks (arrays)\n  if (Array.isArray(j.data)) {\n    for (const d of j.data) classify(pickContent(d));\n  }\n\n  // 🧩 Direct content blocks\n  const text = pickContent(j);\n  if (text) classify(text);\n\n  // 📰 News API blocks\n  if (j.indicator === \"crypto_news_summary\" && j.summary) {\n    news =\n      `Today's Crypto News Summary\\n` +\n      `Source: ${j.source || \"Unknown\"} | Sentiment: ${\n        j.general_sentiment || \"N/A\"\n      } (${j.sentiment_score || \"-\"})\\n\\n` +\n      j.summary;\n  }\n}\n\n// --- Build output only with existing fields ---\nconst out = {};\nif (macro) out.macro = macro;\nif (meso) out.meso = meso;\nif (micro) out.micro = micro;\nif (news) out.news = news;\nif (topbottom) out.topbottom = topbottom;\n\nreturn [{ json: out }];\n"
+        "jsCode": "// === Unified Market Insights Cleaner (no message / biweekly) ===\n// Mode: Run Once for All Items\nconst items = $input.all();\n\nlet macro, meso, micro, news, topbottom;\n\n// --- Helper to extract content from different formats ---\nfunction pickContent(d) {\n  return (\n    d?.choices?.[0]?.message?.content ??\n    d?.message?.content ??\n    d?.content ??\n    null\n  );\n}\n\n// --- Text classifier (keeps your original labels) ---\nfunction classify(text) {\n  if (!text || typeof text !== \"string\") return;\n  const t = text.toLowerCase();\n\n  if (!macro && (t.startsWith(\"macro \") || t.includes(\"macro market analysis\")))\n    macro = text;\n  else if (\n    !meso &&\n    (t.includes(\"meso market analysis\") || t.includes(\"price & trend (weekly)\"))\n  )\n    meso = text;\n  else if (\n    !micro &&\n    (t.includes(\"micro market analysis\") ||\n      (t.includes(\"snapshot\") && t.includes(\"delta_7d\")))\n  )\n    micro = text;\n  else if (\n    !news &&\n    (t.includes(\"today's crypto news summary\") ||\n      t.includes(\"not\u00edcias\") ||\n      t.includes(\"news\"))\n  )\n    news = text;\n  else if (\n    !topbottom &&\n    (t.includes(\"top & bottom watchout\") ||\n      t.includes(\"top and bottom watchout\") ||\n      t.includes(\"bull top & bear bottom\") ||\n      t.includes(\"bull top and bear bottom\") ||\n      t.includes(\"cycle turning point watch\"))\n  )\n    topbottom = text;\n}\n\n// --- Main loop ---\nfor (const it of items) {\n  const j = it.json;\n\n  // \ud83e\udde9 GPT analysis blocks (arrays)\n  if (Array.isArray(j.data)) {\n    for (const d of j.data) classify(pickContent(d));\n  }\n\n  // \ud83e\udde9 Direct content blocks\n  const text = pickContent(j);\n  if (text) classify(text);\n\n  // \ud83d\udcf0 News API blocks\n  if (j.indicator === \"crypto_news_summary\" && j.summary) {\n    news =\n      `Today's Crypto News Summary\\n` +\n      `Source: ${j.source || \"Unknown\"} | Sentiment: ${\n        j.general_sentiment || \"N/A\"\n      } (${j.sentiment_score || \"-\"})\\n\\n` +\n      j.summary;\n  }\n}\n\n// --- Build output only with existing fields ---\nconst out = {};\nif (macro) out.macro = macro;\nif (meso) out.meso = meso;\nif (micro) out.micro = micro;\nif (news) out.news = news;\nif (topbottom) out.topbottom = topbottom;\n\nreturn [{ json: out }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -511,7 +511,8 @@
         -576
       ],
       "id": "85065caa-2de6-469a-9e13-a88f3cf81620",
-      "name": "Fetch Binance Ticker"
+      "name": "Fetch Binance Ticker",
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -525,7 +526,8 @@
         -432
       ],
       "id": "6031660a-799f-4ea7-a8f8-82e1b78fa02e",
-      "name": "Fetch Binance Daily"
+      "name": "Fetch Binance Daily",
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -543,7 +545,8 @@
         -288
       ],
       "id": "c6ad4607-9c2f-4e4d-8d55-5d733d3f894c",
-      "name": "Fetch Binance Weekly"
+      "name": "Fetch Binance Weekly",
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -557,7 +560,8 @@
         -352
       ],
       "id": "a91fb611-ee5a-4350-b647-84e9e70bf166",
-      "name": "Fetch Binance Futures"
+      "name": "Fetch Binance Futures",
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -571,7 +575,8 @@
         -112
       ],
       "id": "c386d6b7-30c2-4ee0-bd1e-91840c588333",
-      "name": "Fetch Binance OI"
+      "name": "Fetch Binance OI",
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -585,7 +590,8 @@
         192
       ],
       "id": "93c96439-43d4-4b55-8345-d390107f5254",
-      "name": "Fetch Yahoo"
+      "name": "Fetch Yahoo",
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -599,7 +605,8 @@
         32
       ],
       "id": "57ccb7bc-f364-4cd6-b838-28b5ff7f3d8f",
-      "name": "Fetch FearGreed"
+      "name": "Fetch FearGreed",
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -615,7 +622,8 @@
         352
       ],
       "id": "9e4d767d-252f-4e9a-b431-5932371bc73c",
-      "name": "Fetch CryptoPanic"
+      "name": "Fetch CryptoPanic",
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -631,7 +639,8 @@
         -48
       ],
       "id": "57a6987b-76fa-4315-ba54-183e8fca218d",
-      "name": "Fetch Google News"
+      "name": "Fetch Google News",
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -698,7 +707,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a senior crypto market strategist.\n\nGoal: Compress the meso-level BTC snapshot in the JSON into a concise daily trading brief used alongside a separate MICRO timing model. Be a signal filter, not a narrative.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY values present in the JSON; if absent, write \"not provided\".\n- Prefer implications over raw stats (e.g., “scarcity intact” instead of listing stock/flow/block_reward numbers).\n- Price & Trend must reference only what’s in JSON (e.g., Bull Market Support Band: 20W EMA / 21W SMA, 50W MA). Do NOT invent 50D/200D if missing.\n- Momentum: use RSI if present; otherwise \"not provided\".\n- Cycle: compare price vs S2F fair_value and state rainbow zone; mention halving progress and composite/phase if present.\n- Dominance: report latest level and micro/meso/macro trend labels if present; state rotation implication.\n- Levels: list bull band (20W EMA / 21W SMA) and 50W MA as Support; include Resistance ONLY if explicitly provided; else \"not provided\".\n- Outlook: give a 2–4 week bias and a 3–6 month view tied to the levels above.\n- Triggers: one Bull and one Bear condition, explicitly tied to those levels (e.g., weekly close > band; weekly close < 50W MA).\n- Keep it actionable and compact. Plain language. No markdown, no tables.\n- Word cap: 300 words total. Use \"$\" in prices and make it easy to read with unequivocal terms and concepts (eg. Bitcoin Dominance instead of BTC.D)\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"BTC Meso Market Analysis\"\nmesoBrief:\nPrice & Trend: [...]\nMomentum: [...]\nCycle (S2F & Rainbow): [...]\nOn-chain/Issuance: [...]\nDominance & Rotation: [...]\nLevels:\n- Support: [...]\n- Resistance: [...]\nOutlook:\n- 2–4 weeks: [...]\n- 3–6 months: [...]\ntriggers:\n- Bull: [...]\n- Bear: [...]\nmesoBias: \"mildly-bullish\" | \"neutral\" | \"mildly-bearish\"\nhorizon: [\"weeks\",\"months\"]"
+              "content": "=You are a senior crypto market strategist.\n\nGoal: Compress the meso-level BTC snapshot in the JSON into a concise daily trading brief used alongside a separate MICRO timing model. Be a signal filter, not a narrative.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY values present in the JSON; if absent, write \"not provided\".\n- Prefer implications over raw stats (e.g., \u201cscarcity intact\u201d instead of listing stock/flow/block_reward numbers).\n- Price & Trend must reference only what\u2019s in JSON (e.g., Bull Market Support Band: 20W EMA / 21W SMA, 50W MA). Do NOT invent 50D/200D if missing.\n- Momentum: use RSI if present; otherwise \"not provided\".\n- Cycle: compare price vs S2F fair_value and state rainbow zone; mention halving progress and composite/phase if present.\n- Dominance: report latest level and micro/meso/macro trend labels if present; state rotation implication.\n- Levels: list bull band (20W EMA / 21W SMA) and 50W MA as Support; include Resistance ONLY if explicitly provided; else \"not provided\".\n- Outlook: give a 2\u20134 week bias and a 3\u20136 month view tied to the levels above.\n- Triggers: one Bull and one Bear condition, explicitly tied to those levels (e.g., weekly close > band; weekly close < 50W MA).\n- Keep it actionable and compact. Plain language. No markdown, no tables.\n- Word cap: 300 words total. Use \"$\" in prices and make it easy to read with unequivocal terms and concepts (eg. Bitcoin Dominance instead of BTC.D)\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"BTC Meso Market Analysis\"\nmesoBrief:\nPrice & Trend: [...]\nMomentum: [...]\nCycle (S2F & Rainbow): [...]\nOn-chain/Issuance: [...]\nDominance & Rotation: [...]\nLevels:\n- Support: [...]\n- Resistance: [...]\nOutlook:\n- 2\u20134 weeks: [...]\n- 3\u20136 months: [...]\ntriggers:\n- Bull: [...]\n- Bear: [...]\nmesoBias: \"mildly-bullish\" | \"neutral\" | \"mildly-bearish\"\nhorizon: [\"weeks\",\"months\"]"
             }
           ]
         },
@@ -730,7 +739,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a quantitative analyst.  \nYour task is to interpret the JSON dataset provided below — it represents the latest *micro-level indicators* for a specific crypto asset.\n\n⚠️ Important:\n- Do NOT infer, speculate, or reference macro, meso, or external market context.\n- Only describe what is explicitly shown in the data.\n- If a metric is missing or null, omit it.\n- Keep the tone factual, concise, and technical.\n- Do not provide recommendations, outlooks, or predictions.\n- Your only goal is to organize and summarize the data clearly.\n\nGive your analysis a clear title: \"BTC Micro Market Analysis\"\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n"
+              "content": "=You are a quantitative analyst.  \nYour task is to interpret the JSON dataset provided below \u2014 it represents the latest *micro-level indicators* for a specific crypto asset.\n\n\u26a0\ufe0f Important:\n- Do NOT infer, speculate, or reference macro, meso, or external market context.\n- Only describe what is explicitly shown in the data.\n- If a metric is missing or null, omit it.\n- Keep the tone factual, concise, and technical.\n- Do not provide recommendations, outlooks, or predictions.\n- Your only goal is to organize and summarize the data clearly.\n\nGive your analysis a clear title: \"BTC Micro Market Analysis\"\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n"
             }
           ]
         },
@@ -762,7 +771,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro “wind” implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  • 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  • Fed Funds (current; 3m and 6m change)  \n  • M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  • USD via dxy_proxy (if absent: \"USD: not provided\")  \n  • Gold (7d/30d/90d % changes)  \n  • WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates ↑ while long yields ↓).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
+              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro \u201cwind\u201d implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  \u2022 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  \u2022 Fed Funds (current; 3m and 6m change)  \n  \u2022 M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  \u2022 USD via dxy_proxy (if absent: \"USD: not provided\")  \n  \u2022 Gold (7d/30d/90d % changes)  \n  \u2022 WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates \u2191 while long yields \u2193).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
             }
           ]
         },
@@ -794,7 +803,7 @@
         "messages": {
           "values": [
             {
-              "content": "=Imagine you are a crypto market analyst. You don’t give advice about short-term movements — only about opportunities to accumulate or exit from a cycle perspective.\n\nIf there are key levels to watch, you may mention them as long as they are relevant to the mid-term cycle investment strategy. \n\nThe overall rule is: if there’s still time left in the bull run and a consolidation opportunity appears, you may want to accumulate. If the market is overextended or a major reversal into a bear market seems near, you may want to exit.\n\nThe main goal is to make great entries and exits at cycle tops and bottoms, while navigating bull and bear phases through local opportunities.\n\nIf key levels are in sight, or the base case suggests that supports or resistances are coming soon, manage current entries or exits with that base case in mind — assuming there’s a chance it might happen and acting accordingly.\n\nI don’t want confusing “ifs.” I want to know what to do now, focusing only on your strongest base case for the cycle. \n\nI don’t want local trims or nibbles, and I don’t care about short-term wins or losses. I just want to take advantage of the market cycle on a macro level.\n\nConsider the current picture and the most likely base case, and act accordingly — without adding extra conditions.\n\nAssume I may or may not have already entered the market; refer to both possibilities clearly, including specific price levels or zones that might be of interest.\n\nMention altcoins briefly.\n\nMention relevant news briefly for additional context on sentiment.\n\nWrite a single, simple, easy-to-follow paragraph — no bullet points — using a natural, informal tone, as if explaining to a friend.\n\nAt the end, add a short, dense, and technical justification labeled “Reasoning:”, separated with a double line break. \n\nINPUT:\n{{ $json.macro }}\n{{ $json.meso }}\n{{ $json.micro }}\n{{ $json.news }}\n{{ $json.topbottom }}"
+              "content": "=Imagine you are a crypto market analyst. You don\u2019t give advice about short-term movements \u2014 only about opportunities to accumulate or exit from a cycle perspective.\n\nIf there are key levels to watch, you may mention them as long as they are relevant to the mid-term cycle investment strategy. \n\nThe overall rule is: if there\u2019s still time left in the bull run and a consolidation opportunity appears, you may want to accumulate. If the market is overextended or a major reversal into a bear market seems near, you may want to exit.\n\nThe main goal is to make great entries and exits at cycle tops and bottoms, while navigating bull and bear phases through local opportunities.\n\nIf key levels are in sight, or the base case suggests that supports or resistances are coming soon, manage current entries or exits with that base case in mind \u2014 assuming there\u2019s a chance it might happen and acting accordingly.\n\nI don\u2019t want confusing \u201cifs.\u201d I want to know what to do now, focusing only on your strongest base case for the cycle. \n\nI don\u2019t want local trims or nibbles, and I don\u2019t care about short-term wins or losses. I just want to take advantage of the market cycle on a macro level.\n\nConsider the current picture and the most likely base case, and act accordingly \u2014 without adding extra conditions.\n\nAssume I may or may not have already entered the market; refer to both possibilities clearly, including specific price levels or zones that might be of interest.\n\nMention altcoins briefly.\n\nMention relevant news briefly for additional context on sentiment.\n\nWrite a single, simple, easy-to-follow paragraph \u2014 no bullet points \u2014 using a natural, informal tone, as if explaining to a friend.\n\nAt the end, add a short, dense, and technical justification labeled \u201cReasoning:\u201d, separated with a double line break. \n\nINPUT:\n{{ $json.macro }}\n{{ $json.meso }}\n{{ $json.micro }}\n{{ $json.news }}\n{{ $json.topbottom }}"
             }
           ]
         },
@@ -817,7 +826,7 @@
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json;\nconst binanceWeeklyItems = $('Fetch Binance Weekly').all();\nconst binanceFutures = $('Fetch Binance Futures').first().json;\n\n// Helpers\nfunction getHighs(items) {\n    // kline format: [Open Time, Open, High, Low, Close, Volume, Close Time, ...]\n    // Index 2 is High.\n    return items.map(i => parseFloat(i.json[2]));\n}\nconst highsWeekly = getHighs(binanceWeeklyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice);\nconst fundingRate = parseFloat(binanceFutures.lastFundingRate || 0);\n\n// Logic\n// 1. Margin of Safety: Drop from ATH\n// Use all available weekly data to find ATH.\nlet ath = 0;\nfor (const h of highsWeekly) {\n    if (h > ath) ath = h;\n}\nif (currentPrice > ath) ath = currentPrice; // Should be impossible if data covers it, but safe fallback\n\nconst drawdownPercent = ((ath - currentPrice) / ath) * 100;\nconst isHighSafetyMargin = drawdownPercent > 50;\n\n// 2. Defensive Investor: BTC Dominance\n// Placeholder as per instructions\nconst btcDominance = 52.0; // Mocked > 50%\nconst isDominant = btcDominance > 50;\n\n// 3. Financial Strength: Funding Rate\n// Negative or near zero (indicating fear/lack of leverage).\n// Binance funding is usually e.g. 0.01% (0.0001). 0.01% is baseline neutral/bullish.\nconst isFear = fundingRate <= 0.00005; // 0.005%\n\n// Verdict\nlet verdict = \"Neutral\";\nlet reasoning = `Drawdown: ${drawdownPercent.toFixed(1)}% (ATH: $${ath.toFixed(0)}), Funding: ${(fundingRate*100).toFixed(4)}%`;\n\nif (isHighSafetyMargin && isFear) {\n    verdict = \"Undervalued\";\n    reasoning += \". High safety margin (>50% drawdown) and low leverage/fear.\";\n} else if (drawdownPercent < 20 && fundingRate > 0.0005) { \n    verdict = \"Overvalued\"; \n    reasoning += \". Price near highs with high leverage.\";\n}\n\nreturn [{\n    json: {\n        indicator: \"graham_analysis\",\n        verdict: verdict,\n        reasoning: reasoning,\n        drawdown_percent: drawdownPercent,\n        funding_rate: fundingRate\n    }\n}];\n"
+        "jsCode": "\n// Access Fetch Nodes - Safe access patterns for Dead Man's Switch\nconst getJson = (nodeName) => {\n    try {\n        const node = $(nodeName).first();\n        if (!node || !node.json || node.json.error) return {};\n        return node.json;\n    } catch(e) { return {}; }\n};\n\nconst getItems = (nodeName) => {\n    try {\n        return $(nodeName).all().map(i => i.json);\n    } catch(e) { return []; }\n};\n\nconst binanceTicker = getJson('Fetch Binance Ticker');\nconst binanceWeeklyItems = getItems('Fetch Binance Weekly');\nconst binanceFutures = getJson('Fetch Binance Futures');\nconst ethBtcItems = getItems('Fetch ETHBTC Weekly');\nconst hashrateData = getJson('Fetch Hashrate');\n\n// Helpers\nfunction getValues(items, index) {\n    if (!items || items.length === 0) return [];\n    return items\n        .filter(i => Array.isArray(i) && i.length > index)\n        .map(i => parseFloat(i[index]))\n        .filter(n => !isNaN(n));\n}\n\nconst highsWeekly = getValues(binanceWeeklyItems, 2); // High is index 2\nconst ethBtcCloses = getValues(ethBtcItems, 4); // Close is index 4\n\nconst currentPrice = parseFloat(binanceTicker.lastPrice || 0);\nconst fundingRate = parseFloat(binanceFutures.lastFundingRate || 0);\n\n// Logic\n// 1. Margin of Safety: Drop from ATH\nlet ath = 0;\nif (highsWeekly.length > 0) {\n    ath = Math.max(...highsWeekly);\n}\n// If current price > found ath, update ath\nif (currentPrice > ath) ath = currentPrice;\n\nconst drawdownPercent = ath > 0 ? ((ath - currentPrice) / ath) * 100 : 0;\nconst isDeepValue = drawdownPercent > 40;\n\n// 2. Hashrate Trend (Network Strength)\n// blockchain.info returns { values: [ { x, y }, ... ] }\nlet hashrateTrend = \"Unknown\";\nlet currentHashrate = 0;\nlet avg60Hashrate = 0;\n\nif (hashrateData && hashrateData.values && Array.isArray(hashrateData.values) && hashrateData.values.length > 0) {\n    const values = hashrateData.values; \n    currentHashrate = values[values.length - 1].y;\n    \n    // Last 60 points\n    const slice = values.slice(Math.max(0, values.length - 60));\n    if (slice.length > 0) {\n        const sum = slice.reduce((acc, v) => acc + v.y, 0);\n        avg60Hashrate = sum / slice.length;\n        hashrateTrend = currentHashrate > avg60Hashrate ? \"Growing\" : \"Declining\";\n    }\n}\n\n// 3. Rotation: Check if ETHBTC Close > 20-Week SMA\nlet rotationRegime = \"Unknown\";\nlet ethBtcSMA20 = 0;\nlet currentEthBtc = 0;\n\nif (ethBtcCloses.length >= 20) {\n    currentEthBtc = ethBtcCloses[ethBtcCloses.length - 1];\n    const slice = ethBtcCloses.slice(ethBtcCloses.length - 20);\n    ethBtcSMA20 = slice.reduce((a, b) => a + b, 0) / 20;\n    \n    rotationRegime = currentEthBtc > ethBtcSMA20 ? \"Altseason/Risk-On\" : \"Bitcoin Season\";\n}\n\n// 4. Contrarian Signal: If Funding Rate is NEGATIVE (< 0)\nconst isContrarianBuy = fundingRate < 0;\n\n// Verdict\nlet verdict = \"Neutral\";\nlet reasoning = `Drawdown: ${drawdownPercent.toFixed(1)}% (ATH: $${ath.toFixed(0)}), Funding: ${(fundingRate*100).toFixed(4)}%`;\n\nif (isDeepValue && isContrarianBuy) {\n    verdict = \"Deep Value (Strong Buy)\";\n    reasoning += \". >40% Drawdown + Negative Funding.\";\n} else if (drawdownPercent < 20 && fundingRate > 0.0005) { \n    verdict = \"Overvalued\"; \n    reasoning += \". Price near highs with high leverage.\";\n} else if (hashrateTrend === \"Growing\" && rotationRegime === \"Bitcoin Season\") {\n    if (drawdownPercent > 20) {\n        verdict = \"Accumulate\";\n        reasoning += \". Strong network + Bitcoin Season.\";\n    }\n}\n\nreturn [{\n    json: {\n        indicator: \"graham_analysis\",\n        verdict: verdict,\n        reasoning: reasoning,\n        drawdown_percent: drawdownPercent,\n        funding_rate: fundingRate,\n        hashrate_trend: hashrateTrend,\n        rotation_regime: rotationRegime,\n        contrarian_signal: isContrarianBuy\n    }\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -843,7 +852,7 @@
     },
     {
       "parameters": {
-        "numberInputs": 3
+        "numberInputs": 5
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
@@ -892,6 +901,40 @@
       ],
       "id": "dccd5b68-b8da-42d9-879a-de98319d547a",
       "name": "Clean Merge4"
+    },
+    {
+      "parameters": {
+        "url": "https://api.binance.com/api/v3/klines?symbol=ETHBTC&interval=1w&limit=210",
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -5440,
+        -150
+      ],
+      "id": "1ce71369-99d0-4dd3-8e0c-5b15fa1d0783",
+      "name": "Fetch ETHBTC Weekly",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://api.blockchain.info/charts/hash-rate?timespan=1year&format=json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -5440,
+        500
+      ],
+      "id": "de4f0d17-1b0a-4e69-8440-c9905f1e269a",
+      "name": "Fetch Hashrate",
+      "continueOnFail": true
     }
   ],
   "pinData": {},
@@ -1005,7 +1048,7 @@
         ]
       ]
     },
-    "When clicking ‘Execute workflow’": {
+    "When clicking \u2018Execute workflow\u2019": {
       "main": [
         [
           {
@@ -1050,6 +1093,16 @@
           },
           {
             "node": "Fetch Google News",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch ETHBTC Weekly",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Hashrate",
             "type": "main",
             "index": 0
           }
@@ -1589,6 +1642,28 @@
             "node": "btc_price_trend",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch ETHBTC Weekly": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Fetch Hashrate": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 4
           }
         ]
       ]
