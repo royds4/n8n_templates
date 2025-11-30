@@ -1,0 +1,244 @@
+{
+  "name": "Stripe Subscription Manager",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Google Sheets Structure\nCreate a sheet with the following headers in Row 1:\n- A: stripe_customer_id\n- B: email\n- C: amount\n- D: status\n- E: subscription_start_date\n- F: telegram_invite_link",
+        "height": 240,
+        "width": 350,
+        "color": 4
+      },
+      "name": "Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        100,
+        100
+      ],
+      "id": "note-1"
+    },
+    {
+      "parameters": {
+        "events": [
+          "checkout.session.completed"
+        ]
+      },
+      "name": "Stripe Trigger",
+      "type": "n8n-nodes-base.stripeTrigger",
+      "typeVersion": 1,
+      "position": [
+        100,
+        400
+      ],
+      "id": "stripe-trigger-1"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "telegram_chat_id",
+              "value": "-100xxxx"
+            },
+            {
+              "name": "google_sheet_id",
+              "value": "xxxx"
+            }
+          ]
+        }
+      },
+      "name": "CONFIG",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        300,
+        400
+      ],
+      "id": "config-1"
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "operation": "createInviteLink",
+        "chatId": "={{ $('CONFIG').first().json.telegram_chat_id }}",
+        "name": "Subscriber Access - {{ $('Stripe Trigger').item.json.data.object.customer_details.email }}",
+        "memberLimit": 1,
+        "additionalFields": {}
+      },
+      "name": "Create Invite Link",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        500,
+        400
+      ],
+      "id": "telegram-1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "sheetId": "={{ $('CONFIG').first().json.google_sheet_id }}",
+        "range": "Sheet1",
+        "options": {
+            "valueInputOption": "USER_ENTERED"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "stripe_customer_id": "={{ $('Stripe Trigger').item.json.data.object.customer }}",
+            "email": "={{ $('Stripe Trigger').item.json.data.object.customer_details.email }}",
+            "amount": "={{ $('Stripe Trigger').item.json.data.object.amount_total / 100 }}",
+            "status": "Active",
+            "subscription_start_date": "={{ new Date().toISOString() }}",
+            "telegram_invite_link": "={{ $json.invite_link }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "stripe_customer_id",
+              "displayName": "stripe_customer_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "subscription_start_date",
+              "displayName": "subscription_start_date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+             {
+              "id": "telegram_invite_link",
+              "displayName": "telegram_invite_link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ]
+        }
+      },
+      "name": "Save to Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        700,
+        400
+      ],
+      "id": "gsheets-1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Stripe Trigger').item.json.data.object.customer_details.email }}",
+        "subject": "Welcome to the Inner Circle - Access Link Inside",
+        "message": "Thanks for subscribing! Here is your unique, one-time link to join the channel: {{ $('Create Invite Link').item.json.invite_link }}. Do not share this; it works once.",
+        "options": {}
+      },
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        900,
+        400
+      ],
+      "id": "gmail-1",
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Stripe Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG": {
+      "main": [
+        [
+          {
+            "node": "Create Invite Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Invite Link": {
+      "main": [
+        [
+          {
+            "node": "Save to Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Sheets": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
