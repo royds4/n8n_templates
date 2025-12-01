@@ -968,7 +968,7 @@
     },
     {
       "parameters": {
-        "prompt": "=Macro: {{$json.macro}}\n\nLiquidity: {{$json.metrics.liquidity_trend}}\n\nNews: {{$json.news}}\n\nDate: {{$json.metrics.date}}\n\nSystem Instructions:\n\nYou are the Social Media Manager for \"Institutional Genesis Report\" (@DailyGenReport).\n**GOAL:** Write a high-engagement daily tweet summarizing the market \"Weather\" based on the provided Macro and Liquidity data.\n**RULES:**\n1. **Public Teaser Only:** Discuss the Macro Regime (Risk-On/Off) and Liquidity Trend. DO NOT reveal the \"Graham Verdict\", \"Tactical Stance\", or specific \"Buy/Sell\" signals. Those are for paid subscribers.\n2. **Format:**\n   - Hook: A short, punchy observation about the day's data (e.g., \"Liquidity is expanding, but yields are stubborn.\").\n   - Body: 3 bullet points using emojis (🌊, 🏦, 📰) summarizing Macro, Yields, and top News.\n   - Closing: A curiosity gap.\n   - CTA: \"Full tactical signals & entry levels in the Daily Report 👇 [Link]\"\n3. **Tone:** Professional, institutional, data-driven. No \"moonboi\" slang.\n4. **Length:** Under 280 characters if possible, or strictly formatted for a short thread.\n5. **No HTML:** Use plain text only."
+        "prompt": "=Macro: {{$json.macro}}\n\nLiquidity: {{$json.metrics.liquidity_trend}}\n\nNews: {{$json.news}}\n\nDate: {{$json.metrics.date}}\n\nSystem Instructions:\n\nYou are the Social Media Manager for \"Institutional Genesis Report\" (@DailyGenReport).\n**GOAL:** Write a high-engagement daily tweet thread summarizing the market \"Weather\" based on the provided Macro and Liquidity data.\n**RULES:**\n1. **Public Teaser Only:** Discuss the Macro Regime (Risk-On/Off) and Liquidity Trend. DO NOT reveal the \"Graham Verdict\", \"Tactical Stance\", or specific \"Buy/Sell\" signals. Those are for paid subscribers.\n2. **Format:**\n   - **Structure:** Strictly 3 sections separated by **Tweet X/3** (e.g., **Tweet 1/3**, **Tweet 2/3**, **Tweet 3/3**).\n   - Hook: A short, punchy observation about the day's data (e.g., \"Liquidity is expanding, but yields are stubborn.\").\n   - Body: Bullet points using emojis (🌊, 🏦, 📰) summarizing Macro, Yields, and top News.\n   - Closing: A curiosity gap.\n   - CTA: \"Full tactical signals & entry levels in the Daily Report 👇 [Link]\"\n3. **MANDATORY:** In the final tweet of the thread (**Tweet 3/3**), you MUST include these tags: $BTC #Bitcoin #Crypto #Trading #DailyGenReport.\n4. **Tone:** Professional, institutional, data-driven. No \"moonboi\" slang.\n5. **Length:** Each tweet must be under 280 characters.\n6. **No HTML:** Use plain text only."
       },
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1,
@@ -982,12 +982,14 @@
     {
       "parameters": {
         "text": "={{ $json.text }}",
-        "additionalFields": {}
+        "additionalFields": {
+          "replyToTweetId": "={{ $json.index > 0 ? $('Twitter Post').all()[$json.index - 1].json.id : undefined }}"
+        }
       },
       "type": "n8n-nodes-base.twitter",
       "typeVersion": 1,
       "position": [
-        480,
+        860,
         -336
       ],
       "id": "475a183a-d859-4095-91b4-3d7e3c255d81",
@@ -1017,6 +1019,33 @@
           "name": "Google Gemini(PaLM) Api account"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract the full text\nconst text = $input.first().json.output;\n// Split by the bold headers\nconst tweets = text.split(/\\*\\*Tweet \\d+\\/3\\*\\*\\n/).filter(t => t.trim().length > 0);\n// Return array for the Loop\nreturn tweets.map((t, i) => {\n  return {\n    json: {\n      text: t.trim(),\n      index: i // 0, 1, 2\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        300,
+        -336
+      ],
+      "id": "dc843d4d-a717-4e99-91c5-1399ced8ef66",
+      "name": "Thread Splitter"
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        580,
+        -336
+      ],
+      "id": "f81bd779-2ff8-47a2-971e-d20153c6bb71",
+      "name": "Thread Loop"
     }
   ],
   "pinData": {},
@@ -1848,7 +1877,29 @@
         ]
       ]
     },
-    "Twitter Composer": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Twitter Composer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Thread Splitter": {
+      "main": [
+        [
+          {
+            "node": "Thread Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Thread Loop": {
       "main": [
         [
           {
@@ -1859,12 +1910,23 @@
         ]
       ]
     },
-    "Google Gemini Chat Model": {
-      "ai_languageModel": [
+    "Twitter Post": {
+      "main": [
         [
           {
-            "node": "Twitter Composer",
-            "type": "ai_languageModel",
+            "node": "Thread Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Twitter Composer": {
+      "main": [
+        [
+          {
+            "node": "Thread Splitter",
+            "type": "main",
             "index": 0
           }
         ]
