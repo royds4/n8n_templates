@@ -1,0 +1,209 @@
+{
+  "name": "Automatizacion X",
+  "nodes": [
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "id": "3f54dc6e-351d-41e5-af8d-7983046116c8",
+      "name": "first tweet",
+      "type": "n8n-nodes-base.twitterTool",
+      "position": [
+        -544,
+        2096
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "XfeB97RGjsfZ53j2",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {
+          "inReplyToStatusId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Reply_to_Tweet', `Debes hacer reply justo al tweet anterior`, 'string') }}"
+          }
+        }
+      },
+      "id": "fa65f64d-fc0f-4768-bf62-d225f40fb1e6",
+      "name": "hilo",
+      "type": "n8n-nodes-base.twitterTool",
+      "position": [
+        -368,
+        2096
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "XfeB97RGjsfZ53j2",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Macro: {{$json.macro}}\\n\\nLiquidity: {{$json.metrics.liquidity_trend}}\\n\\nNews: {{$json.news}}\\n\\nDate: {{$json.metrics.date}}\\n\\nSystem Instructions:\\n\\nYou are the Social Media Manager for \\\"Institutional Genesis Report\\\" (@DailyGenReport).\\n**GOAL:** Write a high-engagement daily tweet summarizing the market \\\"Weather\\\" based on the provided Macro and Liquidity data.\\n**RULES:**\\n1. **Public Teaser Only:** Discuss the Macro Regime (Risk-On/Off) and Liquidity Trend. DO NOT reveal the \\\"Graham Verdict\\\", \\\"Tactical Stance\\\", or specific \\\"Buy/Sell\\\" signals. Those are for paid subscribers.\\n2. **Format:**\\n   - Hook: A short, punchy observation about the day's data (e.g., \\\"Liquidity is expanding, but yields are stubborn.\\\").\\n   - Body: 3 bullet points using emojis (🌊, 🏦, 📰) summarizing Macro, Yields, and top News.\\n   - Closing: A curiosity gap.\\n   - CTA: \\\"Full tactical signals & entry levels in the Daily Report 👇 [https://whop.com/institutional-genesis-report/institutional-genesis-report-fe/]\\\"\\n3. **Tone:** Professional, institutional, data-driven. No \\\"moonboi\\\" slang.\\n4. **Length:** Under 280 characters if possible, or strictly formatted for a short thread.\\n5. **No HTML:** Use plain text only.\"",
+        "options": {}
+      },
+      "id": "38f5be1b-6fa4-4c81-bc49-984cee880b97",
+      "name": "Agente X",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -784,
+        1856
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "14i4E6-_xETyg4fVGuKuTysksK7EDQH8EyDIt8vKl0Ig",
+          "mode": "list",
+          "cachedResultName": "GenesisTweets",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14i4E6-_xETyg4fVGuKuTysksK7EDQH8EyDIt8vKl0Ig/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14i4E6-_xETyg4fVGuKuTysksK7EDQH8EyDIt8vKl0Ig/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        1856
+      ],
+      "id": "50232dd7-7dbd-4572-b2e2-24f7374ce550",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "3ifInqZk1LczImaH",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        2096
+      ],
+      "id": "0e4a9c11-4239-4bfe-931b-a58e822d9efd",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3WcjGrEmVOgnUbOk",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "hilo": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente X",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "first tweet": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente X",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Agente X",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente X",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c9d43e4a-3640-49a9-b0d0-69e540d72429",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a8748a89ba0a07ced721aa28816660fdc66500ea257b33db469e712184fd16c7"
+  },
+  "id": "O5WBS0HXCJKaYYAT",
+  "tags": [
+    {
+      "updatedAt": "2025-11-29T23:22:49.023Z",
+      "createdAt": "2025-11-29T23:22:49.023Z",
+      "id": "DK9PCfBrJ1IFcT9U",
+      "name": "Golem.Agency"
+    },
+    {
+      "updatedAt": "2025-11-29T23:22:49.042Z",
+      "createdAt": "2025-11-29T23:22:49.042Z",
+      "id": "FQp0g8PlpojihTGA",
+      "name": "TG @nikolenkoclub"
+    },
+    {
+      "updatedAt": "2025-11-29T23:22:48.979Z",
+      "createdAt": "2025-11-29T23:22:48.979Z",
+      "id": "csKqpbHly6OsHKqH",
+      "name": "Telegram"
+    },
+    {
+      "updatedAt": "2025-11-29T23:22:49.002Z",
+      "createdAt": "2025-11-29T23:22:49.002Z",
+      "id": "lUDHmyQLzuiL9kIl",
+      "name": "Nikolenko.Club"
+    }
+  ]
+}
