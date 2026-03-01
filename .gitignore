@@ -1,0 +1,6 @@
+#Ignore video folder
+shared/
+#ignore basic n8n data
+n8n-data/
+#ignore Whisper with elevenlabs
+whisper-asr-webservice/

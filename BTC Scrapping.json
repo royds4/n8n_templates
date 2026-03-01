@@ -1,19 +1,19 @@
 {
-  "name": "Phil Crypto Investment Insight",
+  "name": "BTC Scrapping",
   "nodes": [
     {
       "parameters": {
         "content": "## Macro Context \n",
-        "height": 1680,
+        "height": 2256,
         "width": 1120
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -4288,
-        -1184
+        1216,
+        -288
       ],
       "typeVersion": 1,
-      "id": "e9a854a4-7cf4-4a6c-9059-5099076d6101",
+      "id": "8bd5de31-cf94-4300-8af2-50e3dcd5e47e",
       "name": "Sticky Note"
     },
     {
@@ -23,39 +23,39 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -3856,
-        -304
+        1664,
+        1152
       ],
-      "id": "18eeba72-e4f7-440b-8004-287f510f568e",
+      "id": "fe1328d1-cdb6-4c9b-9f69-075cbf2957f5",
       "name": "Merge"
     },
     {
       "parameters": {
         "content": "## Micro Context\n",
-        "height": 1680,
+        "height": 2256,
         "width": 1200,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -1584,
-        -1184
+        3920,
+        -288
       ],
       "typeVersion": 1,
-      "id": "994e4353-9a30-4019-8c46-b19902ca3e8e",
+      "id": "e57f0816-d0c8-4d30-acf0-431acac29762",
       "name": "Sticky Note2"
     },
     {
       "parameters": {
-        "numberInputs": 5
+        "numberInputs": 6
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -256,
-        -640
+        5312,
+        544
       ],
-      "id": "58bcb966-f551-4288-b12c-e8389fd794eb",
+      "id": "5173b2bf-2250-4860-b5ee-3b7a035ac628",
       "name": "Merge5"
     },
     {
@@ -65,10 +65,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -896,
-        -560
+        4688,
+        624
       ],
-      "id": "d9bea458-9cc0-4fb8-a113-0b3cc1d90d3e",
+      "id": "6a94a47b-6360-405d-b13e-712857dc0813",
       "name": "Clean Merge3"
     },
     {
@@ -76,8 +76,8 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 8,
-              "triggerAtMinute": 30
+              "triggerAtHour": 21,
+              "triggerAtMinute": 36
             }
           ]
         }
@@ -85,10 +85,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -5920,
-        -576
+        -336,
+        0
       ],
-      "id": "1ef08b25-aef1-460f-b699-440a0fdd92fd",
+      "id": "6f435a98-cbe4-480c-9964-2ea98fed1232",
       "name": "Schedule Trigger"
     },
     {
@@ -98,10 +98,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        -1024
+        1344,
+        736
       ],
-      "id": "7c91ad1c-5dc0-4a86-93b4-203f9d6cc455",
+      "id": "a4d89a8b-ed20-4a7f-9013-c6b3c66bdc46",
       "name": "treasury_yield"
     },
     {
@@ -111,23 +111,23 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        -880
+        1344,
+        880
       ],
-      "id": "866c2266-fb05-40e3-9ac9-519bcd777497",
+      "id": "288277bc-dede-4f12-8f93-02d141c429ab",
       "name": "fed_funds_rate"
     },
     {
       "parameters": {
-        "jsCode": "\nconst googleNewsData = $('Fetch Google News').first().json;\nlet xml = \"\";\n\n// Robustly find the XML string\nif (typeof googleNewsData === 'string') xml = googleNewsData;\nelse if (googleNewsData && typeof googleNewsData.data === 'string') xml = googleNewsData.data;\nelse if (googleNewsData && typeof googleNewsData.content === 'string') xml = googleNewsData.content;\nelse if (googleNewsData && typeof googleNewsData.xml === 'string') xml = googleNewsData.xml;\nelse xml = JSON.stringify(googleNewsData); // Fallback\n\n// State Management\nconst staticData = $getWorkflowStaticData('global');\nconst lastTelegramSentTime = staticData.lastTelegramSentTime ? new Date(staticData.lastTelegramSentTime) : new Date(Date.now() - 3600 * 1000); // Default 1h ago\n\n// Parse Items\nconst items = [];\nconst itemRegex = /<item>([\\s\\S]*?)<\\/item>/g;\nconst titleRegex = /<title>(.*?)<\\/title>/;\nconst dateRegex = /<pubDate>(.*?)<\\/pubDate>/;\n\nlet match;\nwhile ((match = itemRegex.exec(xml)) !== null) {\n    const itemContent = match[1];\n    const titleMatch = titleRegex.exec(itemContent);\n    const dateMatch = dateRegex.exec(itemContent);\n\n    if (titleMatch && dateMatch) {\n        const title = titleMatch[1].replace(/<!\\[CDATA\\[(.*?)\\]\\]>/, '$1');\n        const date = new Date(dateMatch[1]);\n\n        if (date > lastTelegramSentTime) {\n            items.push({ title, date });\n        }\n    }\n}\n\n// Format Output\nconst titles = items.length > 0\n    ? items.map(i => i.title).join(\". \")\n    : \"No new news since \" + lastTelegramSentTime.toISOString();\n\nreturn [{\n    json: {\n        indicator: \"macro_news_summary\",\n        content: titles,\n        summary: titles,\n        item_count: items.length\n    }\n}];\n"
+        "jsCode": "// 1. GET DATA\nconst jsonData = $input.first().json;\n\n// Safety check pathing\nconst newsItems = jsonData?.rss?.channel?.item || [];\n\n// 2. STATE MANAGEMENT (Read Only)\nconst staticData = $getWorkflowStaticData('global');\n\n// *** FIX: Changed fallback from 1h (3600) to 24h (86400) to catch today's earlier news ***\nconst lastTelegramSentTime = staticData.lastTelegramSentTime \n    ? new Date(staticData.lastTelegramSentTime) \n    : new Date(Date.now() - 86400 * 1000); \n\n// 3. FILTER ITEMS\nconst validItems = newsItems.filter(item => {\n    const itemDate = new Date(item.pubDate);\n    // Check if valid date and newer than last check\n    return  itemDate > lastTelegramSentTime;\n}).map(item => {\n    // 4. CLEANUP\n    return {\n        title: item.title,\n        date: new Date(item.pubDate)\n    };\n});\n\n// 5. FORMAT OUTPUT\nconst titles = validItems.length > 0\n    ? validItems.map(i => i.title).join(\". \")\n    : \"No new news since \" + lastTelegramSentTime.toISOString();\n\nreturn [{\n    json: {\n        indicator: \"macro_news_summary\",\n        content: titles,\n        summary: titles,\n        item_count: validItems.length\n    }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        -736
+        1344,
+        1008
       ],
-      "id": "f5d5faa4-3686-4174-b475-97915de3ec98",
+      "id": "ea3f6330-904b-47f8-923a-ab6ffe8b9209",
       "name": "macro_news_summary"
     },
     {
@@ -137,10 +137,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        -592
+        1344,
+        1136
       ],
-      "id": "31bc4b69-8eab-4981-a1da-eb7d2c545677",
+      "id": "d6370c1e-5da3-445e-b2ed-735a81100ee2",
       "name": "btc_overview"
     },
     {
@@ -150,22 +150,11 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        -128
+        1344,
+        1392
       ],
-      "id": "c4840e4f-af92-4cb6-b20a-96555ce8cdc2",
+      "id": "857add8a-162d-470c-a5b1-c1633be19548",
       "name": "gold_price_trend"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        -5920,
-        -768
-      ],
-      "id": "2f04af12-b3ca-4ce1-92a6-31337524c2ac",
-      "name": "When clicking ‘Execute workflow’"
     },
     {
       "parameters": {
@@ -174,26 +163,26 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        -288
+        1344,
+        1264
       ],
-      "id": "26bd8c5a-d64d-4511-84a7-286e5c1827ad",
+      "id": "b3a52b95-2838-43e4-a9bd-8713613cdf55",
       "name": "dxy_proxy"
     },
     {
       "parameters": {
         "content": "## Real Data Sources\n\nThis workflow is now configured to fetch live data from:\n\n- **Binance**: BTC Price & Candles\n- **Yahoo Finance**: Gold, Oil, Yields\n- **Alternative.me**: Fear & Greed\n- **CryptoPanic**: Crypto News\n- **Google News**: Macro/Trump News",
-        "height": 1680,
+        "height": 2256,
         "width": 1232,
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -5520,
-        -1184
+        -16,
+        -288
       ],
       "typeVersion": 1,
-      "id": "63f442ce-74f2-4d09-817c-1ca22eb9f002",
+      "id": "0c59c64d-fd9f-4f25-ba89-35e631b28abf",
       "name": "Sticky Note3"
     },
     {
@@ -203,23 +192,23 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        32
+        1344,
+        1536
       ],
-      "id": "489462c6-24ea-4985-bd90-00462d0385f4",
+      "id": "0d238e56-3cc3-4af4-9a36-99fc5cb955c3",
       "name": "crude_oil_trend"
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json || {};\n// Use safe access to handle potential failures\nconst binanceDailyNode = $('Fetch Binance Daily').all();\nconst binanceDailyItems = binanceDailyNode.length > 0 ? binanceDailyNode.map(i => i.json).filter(i => i) : [];\n\n// Parsers & Helpers\nfunction getCloses(items) {\n    if (!items || items.length === 0) return [];\n    // item is usually array [time, open, high, low, close, ...]\n    // Filter out invalid items (like error objects)\n    return items\n        .filter(i => Array.isArray(i) && i.length > 4)\n        .map(i => parseFloat(i[4]))\n        .filter(n => !isNaN(n));\n}\nconst closesDaily = getCloses(binanceDailyItems);\nconst currentPrice = parseFloat(binanceTicker.lastPrice || 0);\n\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const sum = slice.reduce((a, b) => a + b, 0);\n    return sum / period;\n}\n\nfunction stdDev(values, period, average) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const squareDiffs = slice.map(value => Math.pow(value - average, 2));\n    const avgSquareDiff = squareDiffs.reduce((a, b) => a + b, 0) / period;\n    return Math.sqrt(avgSquareDiff);\n}\n\n// Indicator Logic\nlet result = {};\n\nif (closesDaily.length >= 20) {\n    const ma50 = sma(closesDaily, 50);\n    const ma20 = sma(closesDaily, 20);\n    const sd20 = stdDev(closesDaily, 20, ma20);\n    \n    const upper = ma20 + (2 * sd20);\n    const lower = ma20 - (2 * sd20);\n    \n    // BBW: (Upper - Lower) / Middle\n    const bbw = (ma20 !== 0) ? (upper - lower) / ma20 : 0;\n    \n    // Volatility Squeeze: Check if BBW is near 6-month low\n    let minBBW = 9999;\n    let bbwHistory = [];\n    const lookback = 180;\n    \n    // We calculate BBW history\n    for (let i = 0; i < lookback; i++) {\n        let idx = closesDaily.length - 1 - i;\n        if (idx < 20) break;\n        \n        let slice = closesDaily.slice(idx - 19, idx + 1);\n        let avg = slice.reduce((a, b) => a + b, 0) / 20;\n        \n        // Optimize: we just need avg for BBW calc? No we need SD.\n        // Doing full SD calc 180 times is fine for n8n code node (JS is fast enough).\n        let sqDiffs = slice.map(v => Math.pow(v - avg, 2));\n        let sd = Math.sqrt(sqDiffs.reduce((a, b) => a + b, 0) / 20);\n        \n        let u = avg + 2 * sd;\n        let l = avg - 2 * sd;\n        if (avg !== 0) {\n            bbwHistory.push((u - l) / avg);\n        }\n    }\n    \n    if (bbwHistory.length > 0) {\n        minBBW = Math.min(...bbwHistory);\n        // \"Near 6-month low\": Within 10% of the minimum\n        result.volatility_squeeze = bbw <= (minBBW * 1.10);\n    } else {\n        result.volatility_squeeze = false;\n    }\n    \n    result.bbw = bbw;\n\n    const trend = currentPrice > ma50 ? \"bullish\" : \"bearish\";\n    result.indicator = \"btc_price_trend\";\n    result.price = currentPrice;\n    result.trend = trend;\n} else {\n     // Handle missing data or API failure\n     result = {\n        indicator: \"btc_price_trend\",\n        price: currentPrice,\n        trend: \"neutral\",\n        error: \"Insufficient data\"\n    };\n}\n\nreturn [{ json: result }];\n"
+        "jsCode": "// Access Fetch Nodes\nconst binanceTicker = $('Fetch Binance Ticker').first().json || {};\nconst binanceDailyNode = $('Fetch Binance Daily').all();\nconst binanceDailyItems = binanceDailyNode.length > 0 ? binanceDailyNode.map(i => i.json) : [];\n\n// === PARSERS ===\n// We need High, Low, and Close for ATR\nfunction getCandles(items) {\n    if (!items || items.length === 0) return [];\n    // Binance kline format: [time, open, high, low, close, vol...]\n    return items\n        .filter(i => Array.isArray(i) && i.length > 4)\n        .map(i => ({\n            high: parseFloat(i[2]),\n            low: parseFloat(i[3]),\n            close: parseFloat(i[4])\n        }));\n}\n\nconst candles = getCandles(binanceDailyItems);\n// We need at least 20 periods + 1 for previous close calculation\nif (candles.length < 21) {\n    return [{ json: { error: \"Insufficient data for volatility analysis\" } }];\n}\n\n// === TECHNICAL INDICATOR FUNCTIONS ===\n\n// Simple Moving Average\nfunction sma(values, period) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    return slice.reduce((a, b) => a + b, 0) / period;\n}\n\n// Standard Deviation (for Bollinger Bands)\nfunction stdDev(values, period, average) {\n    if (values.length < period) return 0;\n    const slice = values.slice(values.length - period);\n    const squareDiffs = slice.map(value => Math.pow(value - average, 2));\n    const avgSquareDiff = squareDiffs.reduce((a, b) => a + b, 0) / period;\n    return Math.sqrt(avgSquareDiff);\n}\n\n// Average True Range (for Keltner Channels)\n// Uses simple SMA of TR for the channel width (Standard Keltner approach)\nfunction calculateATR(candles, period) {\n    if (candles.length < period + 1) return 0;\n    \n    let trueRanges = [];\n    // Start from index 1 because we need previous close\n    // We only need the last 'period' TRs\n    const startIndex = candles.length - period;\n    \n    for (let i = startIndex; i < candles.length; i++) {\n        const current = candles[i];\n        const prev = candles[i - 1];\n        \n        const hl = current.high - current.low;\n        const h_pc = Math.abs(current.high - prev.close);\n        const l_pc = Math.abs(current.low - prev.close);\n        \n        trueRanges.push(Math.max(hl, h_pc, l_pc));\n    }\n    \n    return trueRanges.reduce((a, b) => a + b, 0) / period;\n}\n\n// === LOGIC CORE ===\n\nconst closes = candles.map(c => c.close);\nconst currentPrice = parseFloat(binanceTicker.lastPrice || closes[closes.length-1]);\n\n// 1. Calculate Bollinger Bands (20, 2)\nconst basis = sma(closes, 20); // Middle Line\nconst sd = stdDev(closes, 20, basis);\nconst bbUpper = basis + (2 * sd);\nconst bbLower = basis - (2 * sd);\n\n// 2. Calculate Keltner Channels (20, 1.5)\n// Note: We use the same 'basis' (SMA 20) for the centerline to align them perfectly\nconst atr = calculateATR(candles, 20);\nconst kcFactor = 1.5;\nconst kcUpper = basis + (kcFactor * atr);\nconst kcLower = basis - (kcFactor * atr);\n\n// 3. Detect Squeeze\n// Squeeze is ON when BB are INSIDE Keltner Channels\nconst squeezeOn = (bbUpper < kcUpper) && (bbLower > kcLower);\n\n// 4. Calculate BB Width (for relative comparison)\nconst bbw = (basis !== 0) ? (bbUpper - bbLower) / basis : 0;\n\n// 5. Trend Determination (Price vs SMA50)\nconst ma50 = sma(closes, 50);\nconst trend = currentPrice > ma50 ? \"bullish\" : \"bearish\";\n\n// === OUTPUT ===\n\nlet result = {\n    indicator: \"btc_price_trend\",\n    price: currentPrice,\n    trend: trend,\n    volatility: {\n        bb_width: bbw,\n        atr_value: atr,\n        squeeze_on: squeezeOn, // TRUE = Explosive move imminent\n        status: squeezeOn ? \"Active Squeeze (Low Volatility)\" : \"Normal Volatility\"\n    },\n    technical_levels: {\n        basis_sma20: basis,\n        bb_upper: bbUpper,\n        bb_lower: bbLower\n    }\n};\n\nreturn [{ json: result }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        -768
+        4064,
+        416
       ],
-      "id": "d2a83e3e-da15-4b85-a54d-e556f5d5509f",
+      "id": "90459049-2b22-431e-a1d6-b69a49f42aed",
       "name": "btc_price_trend"
     },
     {
@@ -229,10 +218,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        -912
+        4064,
+        272
       ],
-      "id": "96bc2fc9-cbb6-4124-b6d8-84aa9c4b811a",
+      "id": "42f9d822-80ce-43d4-8628-6211cd561895",
       "name": "rsi14"
     },
     {
@@ -242,10 +231,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        -624
+        4064,
+        560
       ],
-      "id": "2c827ab4-b75d-4faa-9840-3860a63b40ae",
+      "id": "819dc360-0019-4231-a765-a7f2921abe54",
       "name": "fear_greed_index_trend"
     },
     {
@@ -255,10 +244,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        -480
+        4064,
+        704
       ],
-      "id": "8aa1ab0a-4dac-434f-881c-7bbd5100c0f3",
+      "id": "f307b030-c22b-47af-9fcd-4fb78bf2ccb0",
       "name": "btc_funding_rate"
     },
     {
@@ -268,10 +257,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        -160
+        4064,
+        1024
       ],
-      "id": "5d3e894e-2977-426e-9305-ce671b6c4f9c",
+      "id": "6f73a365-8c47-4e0b-86d4-c9a64dafb3cd",
       "name": "crypto_news_summary"
     },
     {
@@ -281,10 +270,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1440,
-        -304
+        4064,
+        880
       ],
-      "id": "3aaf7832-59f7-4ad8-9b5e-46ef29c8ee5d",
+      "id": "1fd6b5cd-7e48-4fb5-a48c-f34d511f9cd0",
       "name": "btc_open_interest"
     },
     {
@@ -294,10 +283,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -912
+        2720,
+        -16
       ],
-      "id": "7a0d780e-8f83-4cd1-87da-ec48a815c6c7",
+      "id": "8a801534-6bd6-49e5-96e6-1781bfb1946a",
       "name": "btc_200wma_distance"
     },
     {
@@ -307,10 +296,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -800
+        2720,
+        96
       ],
-      "id": "700762cb-8ffa-4a7d-9d0b-2331ae293016",
+      "id": "b7277c18-86dd-4569-a961-b138990db09d",
       "name": "rsi14_trend"
     },
     {
@@ -320,10 +309,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -672
+        2720,
+        224
       ],
-      "id": "69338e11-7c13-4e9a-b478-c7f2a8abbdc0",
+      "id": "0ee0a0b6-fd44-49b0-b14f-a01da9f18126",
       "name": "bull_market_support_band"
     },
     {
@@ -333,10 +322,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -528
+        2720,
+        368
       ],
-      "id": "429b4b1a-b3c3-4a66-8628-11b67975eb3d",
+      "id": "a5decac9-c2f4-4417-9da0-21f32471e0cb",
       "name": "50wma"
     },
     {
@@ -346,10 +335,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -400
+        2704,
+        1056
       ],
-      "id": "93848d74-7417-4031-b1e0-515e1ba91c6a",
+      "id": "428e36c1-b671-41cb-b654-be30d491f1d8",
       "name": "ma50_ma200_trend"
     },
     {
@@ -359,10 +348,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -272
+        2704,
+        1216
       ],
-      "id": "e12c6f02-c899-4288-ac02-7375eb3fee27",
+      "id": "3f858262-1089-4373-b39e-7291edadbd0a",
       "name": "pi_cycle_top"
     },
     {
@@ -372,26 +361,26 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        -112
+        2704,
+        1392
       ],
-      "id": "b6476151-5f2a-44df-96e2-b2884cac293a",
+      "id": "a3de5f5f-f450-4815-afb7-d53e3dd3b142",
       "name": "halving_cycle"
     },
     {
       "parameters": {
         "content": "## Meso Context\n\n",
-        "height": 1680,
+        "height": 2256,
         "width": 1584,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -3168,
-        -1184
+        2336,
+        -288
       ],
       "typeVersion": 1,
-      "id": "d5a2bdcb-ba87-482a-88f3-cefe590b8225",
+      "id": "044ede87-06c3-4ce4-9a4d-899bb9c99d42",
       "name": "Sticky Note4"
     },
     {
@@ -401,36 +390,36 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -2496,
-        -832
+        3008,
+        64
       ],
-      "id": "b4a16af2-1b07-45f2-8aec-29cd9d4d27f0",
+      "id": "a3402d36-4732-4efb-b9c9-a2d2bd9d22c5",
       "name": "Merge Meso"
     },
     {
       "parameters": {
-        "numberInputs": 7
+        "numberInputs": 4
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -2464,
-        -288
+        2960,
+        928
       ],
-      "id": "98ffcc55-b6e4-4b4b-9bae-4bf099e43276",
+      "id": "92305c5b-31fd-4b63-b155-a75611077c87",
       "name": "Merge Top&Bottom"
     },
     {
       "parameters": {
-        "jsCode": "// === Unified Market Insights Cleaner ===\n// Mode: Run Once for All Items\nconst items = $input.all();\nlet macro, meso, micro, news, topbottom;\n\n// --- Helper: Robustly extract text from various AI JSON structures --- \nfunction pickContent(d) { \n    if (!d) return null;\n\n    // 1. Google Gemini / PaLM (Structure: content.parts[0].text) \n    if (d.content?.parts?.[0]?.text) { \n        return d.content.parts[0].text; \n    }\n\n    // 2. OpenAI / Standard (Structure: choices[0].message.content) \n    if (d.choices?.[0]?.message?.content) { \n        return d.choices[0].message.content; \n    }\n\n    // 3. Direct Message (Anthropic/Other) \n    if (d.message?.content) { \n        return d.message.content; \n    }\n\n    // 4. Fallback: Content is already a simple string \n    if (typeof d.content === 'string') { \n        return d.content; \n    }\n\n    return null; \n}\n\n// --- Classifier: Identify the section based on text keywords --- \nfunction classify(text) { \n    if (!text || typeof text !== \"string\") return; \n    const t = text.toLowerCase();\n\n    if (!macro && (t.includes(\"macro market analysis\") || t.startsWith(\"macro \"))) { \n        macro = text; \n    } else if (!meso && (t.includes(\"meso market analysis\") || t.includes(\"price & trend\"))) { \n        meso = text; \n    } else if (!micro && (t.includes(\"micro market analysis\") || t.includes(\"volatility squeeze\"))) { \n        micro = text; \n    } else if (!news && (t.includes(\"crypto news summary\") || t.includes(\"sentiment:\"))) { \n        news = text; \n    } else if (!topbottom && (t.includes(\"top & bottom\") || t.includes(\"cycle turning point\"))) { \n        topbottom = text; \n    } \n}\n\n// --- Main Loop --- \nfor (const it of items) { \n    const j = it.json;\n\n    // Scenario A: Input is an Aggregated Array (from a Merge node) \n    if (Array.isArray(j.data)) { \n        for (const d of j.data) { \n            // Try to classify AI text \n            classify(pickContent(d));\n\n            // Check for News object inside aggregation\n            if (d.indicator === \"crypto_news_summary\" && d.summary) {\n                news = `Today's Crypto News Summary\\nSource: ${d.source || \"RSS\"} | Sentiment: ${d.general_sentiment || \"N/A\"}\\n\\n${d.summary}`;\n            }\n        } \n    }\n\n    // Scenario B: Input is Single Item \n    classify(pickContent(j));\n\n    // Check for News object directly \n    if (j.indicator === \"crypto_news_summary\" && j.summary) { \n        news = `Today's Crypto News Summary\\nSource: ${j.source || \"RSS\"} | Sentiment: ${j.general_sentiment || \"N/A\"}\\n\\n${j.summary}`; \n    } \n}\n\n// --- Extract Raw Metrics & Metadata --- \nconst getJson = (name) => { try { return $(name).first().json; } catch(e) { return {}; } };\n\nconst graham = getJson('graham_value_check');\nconst liquidity = getJson('liquidity_trend');\nconst yieldData = getJson('treasury_yield');\n\n// Regex to extract Macro Bias from the macro text report\nlet macroBias = \"Mixed\";\nif (macro) {\n    const match = macro.match(/macroBias:\\s*[\"']?([^\"'\\n\\r\\]]+)[\"']?/i);\n    if (match) macroBias = match[1];\n}\n\nconst metrics = {\n    verdict: graham.verdict || \"Neutral\",\n    verdict_emojis: \"😐\", \n    drawdown: graham.drawdown_percent ? Math.round(graham.drawdown_percent) + \"%\" : \"N/A\",\n    hashrate_trend: graham.hashrate_trend || \"N/A\",\n    graham_valuation: graham.verdict || \"N/A\",\n    liquidity_trend: liquidity.status || \"N/A\",\n    yield10y: yieldData.current ? yieldData.current.toFixed(2) + \"%\" : \"N/A\",\n    macro_bias: macroBias,\n    date: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })\n};\n\n// Simple Emoji Logic\nconst v = metrics.verdict.toLowerCase();\nif (v.includes(\"buy\") || v.includes(\"accumulate\") || v.includes(\"value\")) metrics.verdict_emojis = \"🟢\";\nelse if (v.includes(\"sell\") || v.includes(\"overvalued\") || v.includes(\"bear\")) metrics.verdict_emojis = \"🔴\";\n\n// --- Output Construction --- \nconst out = {}; \nif (macro) out.macro = macro; \nif (meso) out.meso = meso; \nif (micro) out.micro = micro; \nif (news) out.news = news; \nif (topbottom) out.topbottom = topbottom;\nout.metrics = metrics;\n\nreturn [{ json: out }];\n"
+        "jsCode": "// === Unified Market Insights Cleaner ===\n// Mode: Run Once for All Items\nconst items = $input.all();\nlet macro, meso, micro, news, topbottom;\n\n// --- Helper: Robustly extract text from various AI JSON structures --- \nfunction pickContent(d) { \n    if (!d) return null;\n\n    // 1. Google Gemini / PaLM (Structure: content.parts[0].text) \n    if (d.content?.parts?.[0]?.text) { \n        return d.content.parts[0].text; \n    }\n\n    // 2. OpenAI / Standard (Structure: choices[0].message.content) \n    if (d.choices?.[0]?.message?.content) { \n        return d.choices[0].message.content; \n    }\n\n    // 3. Direct Message (Anthropic/Other) \n    if (d.message?.content) { \n        return d.message.content; \n    }\n\n    // 4. Fallback: Content is already a simple string \n    if (typeof d.content === 'string') { \n        return d.content; \n    }\n\n    return null; \n}\n\n// --- Classifier: Identify the section based on text keywords --- \nfunction classify(text) { \n    if (!text || typeof text !== \"string\") return; \n    const t = text.toLowerCase();\n\n    if (!macro && (t.includes(\"macro market analysis\") || t.startsWith(\"macro \"))) { \n        macro = text; \n    } else if (!meso && (t.includes(\"meso market analysis\") || t.includes(\"price & trend\"))) { \n        meso = text; \n    } else if (!micro && (t.includes(\"micro market analysis\") || t.includes(\"volatility squeeze\"))) { \n        micro = text; \n    } else if (!news && (t.includes(\"crypto news summary\") || t.includes(\"sentiment:\"))) { \n        news = text; \n    } else if (!topbottom && (t.includes(\"top & bottom\") || t.includes(\"cycle turning point\"))) { \n        topbottom = text; \n    } \n}\n\n// --- Main Loop --- \nfor (const it of items) { \n    const j = it.json;\n\n    // Scenario A: Input is an Aggregated Array (from a Merge node) \n    if (Array.isArray(j.data)) { \n        for (const d of j.data) { \n            // Try to classify AI text \n            classify(pickContent(d));\n\n            // Check for News object inside aggregation\n            if (d.indicator === \"crypto_news_summary\" && d.summary) {\n                news = `Today's Crypto News Summary\\nSource: ${d.source || \"RSS\"} | Sentiment: ${d.general_sentiment || \"N/A\"}\\n\\n${d.summary}`;\n            }\n        } \n    }\n\n    // Scenario B: Input is Single Item \n    classify(pickContent(j));\n\n    // Check for News object directly \n    if (j.indicator === \"crypto_news_summary\" && j.summary) { \n        news = `Today's Crypto News Summary\\nSource: ${j.source || \"RSS\"} | Sentiment: ${j.general_sentiment || \"N/A\"}\\n\\n${j.summary}`; \n    } \n}\n\n// --- Extract Raw Metrics & Metadata --- \nconst getJson = (name) => { try { return $(name).first().json; } catch(e) { return {}; } };\n\nconst graham = getJson('graham_value_check');\nconst liquidity = getJson('liquidity_trend');\nconst yieldData = getJson('treasury_yield');\n\n// Regex to extract Macro Bias from the macro text report\nlet macroBias = \"Mixed\";\nif (macro) {\n    const match = macro.match(/macroBias:\\s*(?:\\[\\s*)?[\"']?([^\"'\\n\\r\\]\"]+)/i);\n    if (match) macroBias = match[1];\n}\n\nconst metrics = {\n    liquidity_trend: liquidity.status || \"N/A\",\n    yield10y: yieldData.current ? yieldData.current.toFixed(2) + \"%\" : \"N/A\",\n    macro_bias: macroBias,\n    date: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })\n};\n\n\n// --- Output Construction --- \nconst out = {}; \nif (macro) out.macro = macro; \nif (meso) out.meso = meso; \nif (micro) out.micro = micro; \nif (news) out.news = news; \nif (topbottom) out.topbottom = topbottom;\nout.metrics = metrics;\n\nreturn [{ json: out }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -64,
-        -592
+        5504,
+        592
       ],
-      "id": "bef48f79-c010-4d3d-b30b-057f96cd8204",
+      "id": "556ffc60-bacc-4f19-92ae-88df25726235",
       "name": "Data Clean and Debug"
     },
     {
@@ -442,11 +431,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        384,
-        -720
+        6016,
+        144
       ],
       "typeVersion": 1,
-      "id": "c319c95c-83c1-4b52-aa6a-af8f125445f5",
+      "id": "e48c6c6a-8b2a-4b6d-a7e1-300d51801dff",
       "name": "Sticky Note6"
     },
     {
@@ -456,10 +445,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -3648,
-        -208
+        1872,
+        1248
       ],
-      "id": "cd94c325-c1c5-4af3-8d48-6fbd3d3fa86a",
+      "id": "ad577017-4a21-4471-b245-891fb8d6acc1",
       "name": "Clean Merge"
     },
     {
@@ -467,10 +456,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -2320,
-        -544
+        3216,
+        688
       ],
-      "id": "afd7a61b-fb07-46ac-bc9a-2298ce6614de",
+      "id": "b043a443-82c6-4ebd-b4ef-acb8b7d029d6",
       "name": "Merge2"
     },
     {
@@ -480,10 +469,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2128,
-        -544
+        3456,
+        688
       ],
-      "id": "c36f3556-ec26-48c1-b959-f7450cfd08de",
+      "id": "4aa85b3b-517a-44f3-8d96-fe8fe7c306f5",
       "name": "Clean Merge2"
     },
     {
@@ -493,10 +482,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -1104,
-        -624
+        4400,
+        560
       ],
-      "id": "bf991aee-a856-4e80-baf2-0161d0cf5c49",
+      "id": "5ee21e32-abd1-4a96-8daa-de280a41a06e",
       "name": "Merge3"
     },
     {
@@ -507,10 +496,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -896
+        64,
+        0
       ],
-      "id": "b8a82c6a-949b-4fcb-8778-cb21fb88dfc3",
+      "id": "9e074ed8-cc7e-4244-ad23-96eb93332840",
       "name": "Fetch Binance Ticker",
       "continueOnFail": true
     },
@@ -522,10 +511,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -752
+        64,
+        144
       ],
-      "id": "329f4ae7-183a-4f1d-a8bd-3c043c5d6dd5",
+      "id": "80ec105f-6ce1-407f-bf75-3e8033fc30b1",
       "name": "Fetch Binance Daily",
       "continueOnFail": true
     },
@@ -541,10 +530,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -608
+        64,
+        464
       ],
-      "id": "5e10353f-d4fb-464b-866a-4ec7c66232b7",
+      "id": "2492dea8-b519-4985-a55f-fb8acfb985b1",
       "name": "Fetch Binance Weekly",
       "continueOnFail": true
     },
@@ -556,10 +545,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5088,
-        -672
+        64,
+        304
       ],
-      "id": "70ba1e1f-6b15-433a-aa0d-6d116d4d6723",
+      "id": "3195c8f6-7b1c-41db-808b-2fa5f3b59df6",
       "name": "Fetch Binance Futures",
       "continueOnFail": true
     },
@@ -571,10 +560,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -432
+        64,
+        752
       ],
-      "id": "17e2d1ef-750d-40be-9384-eef7046a99b5",
+      "id": "d8454f94-5d1c-4ad7-a6f2-b2381ecb2f20",
       "name": "Fetch Binance OI",
       "continueOnFail": true
     },
@@ -586,10 +575,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -128
+        64,
+        1184
       ],
-      "id": "0da0757e-4061-4540-a641-8dd5e7ef0a8d",
+      "id": "780e5c02-0488-4896-bd70-2f872875e0c2",
       "name": "Fetch Yahoo",
       "continueOnFail": true
     },
@@ -601,10 +590,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        -288
+        64,
+        896
       ],
-      "id": "0a2a444a-5770-4dfb-a269-886f6bdc880f",
+      "id": "b5f96acc-7f27-476d-8747-4258f2fd5cb3",
       "name": "Fetch FearGreed",
       "continueOnFail": true
     },
@@ -618,10 +607,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5424,
-        48
+        64,
+        1344
       ],
-      "id": "2595185c-a7e8-4777-9215-b3d7fd1824e5",
+      "id": "3148d57d-7bda-4b5d-a75a-674835e800b4",
       "name": "Fetch CryptoPanic",
       "continueOnFail": true
     },
@@ -635,10 +624,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5088,
-        -368
+        64,
+        624
       ],
-      "id": "4ba69c4a-cadb-4fbb-bc80-b0c2b6681685",
+      "id": "93271a34-5bc1-4807-9fcd-eaa22b1d0167",
       "name": "Fetch Google News",
       "continueOnFail": true
     },
@@ -653,15 +642,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        480,
-        -592
+        6128,
+        272
       ],
-      "id": "d946e40b-3a27-4069-8a13-55a92c445e26",
+      "id": "f61d795b-fc8e-4ad0-b973-312f55b847ff",
       "name": "Send a text message",
       "webhookId": "3705f81f-3ea1-4a0c-895f-3c9091fca9a0",
       "credentials": {
         "telegramApi": {
-          "id": "Wii0cnwJvc8xBoZV",
+          "id": "yWamWgpJc1a6XCVw",
           "name": "Telegram account"
         }
       }
@@ -670,9 +659,9 @@
       "parameters": {
         "modelId": {
           "__rl": true,
-          "value": "models/gemini-2.5-flash",
+          "value": "models/gemini-3-pro-preview",
           "mode": "list",
-          "cachedResultName": "models/gemini-2.5-flash"
+          "cachedResultName": "models/gemini-3-pro-preview"
         },
         "messages": {
           "values": [
@@ -686,14 +675,14 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -1872,
-        -688
+        3632,
+        208
       ],
-      "id": "82b369d3-de9d-4ff6-97fe-60feb6e22686",
+      "id": "6d81378d-7e0e-4d60-9038-62526e87e1be",
       "name": "Top & Bottom Watchout1",
       "credentials": {
         "googlePalmApi": {
-          "id": "3WcjGrEmVOgnUbOk",
+          "id": "cvjWBK1EVgETmooe",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -702,9 +691,9 @@
       "parameters": {
         "modelId": {
           "__rl": true,
-          "value": "models/gemini-2.5-flash",
+          "value": "models/gemini-3-pro-preview",
           "mode": "list",
-          "cachedResultName": "models/gemini-2.5-flash"
+          "cachedResultName": "models/gemini-3-pro-preview"
         },
         "messages": {
           "values": [
@@ -718,14 +707,14 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -1872,
-        -400
+        3616,
+        1232
       ],
-      "id": "c0af31f8-ebeb-4659-9a0b-dbd96d00af15",
+      "id": "41557ad4-e615-400f-95fe-9291e4119b76",
       "name": "BTC Meso Market Analysis1",
       "credentials": {
         "googlePalmApi": {
-          "id": "3WcjGrEmVOgnUbOk",
+          "id": "cvjWBK1EVgETmooe",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -734,9 +723,9 @@
       "parameters": {
         "modelId": {
           "__rl": true,
-          "value": "models/gemini-2.5-flash",
+          "value": "models/gemini-3-pro-preview",
           "mode": "list",
-          "cachedResultName": "models/gemini-2.5-flash"
+          "cachedResultName": "models/gemini-3-pro-preview"
         },
         "messages": {
           "values": [
@@ -750,14 +739,14 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -704,
-        -560
+        4864,
+        624
       ],
-      "id": "890ada51-232b-44f5-9bd7-a8cb85975e43",
+      "id": "8490f242-2a1d-4a8c-a588-8c01fe73f8aa",
       "name": "Micro Market Analysis",
       "credentials": {
         "googlePalmApi": {
-          "id": "3WcjGrEmVOgnUbOk",
+          "id": "cvjWBK1EVgETmooe",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -766,14 +755,14 @@
       "parameters": {
         "modelId": {
           "__rl": true,
-          "value": "models/gemini-2.5-flash",
+          "value": "models/gemini-3-pro-preview",
           "mode": "list",
-          "cachedResultName": "models/gemini-2.5-flash"
+          "cachedResultName": "models/gemini-3-pro-preview"
         },
         "messages": {
           "values": [
             {
-              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro “wind” implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  • Liquidity Fuel (USDT 30d trend)\n  • 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  • Fed Funds (current; 3m and 6m change)  \n  • M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  • USD via dxy_proxy (if absent: \"USD: not provided\")  \n  • Gold (7d/30d/90d % changes)  \n  • WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates ↑ while long yields ↓).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
+              "content": "=Act as the Chief Editor of the \"Crypto Analysis with Tom Tucker\".\nYour task is to synthesize the provided metrics and analysis into a final HTML report for Telegram.\n\nCONTEXTUAL CONSISTENCY RULES:\n\nYesterday's Signal: {{ $('Fetch Memory').first().json.prev_signal }} (Score: {{ $('Fetch Memory').first().json.prev_risk_score }})\n\nCurrent Signal: {{ $json.signal }} (Score: {{ $json.risk_score }})\n\nCRITICAL HTML RULES:\n\nNEVER user <li> nor <ul> nor <br> tags\n\nNEVER use the '&' character on its own. You MUST write it as '&amp;' every single time.\n\nBAD: \"S&P 500\"\n\nGOOD: \"S&amp;P 500\"\n\nBAD: \"MACRO & LIQUIDITY\"\n\nGOOD: \"MACRO &amp; LIQUIDITY\"\n\nDo not use Markdown (bold). Use only HTML tags (<b>, <i>, <code>).\n\nEscape < and > as &lt; and &gt;.\n\nInput Data:\nQUANT_BRAIN (Source of Truth):\nSignal: {{ $json.signal }}\nRisk Score: {{$json.risk_score}}/100\nHeadline: {{$json.headline}}\nTrade Setup: {{JSON.stringify($json.trade_setup)}}\nRationale: {{$json.report_markdown}}\nMETRICS:\n{{JSON.stringify($('Data Clean and Debug').item.json.metrics)}}\n\nANALYSIS SUMMARIES:\n{{$('Data Clean and Debug').item.json.macro}}\n{{$('Data Clean and Debug').item.json.meso}}\n{{$('Data Clean and Debug').item.json.micro}}\n{{$('Data Clean and Debug').item.json.topbottom}}\n\nNEWS:\n{{$('Data Clean and Debug').item.json.news}}\n\nInstructions:\n\n1. **Cycle Signal Authority:** You MUST align your \"CYCLE SIGNAL\" and \"TACTICAL STANCE\" with the 'QUANT_BRAIN' data above.\n   - If Quant says SELL, do not write a bullish stance.\n   - If Quant says ACCUMULATE, highlight the opportunity.\n\n2. Write a \"Tactical Stance\" (1 concise paragraph).\n   - Start with the Quant's Headline.\n   - If 'Trade Setup' is present (not null), you MUST include the <b>Entry</b>, <b>Stop Loss</b>, and <b>Target</b> prices in this paragraph.\n   - Use <b>bold</b> for all price levels.\n\n3. Write an \"Analyst Rationale\" (1 dense technical sentence).\n   - Synthesize the 'Quant Rationale' with the Macro/Meso context.\n   - Example: \"Despite macro headwinds, the Graham model detected a deep value variance (Risk Score: 25), triggering an accumulation signal.\"\n\n4. Select the top 3 most relevant News headlines.\n\n5. If the Risk Score has changed by less than 5 points, you MUST acknowledge this as \"Stabilization\" rather than a trend change. Bad: \"Market flipped bearish!\" (Score went 55 -> 53) Good: \"Market maintains stability, slightly softening from yesterday.\n\nOutput the result using this EXACT HTML template (do not change the structure, just fill the slots):\n\n<b>📅 CRYPTO ANALYSIS</b> <i>{{$('Data Clean and Debug').item.json.metrics.date}}</i>\n\n<b>🛑 CYCLE SIGNAL:</b> <b>{{$json.signal}}</b> (Score: {{$json.risk_score}})\n\n➖➖➖➖➖➖➖➖➖➖➖\n\n<b>🌊 MACRO &amp; LIQUIDITY</b> • <b>Regime:</b> {{$('Data Clean and Debug').item.json.metrics.macro_bias}} • <b>Liquidity:</b> {{$('Data Clean and Debug').item.json.metrics.liquidity_trend}} • <b>10Y Yield:</b> <code>{{$('Data Clean and Debug').item.json.metrics.yield10y}}</code>\n\n<b>🔄 MESO &amp; ROTATION</b> • <b>Regime:</b> {{$('Data Clean and Debug').item.json.metrics.market_regime}} • <b>ETH/BTC:</b> <code>{{$('Data Clean and Debug').item.json.metrics.eth_btc_price}}</code>\n\n<b>🔬 MICRO &amp; SENTIMENT</b> • <b>Funding:</b> <code>{{$('Data Clean and Debug').item.json.metrics.funding_rate}}</code> • <b>Fear &amp; Greed:</b> {{$('Data Clean and Debug').item.json.metrics.fear_greed_index}}\n\n<b>⚖️ TOP &amp; BOTTOM</b> • <b>vs 200WMA:</b> <code>{{$('Data Clean and Debug').item.json.metrics.dist_to_200_wma}}%</code> • <b>Drawdown:</b> <code>{{$('Data Clean and Debug').item.json.metrics.drawdown_percent}}%</code>\n\n\n➖➖➖➖➖➖➖➖➖➖➖\n\n<b>🎯 TACTICAL STANCE</b> [Insert Your Escaped Tactical Stance Here. Include Trade Levels if available!]\n\n<b>🧠 ANALYST RATIONALE</b> <i>[Insert Your Escaped Rationale Here]</i>\n\n📰 <b>HEADLINES</b> [Insert Top 3 Headlines as bullet points. Ensure no naked '&' symbols exist here!]\n"
             }
           ]
         },
@@ -782,74 +771,29 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -3456,
-        -208
+        5744,
+        272
       ],
-      "id": "c517f703-20ae-455d-8572-9b37d17e44af",
-      "name": "Micro Market Analysis1",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "3WcjGrEmVOgnUbOk",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "models/gemini-2.5-flash",
-          "mode": "list",
-          "cachedResultName": "models/gemini-2.5-flash"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "=Act as the Chief Editor of the \"Institutional Genesis Report\".\nYour task is to synthesize the provided metrics and analysis into a final HTML report for Telegram.\n\nCRITICAL HTML RULES:\n\nNEVER user <li> nor <ul> tags\n\nNEVER use the '&' character on its own. You MUST write it as '&amp;' every single time.\n\nBAD: \"S&P 500\"\n\nGOOD: \"S&amp;P 500\"\n\nBAD: \"MACRO & LIQUIDITY\"\n\nGOOD: \"MACRO &amp; LIQUIDITY\"\n\nDo not use Markdown (bold). Use only HTML tags (<b>, <i>, <code>).\n\nEscape < and > as &lt; and &gt;.\n\nInput Data:\nMETRICS:\n{{JSON.stringify($json.metrics)}}\n\nANALYSIS SUMMARIES:\n{{$json.macro}}\n{{$json.meso}}\n{{$json.micro}}\n{{$json.topbottom}}\n\nNEWS:\n{{$json.news}}\n\nInstructions:\n\nWrite a \"Tactical Stance\" (1 concise paragraph). Use <b>bold</b> for price levels.\n\nWrite an \"Analyst Rationale\" (1 dense technical sentence).\n\nSelect the top 3 most relevant News headlines.\n\nOutput the result using this EXACT HTML template (do not change the structure, just fill the slots):\n\n<b>📅 INSTITUTIONAL GENESIS REPORT</b> <i>{{$json.metrics.date}}</i>\n\n<b>🛑 CYCLE SIGNAL:</b> {{$json.metrics.verdict_emojis}} <b>{{$json.metrics.verdict}}</b>\n\n➖➖➖➖➖➖➖➖➖➖➖\n\n<b>🌊 MACRO &amp; LIQUIDITY</b> • <b>Regime:</b> {{$json.metrics.macro_bias}} • <b>Liquidity:</b> {{$json.metrics.liquidity_trend}} • <b>10Y Yield:</b> <code>{{$json.metrics.yield10y}}</code>\n\n<b>🏗 FUNDAMENTALS (Graham)</b> • <b>Valuation:</b> {{$json.metrics.graham_valuation}} • <b>Drawdown:</b> <code>{{$json.metrics.drawdown}}</code> • <b>Hashrate:</b> {{$json.metrics.hashrate_trend}}\n\n➖➖➖➖➖➖➖➖➖➖➖\n\n<b>🎯 TACTICAL STANCE</b> [Insert Your Escaped Tactical Stance Here]\n\n<b>🧠 ANALYST RATIONALE</b> <i>[Insert Your Escaped Rationale Here]</i>\n\n📰 <b>HEADLINES</b> [Insert Top 3 Headlines as bullet points. Ensure no naked '&' symbols exist here!]\n"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.googleGemini",
-      "typeVersion": 1,
-      "position": [
-        128,
-        -592
-      ],
-      "id": "7138b6f4-575b-4b1b-ba39-ea612413e4dd",
+      "id": "c2da8172-cc8c-4f0b-9cbb-5177c25a3b8e",
       "name": "Market Stance1",
       "credentials": {
         "googlePalmApi": {
-          "id": "3WcjGrEmVOgnUbOk",
+          "id": "cvjWBK1EVgETmooe",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "\n// Access Fetch Nodes - Safe access patterns for Dead Man's Switch\nconst getJson = (nodeName) => {\n    try {\n        const node = $(nodeName).first();\n        if (!node || !node.json || node.json.error) return {};\n        return node.json;\n    } catch(e) { return {}; }\n};\n\nconst getItems = (nodeName) => {\n    try {\n        return $(nodeName).all().map(i => i.json);\n    } catch(e) { return []; }\n};\n\nconst binanceTicker = getJson('Fetch Binance Ticker');\nconst binanceWeeklyItems = getItems('Fetch Binance Weekly');\nconst binanceFutures = getJson('Fetch Binance Futures');\nconst ethBtcItems = getItems('Fetch ETHBTC Weekly');\nconst hashrateData = getJson('Fetch Hashrate');\n\n// Helpers\nfunction getValues(items, index) {\n    if (!items || items.length === 0) return [];\n    return items\n        .filter(i => Array.isArray(i) && i.length > index)\n        .map(i => parseFloat(i[index]))\n        .filter(n => !isNaN(n));\n}\n\nconst highsWeekly = getValues(binanceWeeklyItems, 2); // High is index 2\nconst ethBtcCloses = getValues(ethBtcItems, 4); // Close is index 4\n\nconst currentPrice = parseFloat(binanceTicker.lastPrice || 0);\nconst fundingRate = parseFloat(binanceFutures.lastFundingRate || 0);\n\n// Logic\n// 1. Margin of Safety: Drop from ATH\nlet ath = 0;\nif (highsWeekly.length > 0) {\n    ath = Math.max(...highsWeekly);\n}\n// If current price > found ath, update ath\nif (currentPrice > ath) ath = currentPrice;\n\nconst drawdownPercent = ath > 0 ? ((ath - currentPrice) / ath) * 100 : 0;\nconst isDeepValue = drawdownPercent > 40;\n\n// 2. Hashrate Trend (Network Strength)\n// blockchain.info returns { values: [ { x, y }, ... ] }\nlet hashrateTrend = \"Unknown\";\nlet currentHashrate = 0;\nlet avg60Hashrate = 0;\n\nif (hashrateData && hashrateData.values && Array.isArray(hashrateData.values) && hashrateData.values.length > 0) {\n    const values = hashrateData.values; \n    currentHashrate = values[values.length - 1].y;\n    \n    // Last 60 points\n    const slice = values.slice(Math.max(0, values.length - 60));\n    if (slice.length > 0) {\n        const sum = slice.reduce((acc, v) => acc + v.y, 0);\n        avg60Hashrate = sum / slice.length;\n        hashrateTrend = currentHashrate > avg60Hashrate ? \"Growing\" : \"Declining\";\n    }\n}\n\n// 3. Rotation: Check if ETHBTC Close > 20-Week SMA\nlet rotationRegime = \"Unknown\";\nlet ethBtcSMA20 = 0;\nlet currentEthBtc = 0;\n\nif (ethBtcCloses.length >= 20) {\n    currentEthBtc = ethBtcCloses[ethBtcCloses.length - 1];\n    const slice = ethBtcCloses.slice(ethBtcCloses.length - 20);\n    ethBtcSMA20 = slice.reduce((a, b) => a + b, 0) / 20;\n    \n    rotationRegime = currentEthBtc > ethBtcSMA20 ? \"Altseason/Risk-On\" : \"Bitcoin Season\";\n}\n\n// 4. Contrarian Signal: If Funding Rate is NEGATIVE (< 0)\nconst isContrarianBuy = fundingRate < 0;\n\n// Verdict\nlet verdict = \"Neutral\";\nlet reasoning = `Drawdown: ${drawdownPercent.toFixed(1)}% (ATH: $${ath.toFixed(0)}), Funding: ${(fundingRate*100).toFixed(4)}%`;\n\nif (isDeepValue && isContrarianBuy) {\n    verdict = \"Deep Value (Strong Buy)\";\n    reasoning += \". >40% Drawdown + Negative Funding.\";\n} else if (drawdownPercent < 20 && fundingRate > 0.0005) { \n    verdict = \"Overvalued\"; \n    reasoning += \". Price near highs with high leverage.\";\n} else if (hashrateTrend === \"Growing\" && rotationRegime === \"Bitcoin Season\") {\n    if (drawdownPercent > 20) {\n        verdict = \"Accumulate\";\n        reasoning += \". Strong network + Bitcoin Season.\";\n    }\n}\n\nreturn [{\n    json: {\n        indicator: \"graham_analysis\",\n        verdict: verdict,\n        reasoning: reasoning,\n        drawdown_percent: drawdownPercent,\n        funding_rate: fundingRate,\n        hashrate_trend: hashrateTrend,\n        rotation_regime: rotationRegime,\n        contrarian_signal: isContrarianBuy\n    }\n}];\n"
+        "jsCode": "const data = $('HTTP Request').first().json;\nlet staticData = $getWorkflowStaticData('global');\nstaticData.lastTelegramSentTime = new Date().toISOString();\nstaticData.prevRiskScore = data.risk_score;\nstaticData.prevSignal = data.signal;\nstaticData.prevTrend =$('Data Clean and Debug').first().json.metrics.macro_bias; // \nreturn [{\n    json: staticData\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2784,
-        32
+        6112,
+        -16
       ],
-      "id": "8918a67b-915a-4272-afc8-6e035f4c2cc1",
-      "name": "graham_value_check"
-    },
-    {
-      "parameters": {
-        "jsCode": "\nconst staticData = $getWorkflowStaticData('global');\nstaticData.lastTelegramSentTime = new Date().toISOString();\nreturn items;\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        704,
-        -592
-      ],
-      "id": "b8eec2a5-7ec1-4c9c-8304-ba3fd3107776",
+      "id": "28a9ecf8-b822-4a76-823f-19161a5b74e7",
       "name": "Update Last Telegram Time"
     },
     {
@@ -859,10 +803,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -3600,
-        -592
+        1904,
+        304
       ],
-      "id": "503165da-ee9b-40f0-adb8-d364ce7a7e8d",
+      "id": "bc1e8a0c-d975-49ed-97b5-325c15541603",
       "name": "Merge1"
     },
     {
@@ -872,10 +816,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -3344,
-        -544
+        2160,
+        352
       ],
-      "id": "e3035274-7dc7-4904-ac2b-67813005701f",
+      "id": "dddcd771-190f-445a-885e-0572ec1b1fbf",
       "name": "Clean Merge1"
     },
     {
@@ -885,10 +829,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -3616,
-        -1120
+        1920,
+        -192
       ],
-      "id": "2622e698-a0d1-45a7-9318-26330422a42a",
+      "id": "07220e37-dc59-481c-b193-81c0665c89e7",
       "name": "Merge4"
     },
     {
@@ -898,10 +842,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -3328,
-        -1104
+        2144,
+        -176
       ],
-      "id": "df02a802-413f-4f67-8bb7-9bb09138f3d4",
+      "id": "0da8c83f-b464-431f-bc07-81786d12b919",
       "name": "Clean Merge4"
     },
     {
@@ -916,10 +860,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5088,
-        -496
+        64,
+        1040
       ],
-      "id": "8239d284-9b0e-402e-b82b-66384c0097d6",
+      "id": "2c63e176-485e-4376-a423-98ea014ac68e",
       "name": "Fetch ETHBTC Weekly",
       "continueOnFail": true
     },
@@ -931,10 +875,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        208
+        64,
+        1504
       ],
-      "id": "91a0cb2f-21ac-4f2e-a228-8b7230342646",
+      "id": "9d05e786-3dca-417a-8ba1-e6a4e700f5d0",
       "name": "Fetch Hashrate",
       "continueOnFail": true
     },
@@ -946,10 +890,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        -5440,
-        336
+        64,
+        1680
       ],
-      "id": "c7ac120d-e332-477b-b22f-e330377538b4",
+      "id": "ede2fc68-61cf-4cd5-8d72-04a302a43d14",
       "name": "Fetch Liquidity",
       "continueOnFail": true
     },
@@ -960,117 +904,347 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -4176,
-        208
+        1344,
+        1680
       ],
-      "id": "f266b6a0-2165-4e58-9e67-861adffc1fc0",
+      "id": "81cf1749-d099-4b2c-82b9-31ff4570e243",
       "name": "liquidity_trend"
     },
     {
       "parameters": {
-        "prompt": "=Macro: {{$json.macro}}\n\nLiquidity: {{$json.metrics.liquidity_trend}}\n\nNews: {{$json.news}}\n\nDate: {{$json.metrics.date}}\n\nSystem Instructions:\n\nYou are the Social Media Manager for \"Institutional Genesis Report\" (@DailyGenReport).\n**GOAL:** Write a high-engagement daily tweet thread summarizing the market \"Weather\" based on the provided Macro and Liquidity data.\n**RULES:**\n1. **Public Teaser Only:** Discuss the Macro Regime (Risk-On/Off) and Liquidity Trend. DO NOT reveal the \"Graham Verdict\", \"Tactical Stance\", or specific \"Buy/Sell\" signals. Those are for paid subscribers.\n2. **Format:**\n   - **Structure:** Strictly 3 sections separated by **Tweet X/3** (e.g., **Tweet 1/3**, **Tweet 2/3**, **Tweet 3/3**).\n   - Hook: A short, punchy observation about the day's data (e.g., \"Liquidity is expanding, but yields are stubborn.\").\n   - Body: Bullet points using emojis (🌊, 🏦, 📰) summarizing Macro, Yields, and top News.\n   - Closing: A curiosity gap.\n   - CTA: \"Full tactical signals & entry levels in the Daily Report 👇 [Link]\"\n3. **MANDATORY:** In the final tweet of the thread (**Tweet 3/3**), you MUST include these tags: $BTC #Bitcoin #Crypto #Trading #DailyGenReport.\n4. **Tone:** Professional, institutional, data-driven. No \"moonboi\" slang.\n5. **Length:** Each tweet must be under 280 characters.\n6. **No HTML:** Use plain text only."
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14i4E6-_xETyg4fVGuKuTysksK7EDQH8EyDIt8vKl0Ig",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14i4E6-_xETyg4fVGuKuTysksK7EDQH8EyDIt8vKl0Ig/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "macro",
+              "displayName": "macro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "meso",
+              "displayName": "meso",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "micro",
+              "displayName": "micro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "news",
+              "displayName": "news",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "topbottom",
+              "displayName": "topbottom",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "metrics",
+              "displayName": "metrics",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.chainLlm",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
       "position": [
-        128,
-        -336
+        6256,
+        608
       ],
-      "id": "e855f86b-de4b-4dcb-a52f-52421c1c7587",
-      "name": "Twitter Composer"
-    },
-    {
-      "parameters": {
-        "text": "={{ $json.text }}",
-        "additionalFields": {
-          "replyToTweetId": "={{ $json.index > 0 ? $('Twitter Post').all()[$json.index - 1].json.id : undefined }}"
-        }
-      },
-      "type": "n8n-nodes-base.twitter",
-      "typeVersion": 1,
-      "position": [
-        860,
-        -336
-      ],
-      "id": "475a183a-d859-4095-91b4-3d7e3c255d81",
-      "name": "Twitter Post",
+      "id": "aa312d70-71c7-4ec0-b685-9cd729a3dbe0",
+      "name": "Append row in sheet",
       "credentials": {
-        "twitterOAuth1Api": {
-          "id": "9iWZ4fgjZDOGwwp2",
-          "name": "X OAuth account"
+        "googleSheetsOAuth2Api": {
+          "id": "kgqYZcCukQ7mQM3O",
+          "name": "Google Sheets account"
         }
       }
     },
     {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        2160,
+        1456
+      ],
+      "id": "9bfff6c8-dd3c-457a-9b91-350d127e5509",
+      "name": "Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        3728,
+        416
+      ],
+      "id": "9e4efe95-6117-4f01-8d69-59b9db905e39",
+      "name": "Think1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        3712,
+        1440
+      ],
+      "id": "9508cebf-de97-4a36-8a90-77ba5cfc77fa",
+      "name": "Think2"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        4960,
+        832
+      ],
+      "id": "6157e1bc-e67c-4c2a-960a-68dffb773151",
+      "name": "Think3"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        5840,
+        480
+      ],
+      "id": "f20065b5-7c84-461b-9b25-06d1cbe099a1",
+      "name": "Think4"
+    },
+    {
       "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-pro-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-pro-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro “wind” implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  • Liquidity Fuel (USDT 30d trend)\n  • 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  • Fed Funds (current; 3m and 6m change)  \n  • M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  • USD via dxy_proxy (if absent: \"USD: not provided\")  \n  • Gold (7d/30d/90d % changes)  \n  • WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates ↑ while long yields ↓).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
+            }
+          ]
+        },
         "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        64,
-        -96
+        2064,
+        1248
       ],
-      "id": "115c8c73-c3fb-4cd6-ab10-8f0131b6ba59",
-      "name": "Google Gemini Chat Model",
+      "id": "e88355ab-8581-4daf-99a0-ee7cd1e05c74",
+      "name": "Macro Market Analysis1",
       "credentials": {
         "googlePalmApi": {
-          "id": "3WcjGrEmVOgnUbOk",
+          "id": "cvjWBK1EVgETmooe",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "// Extract the full text\nconst text = $input.first().json.output;\n// Split by the bold headers\nconst tweets = text.split(/\\*\\*Tweet \\d+\\/3\\*\\*\\n/).filter(t => t.trim().length > 0);\n// Return array for the Loop\nreturn tweets.map((t, i) => {\n  return {\n    json: {\n      text: t.trim(),\n      index: i // 0, 1, 2\n    }\n  };\n});"
+        "method": "POST",
+        "url": "http://host.docker.internal:5000/analyze",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5488,
+        272
+      ],
+      "id": "b583680b-35c2-44d1-a8dc-0078f5fba69b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === HELPER: Safe Node Access ===\n// Prevents the workflow from crashing if a specific API failed\nconst getJson = (name) => { \n  try { return $(name).first().json; } \n  catch(e) { return {}; } \n};\n\nconst getItems = (name) => {\n  try { return $(name).all().map(i => i.json); }\n  catch(e) { return []; }\n};\n\n// === 1. FETCH RAW DATA ===\nconst tYield = getJson('treasury_yield');\nconst gold = getJson('gold_price_trend');\nconst oil = getJson('crude_oil_trend');\nconst dxy = getJson('dxy_proxy');\nconst btc = getJson('btc_overview');\nconst rsi = getJson('rsi14');\nconst vol = getJson('btc_price_trend'); // Contains BBW & Squeeze\nconst fg = getJson('fear_greed_index_trend');\nconst pi = getJson('pi_cycle_top');\nconst halving = getJson('halving_cycle');\nconst liquidity = getJson('liquidity_trend');\nconst hashrate = getJson('graham_value_check'); // You calculated hashrate trend here\nconst funding = getJson('btc_funding_rate');\nconst oi = getJson('btc_open_interest');\nconst supportBand = getJson('bull_market_support_band');\nconst wma50 = getJson('50wma');\nconst wma200 = getJson('btc_200wma_distance');\n\n// === 2. PROCESS ARRAYS (BTC & ETH) ===\n\n// A. Closing Prices for Laplace Transform (Last 30 days)\nconst btcDailyItems = getItems('Fetch Binance Daily');\n// Binance item structure: [time, open, high, low, close, volume...]\n// We need index 4 (Close), parsed as float\nconst closingPrices = btcDailyItems\n    .map(i => parseFloat(i[4]))\n    .slice(-30); // Take last 30\n\n// B. ETH/BTC Stats for Rotation Logic\nconst ethBtcItems = getItems('Fetch ETHBTC Weekly');\nlet ethCurrent = 0;\nlet ethSma20 = 0;\n\nif (ethBtcItems.length > 20) {\n    const closes = ethBtcItems.map(i => parseFloat(i[4]));\n    ethCurrent = closes[closes.length - 1];\n    // Calculate SMA 20 on the fly\n    const slice = closes.slice(closes.length - 20);\n    ethSma20 = slice.reduce((a, b) => a + b, 0) / 20;\n}\n\n// === 3. CONSTRUCT C# PAYLOAD ===\nconst payload = {\n  macro: {\n    treasury_yields: {\n      yield_10y: tYield.current || 0,\n      change_basis_points: tYield.change_30d || 0\n    },\n    commodities: {\n      gold: { \n          trend: (gold.change_30d > 0 ? \"Up\" : \"Down\"), \n          change_percent: gold.change_30d || 0 \n      },\n      oil: { \n          trend: (oil.change_30d > 0 ? \"Up\" : \"Down\"), \n          change_percent: oil.change_30d || 0 \n      }\n    },\n    dxy: {\n      value: dxy.value || 0,\n      change_percent: 0 // Not explicitly calculated in your node, default 0\n    },\n    macro_bias: 2 // 0=RiskOn, 1=RiskOff, 2=Neutral (Can be improved with logic)\n  },\n  crypto_technicals: {\n    btc_price: {\n      current: btc.price || 0,\n      change_24h: btc.change_24h || 0,\n      drawdown_percent: hashrate.drawdown_percent || 0 // Grabbed from graham_value_check\n    },\n    rsi_data: {\n      daily_rsi: rsi.value || 50,\n      trend: \"Neutral\" // Can be derived if needed\n    },\n    moving_averages: {\n      dist_to_200_wma: wma200.distance_percent || 0,\n      bull_market_support_band_low: supportBand.support_level || 0, // Using the average you calc'd\n      bull_market_support_band_high: supportBand.support_level || 0,\n      wma_50: wma50.value || 0\n    },\n    volatility: {\n      bbw: vol.bbw || 0,\n      squeeze: vol.volatility_squeeze || false\n    },\n    fear_greed_index: fg.value || 50\n  },\n  cycle_on_chain: {\n    pi_cycle_top: pi.is_top || false,\n    halving_progress: halving.progress_percent || 0,\n    liquidity_trend: liquidity.status || \"Neutral\",\n    hashrate_trend: hashrate.hashrate_trend || \"Unknown\",\n    miner_revenue: 0 // Optional, explicitly set to 0 if not fetched\n  },\n  derivatives: {\n    funding_rate: funding.value || 0,\n    open_interest: oi.value || 0\n  },\n  closing_prices: closingPrices,\n  eth_btc_stats: {\n      current_ratio: ethCurrent,\n      sma_20: ethSma20\n  }\n};\n\nreturn { json: payload };"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        300,
-        -336
+        5744,
+        848
       ],
-      "id": "dc843d4d-a717-4e99-91c5-1399ced8ef66",
-      "name": "Thread Splitter"
+      "id": "6a0e8368-7683-4232-96e9-1c8f14d9bd5e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        5792,
+        608
+      ],
+      "id": "c13583b1-44ba-40c6-827f-2b5b17355121",
+      "name": "Merge6"
     },
     {
       "parameters": {
-        "batchSize": 1,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "950a3b00-1ce1-42c0-8e61-fc79eee058be",
+              "name": "signal",
+              "value": "={{ $('HTTP Request').item.json.signal }}",
+              "type": "string"
+            },
+            {
+              "id": "91e3d9bc-19c9-4359-af41-af084a07ce23",
+              "name": "macro",
+              "value": "={{ $('Data Clean and Debug').item.json.macro }}",
+              "type": "string"
+            },
+            {
+              "id": "a2b3eadd-dfbb-4b0e-86d2-39d0265f8f70",
+              "name": "meso",
+              "value": "={{ $('Data Clean and Debug').item.json.meso }}",
+              "type": "string"
+            },
+            {
+              "id": "7db1b42b-c4d5-4bf1-976d-0d25c42503ec",
+              "name": "micro",
+              "value": "={{ $('Data Clean and Debug').item.json.micro }}",
+              "type": "string"
+            },
+            {
+              "id": "c5e4df8c-118d-4d82-b90e-abbd0f4b42eb",
+              "name": "news",
+              "value": "={{ $('Data Clean and Debug').item.json.news }}",
+              "type": "string"
+            },
+            {
+              "id": "06a3e9b1-dd04-4c6b-9c44-7914fc4eaf13",
+              "name": "topbottom",
+              "value": "={{ $('Data Clean and Debug').item.json.topbottom }}",
+              "type": "string"
+            },
+            {
+              "id": "0eff0c7d-86c8-4142-8efb-6ed4b1dc028f",
+              "name": "metrics",
+              "value": "={{ $('Data Clean and Debug').item.json.metrics }}",
+              "type": "object"
+            }
+          ]
+        },
+        "includeOtherFields": true,
         "options": {}
       },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [
-        580,
-        -336
+        6000,
+        608
       ],
-      "id": "f81bd779-2ff8-47a2-971e-d20153c6bb71",
-      "name": "Thread Loop"
+      "id": "23196a21-d012-4215-a622-a00b945868c4",
+      "name": "Edit Fields",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- 1. SAFE DATA FETCHING ---\nconst getJson = (nodeName) => {\n    try {\n        const node = $(nodeName).first();\n        if (!node || !node.json || node.json.error) return {};\n        return node.json;\n    } catch(e) { return {}; }\n};\n\nconst getItems = (nodeName) => {\n    try {\n        return $(nodeName).all().map(i => i.json);\n    } catch(e) { return []; }\n};\n\nconst binanceTicker = getJson('Fetch Binance Ticker');\nconst binanceWeeklyItems = getItems('Fetch Binance Weekly');\nconst binanceFutures = getJson('Fetch Binance Futures');\nconst ethBtcItems = getItems('Fetch ETHBTC Weekly');\nconst hashrateData = getJson('Fetch Hashrate');\n\n// Helper\nfunction getValues(items, index) {\n    if (!items || items.length === 0) return [];\n    return items\n        .filter(i => Array.isArray(i) && i.length > index)\n        .map(i => parseFloat(i[index]))\n        .filter(n => !isNaN(n));\n}\n\n// --- 2. CALCULATE METRICS FOR C# INPUT ---\n\nconst highsWeekly = getValues(binanceWeeklyItems, 2); \nconst ethBtcCloses = getValues(ethBtcItems, 4);       \n\nconst currentPrice = parseFloat(binanceTicker.lastPrice || 0);\nconst fundingRate = parseFloat(binanceFutures.lastFundingRate || 0);\n\n// A. Calculate Drawdown (Input for Graham Logic)\nlet ath = 0;\nif (highsWeekly.length > 0) ath = Math.max(...highsWeekly);\nif (currentPrice > ath) ath = currentPrice;\nconst drawdownPercent = ath > 0 ? ((ath - currentPrice) / ath) * 100 : 0;\n\n// B. Calculate Hashrate Trend (Input for Graham Logic)\nlet hashrateTrend = \"Unknown\";\nif (hashrateData && hashrateData.values && hashrateData.values.length > 0) {\n    const values = hashrateData.values; \n    const currentHashrate = values[values.length - 1].y;\n    const slice = values.slice(Math.max(0, values.length - 60));\n    if (slice.length > 0) {\n        const avg60 = slice.reduce((acc, v) => acc + v.y, 0) / slice.length;\n        hashrateTrend = currentHashrate > avg60 ? \"Growing\" : \"Declining\";\n    }\n}\n\n// C. Calculate Rotation (Input for Logic)\nlet rotationRegime = \"Unknown\";\nif (ethBtcCloses.length >= 20) {\n    const currentEthBtc = ethBtcCloses[ethBtcCloses.length - 1];\n    const slice = ethBtcCloses.slice(ethBtcCloses.length - 20);\n    const ethBtcSMA20 = slice.reduce((a, b) => a + b, 0) / 20;\n    rotationRegime = currentEthBtc > ethBtcSMA20 ? \"Altseason\" : \"BitcoinSeason\";\n}\n\n// --- 3. OUTPUT RAW PAYLOAD ---\n// Note: No \"Verdict\" or \"Reasoning\" here. The C# API will generate that.\nreturn [{\n    json: {\n        macro: {\n            // Fill these from your macro nodes if you have them\n        },\n        crypto_technicals: {\n            btc_price: {\n                current: currentPrice,\n                drawdown_percent: drawdownPercent\n            },\n            moving_averages: {\n                // You might need to calc WMA50/200 here if C# expects them\n            }\n        },\n        cycle_on_chain: {\n            hashrate_trend: hashrateTrend,\n            liquidity_trend: \"Expansion\" // Example, or fetch real data\n        },\n        derivatives: {\n            funding_rate: fundingRate\n        },\n        eth_btc_stats: {\n            rotation_regime: rotationRegime\n        }\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2720,
+        912
+      ],
+      "id": "0426dd68-2f79-4c95-b517-f71343f13fba",
+      "name": "graham_value_check"
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\n\nreturn [{\n    json: {\n        // Default to \"Neutral\"/50 if running for the first time\n        prev_risk_score: staticData.prevRiskScore || 50,\n        prev_signal: staticData.prevSignal || \"NEUTRAL\",\n        prev_trend: staticData.prevTrend || \"Mixed\"\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3248,
+        1824
+      ],
+      "id": "57476ee1-67dd-4817-ad6b-3be921f1d55d",
+      "name": "Fetch Memory"
+    },
+    {
+      "parameters": {
+        "options": {
+          "normalize": true
+        }
+      },
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        336,
+        624
+      ],
+      "id": "030c65e1-8da2-4309-850e-ec2bd31f6364",
+      "name": "XML"
     }
   ],
   "pinData": {},
   "connections": {
-    "Macro Context Analysis1": {
-      "main": [
-        [
-          {
-            "node": "Market Stance1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Data Clean and Debug1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Merge6",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Merge": {
       "main": [
         [
@@ -1098,6 +1272,77 @@
         [
           {
             "node": "Micro Market Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Binance Ticker",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance Daily",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance Futures",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance Weekly",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Google News",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Binance OI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch FearGreed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch ETHBTC Weekly",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Yahoo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch CryptoPanic",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Hashrate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Liquidity",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Memory",
             "type": "main",
             "index": 0
           }
@@ -1155,72 +1400,6 @@
             "node": "Merge",
             "type": "main",
             "index": 5
-          }
-        ]
-      ]
-    },
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Fetch Binance Ticker",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Yahoo",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch CryptoPanic",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch FearGreed",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Binance OI",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Binance Weekly",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Binance Daily",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Binance Futures",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Google News",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch ETHBTC Weekly",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Hashrate",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Liquidity",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -1374,7 +1553,7 @@
           {
             "node": "Merge Top&Bottom",
             "type": "main",
-            "index": 2
+            "index": 1
           }
         ]
       ]
@@ -1385,7 +1564,7 @@
           {
             "node": "Merge Top&Bottom",
             "type": "main",
-            "index": 5
+            "index": 2
           }
         ]
       ]
@@ -1416,14 +1595,14 @@
       "main": [
         [
           {
-            "node": "Market Stance1",
+            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Twitter Composer",
+            "node": "Merge6",
             "type": "main",
-            "index": 0
+            "index": 1
           }
         ]
       ]
@@ -1432,7 +1611,7 @@
       "main": [
         [
           {
-            "node": "Micro Market Analysis1",
+            "node": "Macro Market Analysis1",
             "type": "main",
             "index": 0
           }
@@ -1523,6 +1702,11 @@
           },
           {
             "node": "pi_cycle_top",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "halving_cycle",
             "type": "main",
             "index": 0
           }
@@ -1634,11 +1818,16 @@
       "main": [
         [
           {
-            "node": "macro_news_summary",
+            "node": "XML",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
       ]
     },
     "Top & Bottom Watchout1": {
@@ -1674,44 +1863,16 @@
         ]
       ]
     },
-    "Micro Market Analysis1": {
-      "main": [
-        [
-          {
-            "node": "Merge5",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Market Stance1": {
       "main": [
         [
           {
-            "node": "Send a text message",
+            "node": "Update Last Telegram Time",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "graham_value_check": {
-      "main": [
-        [
+          },
           {
-            "node": "Merge Top&Bottom",
-            "type": "main",
-            "index": 6
-          }
-        ]
-      ]
-    },
-    "Send a text message": {
-      "main": [
-        [
-          {
-            "node": "Update Last Telegram Time",
+            "node": "Send a text message",
             "type": "main",
             "index": 0
           }
@@ -1811,121 +1972,153 @@
         ]
       ]
     },
-    "Schedule Trigger": {
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Macro Market Analysis1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Top & Bottom Watchout1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think2": {
+      "ai_tool": [
+        [
+          {
+            "node": "BTC Meso Market Analysis1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Micro Market Analysis",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think4": {
+      "ai_tool": [
+        [
+          {
+            "node": "Market Stance1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Macro Market Analysis1": {
       "main": [
         [
           {
-            "node": "Fetch Binance Ticker",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Binance Daily",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Binance Weekly",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch ETHBTC Weekly",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch FearGreed",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Yahoo",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch CryptoPanic",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Hashrate",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Liquidity",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Binance OI",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Binance Futures",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Fetch Google News",
+            "node": "Merge5",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Google Gemini Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Twitter Composer",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Thread Splitter": {
+    "HTTP Request": {
       "main": [
         [
           {
-            "node": "Thread Loop",
+            "node": "Market Stance1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge6",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Thread Loop": {
+    "Code in JavaScript": {
       "main": [
         [
           {
-            "node": "Twitter Post",
+            "node": "HTTP Request",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Twitter Post": {
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Merge6": {
       "main": [
         [
           {
-            "node": "Thread Loop",
+            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Twitter Composer": {
+    "Edit Fields": {
       "main": [
         [
           {
-            "node": "Thread Splitter",
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "graham_value_check": {
+      "main": [
+        [
+          {
+            "node": "Merge Top&Bottom",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Fetch Memory": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "XML": {
+      "main": [
+        [
+          {
+            "node": "macro_news_summary",
             "type": "main",
             "index": 0
           }
@@ -1935,20 +2128,16 @@
   },
   "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "America/Bogota",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
-  "versionId": "f880fdfc-ef41-4979-8469-33d98f3cb1f8",
+  "versionId": "4ce155a4-d62c-4163-af6d-72e5d24649ee",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "a8748a89ba0a07ced721aa28816660fdc66500ea257b33db469e712184fd16c7"
+    "instanceId": "cd08d407a1e8137abf3f43af3ee7b7a9a766bf9fb6823062380e62bae765f6bd"
   },
-  "id": "Gsqq1LETYFzaV4Cf",
-  "tags": [
-    {
-      "updatedAt": "2025-11-28T01:31:08.890Z",
-      "createdAt": "2025-11-28T01:31:08.890Z",
-      "id": "NOcXYUzjMxUFKSXL",
-      "name": "Free Automation"
-    }
-  ]
+  "id": "bkRD1WLIigGRpU3f",
+  "tags": []
 }

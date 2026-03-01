@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  n8n:
+    build: .
+    container_name: n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - DB_TYPE=sqlite
+      - GENERIC_TIMEZONE=UTC
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=wyvern
+      - N8N_PAYLOAD_SIZE_MAX=368435456
+    volumes:
+      - ./n8n-data:/home/node/.n8n
+      - ./shared:/data/shared
+    restart: unless-stopped
+
+  whisper-asr-webservice-gpu:
+    build:
+      context: whisper-asr-webservice/
+      dockerfile: Dockerfile.gpu
+    container_name: whisper
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - ASR_MODEL=base
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./whisper-asr-webservice/app:/app/app
+      - ./whisper-asr-webservice/cache-whisper:/root/.cache
