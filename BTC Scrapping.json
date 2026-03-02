@@ -9,11 +9,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1216,
-        -288
+        1424,
+        -112
       ],
       "typeVersion": 1,
-      "id": "8bd5de31-cf94-4300-8af2-50e3dcd5e47e",
+      "id": "6909abca-d39b-4b46-93a5-2f6afa25ea70",
       "name": "Sticky Note"
     },
     {
@@ -23,10 +23,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1664,
-        1152
+        1872,
+        1328
       ],
-      "id": "fe1328d1-cdb6-4c9b-9f69-075cbf2957f5",
+      "id": "4e8fb7c9-f01b-4727-bebf-e3deb88bcae3",
       "name": "Merge"
     },
     {
@@ -38,11 +38,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        3920,
-        -288
+        4128,
+        -112
       ],
       "typeVersion": 1,
-      "id": "e57f0816-d0c8-4d30-acf0-431acac29762",
+      "id": "3648cf34-bb4c-48f7-9b22-64f8ade9f898",
       "name": "Sticky Note2"
     },
     {
@@ -52,10 +52,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        5312,
-        544
+        5520,
+        720
       ],
-      "id": "5173b2bf-2250-4860-b5ee-3b7a035ac628",
+      "id": "928da7fb-79b0-4fb1-aa15-9f6e936d863e",
       "name": "Merge5"
     },
     {
@@ -65,10 +65,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4688,
-        624
+        4896,
+        800
       ],
-      "id": "6a94a47b-6360-405d-b13e-712857dc0813",
+      "id": "cc37e2e4-8839-427e-a525-d81db8bd0ee7",
       "name": "Clean Merge3"
     },
     {
@@ -85,10 +85,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -336,
-        0
+        -128,
+        176
       ],
-      "id": "6f435a98-cbe4-480c-9964-2ea98fed1232",
+      "id": "03765ec8-0ccd-4b59-a7b1-633791e4ab73",
       "name": "Schedule Trigger"
     },
     {
@@ -98,10 +98,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1344,
-        736
+        1552,
+        912
       ],
-      "id": "a4d89a8b-ed20-4a7f-9013-c6b3c66bdc46",
+      "id": "14aeecd8-821b-4449-855c-f8e6018934ed",
       "name": "treasury_yield"
     },
     {
@@ -111,10 +111,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1344,
-        880
+        1552,
+        1056
       ],
-      "id": "288277bc-dede-4f12-8f93-02d141c429ab",
+      "id": "c2b5e1c2-117a-471d-a762-f670563b86b3",
       "name": "fed_funds_rate"
     },
     {
@@ -124,10 +124,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1344,
-        1008
+        1552,
+        1184
       ],
-      "id": "ea3f6330-904b-47f8-923a-ab6ffe8b9209",
+      "id": "cf5c2a77-6e93-4b33-9bdf-9df2b9ec7f9d",
       "name": "macro_news_summary"
     },
     {
@@ -137,10 +137,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1344,
-        1136
+        1552,
+        1312
       ],
-      "id": "d6370c1e-5da3-445e-b2ed-735a81100ee2",
+      "id": "c8076ab6-4c64-4287-8e55-670d20fddb41",
       "name": "btc_overview"
     },
     {
@@ -150,10 +150,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1344,
-        1392
+        1552,
+        1568
       ],
-      "id": "857add8a-162d-470c-a5b1-c1633be19548",
+      "id": "b311a1c2-d64f-42e1-b4b9-18e0558d32df",
       "name": "gold_price_trend"
     },
     {
@@ -163,10 +163,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1344,
-        1264
+        1552,
+        1440
       ],
-      "id": "b3a52b95-2838-43e4-a9bd-8713613cdf55",
+      "id": "adca90e0-efa1-4e73-bba5-a147c2b323a1",
       "name": "dxy_proxy"
     },
     {
@@ -178,11 +178,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -16,
-        -288
+        192,
+        -112
       ],
       "typeVersion": 1,
-      "id": "0c59c64d-fd9f-4f25-ba89-35e631b28abf",
+      "id": "2da33ee8-7fb3-4b02-8b03-95c602918404",
       "name": "Sticky Note3"
     },
     {
@@ -192,10 +192,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1344,
-        1536
+        1552,
+        1712
       ],
-      "id": "0d238e56-3cc3-4af4-9a36-99fc5cb955c3",
+      "id": "059ff398-b532-4ff2-a330-0942f0432c3d",
       "name": "crude_oil_trend"
     },
     {
@@ -205,10 +205,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4064,
-        416
+        4272,
+        592
       ],
-      "id": "90459049-2b22-431e-a1d6-b69a49f42aed",
+      "id": "91e60abd-a30c-4738-b30f-fb5c3af784d3",
       "name": "btc_price_trend"
     },
     {
@@ -218,10 +218,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4064,
-        272
+        4272,
+        448
       ],
-      "id": "42f9d822-80ce-43d4-8628-6211cd561895",
+      "id": "aafc2807-ce8a-4771-8591-e67474068e89",
       "name": "rsi14"
     },
     {
@@ -231,10 +231,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4064,
-        560
+        4272,
+        736
       ],
-      "id": "819dc360-0019-4231-a765-a7f2921abe54",
+      "id": "da972627-077d-4dde-922c-63e5bcdcb516",
       "name": "fear_greed_index_trend"
     },
     {
@@ -244,10 +244,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4064,
-        704
+        4272,
+        880
       ],
-      "id": "f307b030-c22b-47af-9fcd-4fb78bf2ccb0",
+      "id": "1767b900-97d4-4bc9-bb8e-9804e4e5d1dd",
       "name": "btc_funding_rate"
     },
     {
@@ -257,10 +257,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4064,
-        1024
+        4272,
+        1200
       ],
-      "id": "6f73a365-8c47-4e0b-86d4-c9a64dafb3cd",
+      "id": "1c970317-1f21-40f3-8490-87e46ef0ebe5",
       "name": "crypto_news_summary"
     },
     {
@@ -270,10 +270,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4064,
-        880
+        4272,
+        1056
       ],
-      "id": "1fd6b5cd-7e48-4fb5-a48c-f34d511f9cd0",
+      "id": "a06687d3-0554-4b1a-be7a-3b0709828dbd",
       "name": "btc_open_interest"
     },
     {
@@ -283,10 +283,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2720,
-        -16
+        2928,
+        160
       ],
-      "id": "8a801534-6bd6-49e5-96e6-1781bfb1946a",
+      "id": "e8647d10-87b3-455b-aba3-8f6cef812dd9",
       "name": "btc_200wma_distance"
     },
     {
@@ -296,10 +296,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2720,
-        96
+        2928,
+        272
       ],
-      "id": "b7277c18-86dd-4569-a961-b138990db09d",
+      "id": "7cce52ad-d7c4-48e7-88c2-cc886d9b5d8c",
       "name": "rsi14_trend"
     },
     {
@@ -309,10 +309,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2720,
-        224
+        2928,
+        400
       ],
-      "id": "0ee0a0b6-fd44-49b0-b14f-a01da9f18126",
+      "id": "1d6bebee-9ef3-4c06-9e5a-fa2fc45e36bc",
       "name": "bull_market_support_band"
     },
     {
@@ -322,10 +322,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2720,
-        368
+        2928,
+        544
       ],
-      "id": "a5decac9-c2f4-4417-9da0-21f32471e0cb",
+      "id": "a1c1f5ce-35ff-40ca-a4cf-3ac8532a8e26",
       "name": "50wma"
     },
     {
@@ -335,10 +335,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2704,
-        1056
+        2912,
+        1232
       ],
-      "id": "428e36c1-b671-41cb-b654-be30d491f1d8",
+      "id": "499d3642-b29d-4ff4-a195-389f85455448",
       "name": "ma50_ma200_trend"
     },
     {
@@ -348,10 +348,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2704,
-        1216
+        2912,
+        1392
       ],
-      "id": "3f858262-1089-4373-b39e-7291edadbd0a",
+      "id": "8f317b6c-5bcc-4696-9fd1-8644dc15d7dc",
       "name": "pi_cycle_top"
     },
     {
@@ -361,10 +361,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2704,
-        1392
+        2912,
+        1568
       ],
-      "id": "a3de5f5f-f450-4815-afb7-d53e3dd3b142",
+      "id": "e9c87f0e-807b-470b-927a-dd54bfbcb85d",
       "name": "halving_cycle"
     },
     {
@@ -376,11 +376,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        2336,
-        -288
+        2544,
+        -112
       ],
       "typeVersion": 1,
-      "id": "044ede87-06c3-4ce4-9a4d-899bb9c99d42",
+      "id": "774c7ccd-7f3f-4f3e-a89d-8d56b92b45f0",
       "name": "Sticky Note4"
     },
     {
@@ -390,10 +390,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        3008,
-        64
+        3216,
+        240
       ],
-      "id": "a3402d36-4732-4efb-b9c9-a2d2bd9d22c5",
+      "id": "8172e102-6345-4f40-b710-c424a686227e",
       "name": "Merge Meso"
     },
     {
@@ -403,10 +403,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        2960,
-        928
+        3168,
+        1104
       ],
-      "id": "92305c5b-31fd-4b63-b155-a75611077c87",
+      "id": "d6be4e51-c8be-4097-b103-7607364b728e",
       "name": "Merge Top&Bottom"
     },
     {
@@ -416,10 +416,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        5504,
-        592
+        5712,
+        768
       ],
-      "id": "556ffc60-bacc-4f19-92ae-88df25726235",
+      "id": "13f5f74c-4c6f-4448-8778-51c26e494b06",
       "name": "Data Clean and Debug"
     },
     {
@@ -431,11 +431,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        6016,
-        144
+        6224,
+        320
       ],
       "typeVersion": 1,
-      "id": "e48c6c6a-8b2a-4b6d-a7e1-300d51801dff",
+      "id": "fe2da5a8-0803-45a8-9a81-380bb26600ba",
       "name": "Sticky Note6"
     },
     {
@@ -445,10 +445,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1872,
-        1248
+        2080,
+        1424
       ],
-      "id": "ad577017-4a21-4471-b245-891fb8d6acc1",
+      "id": "386c94f8-42f3-4a32-a64b-13f3ab47645d",
       "name": "Clean Merge"
     },
     {
@@ -456,10 +456,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        3216,
-        688
+        3424,
+        864
       ],
-      "id": "b043a443-82c6-4ebd-b4ef-acb8b7d029d6",
+      "id": "e4cd83d6-4c0f-4c8f-b079-e9ad031b584a",
       "name": "Merge2"
     },
     {
@@ -469,10 +469,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3456,
-        688
+        3664,
+        864
       ],
-      "id": "4aa85b3b-517a-44f3-8d96-fe8fe7c306f5",
+      "id": "07b009f5-cf2f-4820-9e53-5734a30a329d",
       "name": "Clean Merge2"
     },
     {
@@ -482,10 +482,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        4400,
-        560
+        4608,
+        736
       ],
-      "id": "5ee21e32-abd1-4a96-8daa-de280a41a06e",
+      "id": "5d4fc4c4-48bd-41f3-a606-f62983765733",
       "name": "Merge3"
     },
     {
@@ -496,10 +496,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        0
+        272,
+        176
       ],
-      "id": "9e074ed8-cc7e-4244-ad23-96eb93332840",
+      "id": "0f766c9f-ab57-4d3b-9e67-fe2469d129dc",
       "name": "Fetch Binance Ticker",
       "continueOnFail": true
     },
@@ -511,10 +511,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        144
+        272,
+        320
       ],
-      "id": "80ec105f-6ce1-407f-bf75-3e8033fc30b1",
+      "id": "8007aaf0-93e6-4d33-b6b3-8adcf1cc9044",
       "name": "Fetch Binance Daily",
       "continueOnFail": true
     },
@@ -530,10 +530,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        464
+        272,
+        640
       ],
-      "id": "2492dea8-b519-4985-a55f-fb8acfb985b1",
+      "id": "33fd099a-6a7e-4ba5-bda2-634a465f83b9",
       "name": "Fetch Binance Weekly",
       "continueOnFail": true
     },
@@ -545,10 +545,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        304
+        272,
+        480
       ],
-      "id": "3195c8f6-7b1c-41db-808b-2fa5f3b59df6",
+      "id": "03016080-86ae-45ea-a451-9c1273f79f8c",
       "name": "Fetch Binance Futures",
       "continueOnFail": true
     },
@@ -560,10 +560,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        752
+        272,
+        928
       ],
-      "id": "d8454f94-5d1c-4ad7-a6f2-b2381ecb2f20",
+      "id": "791d5f0b-3b5b-4024-b8f1-1b826e201fbf",
       "name": "Fetch Binance OI",
       "continueOnFail": true
     },
@@ -575,10 +575,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        1184
+        272,
+        1360
       ],
-      "id": "780e5c02-0488-4896-bd70-2f872875e0c2",
+      "id": "5248dd60-f4bb-4a62-8b5d-de20b3facd94",
       "name": "Fetch Yahoo",
       "continueOnFail": true
     },
@@ -590,10 +590,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        896
+        272,
+        1072
       ],
-      "id": "b5f96acc-7f27-476d-8747-4258f2fd5cb3",
+      "id": "2c597097-830e-454c-9067-e0496094eb11",
       "name": "Fetch FearGreed",
       "continueOnFail": true
     },
@@ -607,10 +607,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        1344
+        272,
+        1520
       ],
-      "id": "3148d57d-7bda-4b5d-a75a-674835e800b4",
+      "id": "d89aacf6-1347-4af1-bf6c-aa93a7d1ff4d",
       "name": "Fetch CryptoPanic",
       "continueOnFail": true
     },
@@ -624,10 +624,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        624
+        272,
+        800
       ],
-      "id": "93271a34-5bc1-4807-9fcd-eaa22b1d0167",
+      "id": "23b6b8a6-ecbe-402d-8fe9-faf905993187",
       "name": "Fetch Google News",
       "continueOnFail": true
     },
@@ -642,10 +642,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        6128,
-        272
+        6336,
+        448
       ],
-      "id": "f61d795b-fc8e-4ad0-b973-312f55b847ff",
+      "id": "f5f6a080-c4f5-4da6-a193-644564fcedb0",
       "name": "Send a text message",
       "webhookId": "3705f81f-3ea1-4a0c-895f-3c9091fca9a0",
       "credentials": {
@@ -675,10 +675,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        3632,
-        208
+        3840,
+        384
       ],
-      "id": "6d81378d-7e0e-4d60-9038-62526e87e1be",
+      "id": "899e9253-6fa1-411c-8b56-6c76b484a946",
       "name": "Top & Bottom Watchout1",
       "credentials": {
         "googlePalmApi": {
@@ -698,7 +698,7 @@
         "messages": {
           "values": [
             {
-              "content": "=<role>\nYou are an institutional quantitative analyst.\n</role>\n\n<rules>\n- You must only use the provided data.\n- You must output strict JSON without markdown code blocks.\n- You must not hallucinate.\n</rules>\n\n<context>\nYou are a senior crypto market strategist.\n\nGoal: Compress the meso-level BTC snapshot in the JSON into a concise daily trading brief used alongside a separate MICRO timing model. Be a signal filter, not a narrative.\n\nInput JSON:\n\n\nRules:\n- Use ONLY values present in the JSON; if absent, write \"not provided\".\n- Prefer implications over raw stats (e.g., \u201cscarcity intact\u201d instead of listing stock/flow/block_reward numbers).\n- Price & Trend must reference only what\u2019s in JSON (e.g., Bull Market Support Band: 20W EMA / 21W SMA, 50W MA). Do NOT invent 50D/200D if missing.\n- Momentum: use RSI if present; otherwise \"not provided\".\n- Cycle: compare price vs S2F fair_value and state rainbow zone; mention halving progress and composite/phase if present.\n- Dominance: report latest level and micro/meso/macro trend labels if present; state rotation implication.\n- Levels: list bull band (20W EMA / 21W SMA) and 50W MA as Support; include Resistance ONLY if explicitly provided; else \"not provided\".\n- Outlook: give a 2\u20134 week bias and a 3\u20136 month view tied to the levels above.\n- Triggers: one Bull and one Bear condition, explicitly tied to those levels (e.g., weekly close > band; weekly close < 50W MA).\n- Keep it actionable and compact. Plain language. No markdown, no tables.\n- Word cap: 300 words total. Use \"$\" in prices and make it easy to read with unequivocal terms and concepts (eg. Bitcoin Dominance instead of BTC.D)\n\n{{ JSON.stringify($json, null, 2) }}\n</context>\n\n<planning_process>\nExplicitly state your step-by-step reasoning inside this tag BEFORE generating the final output. Extract the required data points, evaluate the trends, and formulate the summary.\n</planning_process>\n\n<task>\nOutput EXACTLY this JSON structure:\n{\n  \"title\": \"BTC Meso Market Analysis\",\n  \"mesoBrief\": {\n    \"Price & Trend\": \"...\",\n    \"Momentum\": \"...\",\n    \"Cycle (S2F & Rainbow)\": \"...\",\n    \"On-chain/Issuance\": \"...\",\n    \"Dominance & Rotation\": \"...\",\n    \"Levels\": {\n      \"Support\": \"...\",\n      \"Resistance\": \"...\"\n    },\n    \"Outlook\": {\n      \"2-4 weeks\": \"...\",\n      \"3-6 months\": \"...\"\n    }\n  },\n  \"triggers\": {\n    \"Bull\": \"...\",\n    \"Bear\": \"...\"\n  },\n  \"mesoBias\": \"mildly-bullish | neutral | mildly-bearish\",\n  \"horizon\": [\"weeks\", \"months\"]\n}\n</task>"
+              "content": "=<role>\nYou are an institutional quantitative analyst.\n</role>\n\n<rules>\n- You must only use the provided data.\n- You must output strict JSON without markdown code blocks.\n- You must not hallucinate.\n</rules>\n\n<context>\nYou are a senior crypto market strategist.\n\nGoal: Compress the meso-level BTC snapshot in the JSON into a concise daily trading brief used alongside a separate MICRO timing model. Be a signal filter, not a narrative.\n\nInput JSON:\n\n\nRules:\n- Use ONLY values present in the JSON; if absent, write \"not provided\".\n- Prefer implications over raw stats (e.g., “scarcity intact” instead of listing stock/flow/block_reward numbers).\n- Price & Trend must reference only what’s in JSON (e.g., Bull Market Support Band: 20W EMA / 21W SMA, 50W MA). Do NOT invent 50D/200D if missing.\n- Momentum: use RSI if present; otherwise \"not provided\".\n- Cycle: compare price vs S2F fair_value and state rainbow zone; mention halving progress and composite/phase if present.\n- Dominance: report latest level and micro/meso/macro trend labels if present; state rotation implication.\n- Levels: list bull band (20W EMA / 21W SMA) and 50W MA as Support; include Resistance ONLY if explicitly provided; else \"not provided\".\n- Outlook: give a 2–4 week bias and a 3–6 month view tied to the levels above.\n- Triggers: one Bull and one Bear condition, explicitly tied to those levels (e.g., weekly close > band; weekly close < 50W MA).\n- Keep it actionable and compact. Plain language. No markdown, no tables.\n- Word cap: 300 words total. Use \"$\" in prices and make it easy to read with unequivocal terms and concepts (eg. Bitcoin Dominance instead of BTC.D)\n\n{{ JSON.stringify($json, null, 2) }}\n</context>\n\n<planning_process>\nExplicitly state your step-by-step reasoning inside this tag BEFORE generating the final output. Extract the required data points, evaluate the trends, and formulate the summary.\n</planning_process>\n\n<task>\nOutput EXACTLY this JSON structure:\n{\n  \"title\": \"BTC Meso Market Analysis\",\n  \"mesoBrief\": {\n    \"Price & Trend\": \"...\",\n    \"Momentum\": \"...\",\n    \"Cycle (S2F & Rainbow)\": \"...\",\n    \"On-chain/Issuance\": \"...\",\n    \"Dominance & Rotation\": \"...\",\n    \"Levels\": {\n      \"Support\": \"...\",\n      \"Resistance\": \"...\"\n    },\n    \"Outlook\": {\n      \"2-4 weeks\": \"...\",\n      \"3-6 months\": \"...\"\n    }\n  },\n  \"triggers\": {\n    \"Bull\": \"...\",\n    \"Bear\": \"...\"\n  },\n  \"mesoBias\": \"mildly-bullish | neutral | mildly-bearish\",\n  \"horizon\": [\"weeks\", \"months\"]\n}\n</task>"
             }
           ]
         },
@@ -707,10 +707,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        3616,
-        1232
+        3824,
+        1408
       ],
-      "id": "41557ad4-e615-400f-95fe-9291e4119b76",
+      "id": "0327eea3-89d7-49d7-8ea0-d6d10317ce14",
       "name": "BTC Meso Market Analysis1",
       "credentials": {
         "googlePalmApi": {
@@ -730,7 +730,7 @@
         "messages": {
           "values": [
             {
-              "content": "=<role>\\nYou are an institutional quantitative analyst.\\n</role>\\n\\n<rules>\\n- You must only use the provided data.\\n- You must output strict JSON without markdown code blocks.\\n- You must not hallucinate.\\n</rules>\\n\\n<context>\\nYou are a quantitative analyst.  \\nYour task is to interpret the JSON dataset provided below \u2014 it represents the latest *micro-level indicators* for a specific crypto asset.\\n\\n\u26a0\ufe0f Important:\\n- Do NOT infer, speculate, or reference macro, meso, or external market context.\\n- Only describe what is explicitly shown in the data.\\n- If a metric is missing or null, omit it.\\n- Keep the tone factual, concise, and technical.\\n- Do not provide recommendations, outlooks, or predictions.\\n- Your only goal is to organize and summarize the data clearly.\\n\\nGive your analysis a clear title: \"BTC Micro Market Analysis\"\\n\\nInput JSON:\\n\\n{{ JSON.stringify($json, null, 2) }}\\n</context>\\n\\n<planning_process>\\nExplicitly state your step-by-step reasoning inside this tag BEFORE generating the final output. Identify the micro-level indicators and summarize them factually.\\n</planning_process>\\n\\n<task>\\nOutput EXACTLY this JSON structure:\\n{\\n  \"title\": \"BTC Micro Market Analysis\",\\n  \"indicators\": {\\n    \"funding_rate\": \"...\",\\n    \"open_interest\": \"...\",\\n    \"volatility_squeeze\": \"...\",\\n    \"...\": \"...\"\\n  },\\n  \"summary\": \"...\"\\n}\\n</task>"
+              "content": "=<role>\\nYou are an institutional quantitative analyst.\\n</role>\\n\\n<rules>\\n- You must only use the provided data.\\n- You must output strict JSON without markdown code blocks.\\n- You must not hallucinate.\\n</rules>\\n\\n<context>\\nYou are a quantitative analyst.  \\nYour task is to interpret the JSON dataset provided below — it represents the latest *micro-level indicators* for a specific crypto asset.\\n\\n⚠️ Important:\\n- Do NOT infer, speculate, or reference macro, meso, or external market context.\\n- Only describe what is explicitly shown in the data.\\n- If a metric is missing or null, omit it.\\n- Keep the tone factual, concise, and technical.\\n- Do not provide recommendations, outlooks, or predictions.\\n- Your only goal is to organize and summarize the data clearly.\\n\\nGive your analysis a clear title: \"BTC Micro Market Analysis\"\\n\\nInput JSON:\\n\\n{{ JSON.stringify($json, null, 2) }}\\n</context>\\n\\n<planning_process>\\nExplicitly state your step-by-step reasoning inside this tag BEFORE generating the final output. Identify the micro-level indicators and summarize them factually.\\n</planning_process>\\n\\n<task>\\nOutput EXACTLY this JSON structure:\\n{\\n  \"title\": \"BTC Micro Market Analysis\",\\n  \"indicators\": {\\n    \"funding_rate\": \"...\",\\n    \"open_interest\": \"...\",\\n    \"volatility_squeeze\": \"...\",\\n    \"...\": \"...\"\\n  },\\n  \"summary\": \"...\"\\n}\\n</task>"
             }
           ]
         },
@@ -739,10 +739,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        4864,
-        624
+        5072,
+        800
       ],
-      "id": "8490f242-2a1d-4a8c-a588-8c01fe73f8aa",
+      "id": "7b4c51a0-557a-4888-9c8e-6a0cca3163d5",
       "name": "Micro Market Analysis",
       "credentials": {
         "googlePalmApi": {
@@ -755,14 +755,14 @@
       "parameters": {
         "modelId": {
           "__rl": true,
-          "value": "models/gemini-3-pro-preview",
+          "value": "models/gemini-3.1-pro-preview",
           "mode": "list",
-          "cachedResultName": "models/gemini-3-pro-preview"
+          "cachedResultName": "models/gemini-3.1-pro-preview"
         },
         "messages": {
           "values": [
             {
-              "content": "=<role>\\nYou are an institutional quantitative analyst.\\n</role>\\n\\n<rules>\\n- You must only use the provided data.\\n- You must not hallucinate.\\n- NEVER use the '&' character on its own. You MUST write it as '&amp;' every single time.\\n- Escape < and > as &lt; and &gt;.\\n- Do not use Markdown. Use only HTML tags (<b>, <i>, <code>).\\n- NEVER use <ul>, <li>, or <br> tags.\\n</rules>\\n\\n<context>\\nAct as the Chief Editor of the \"Crypto Analysis with Tom Tucker\".\\nYour task is to synthesize the provided metrics and analysis into a final HTML report for Telegram.\\n\\nCONTEXTUAL CONSISTENCY RULES:\\n\\nYesterday's Signal: {{ $('Fetch Memory').first().json.prev_signal }} (Score: {{ $('Fetch Memory').first().json.prev_risk_score }})\\n\\nCurrent Signal: {{ $json.signal }} (Score: {{ $json.risk_score }})\\n\\nInput Data:\\nQUANT_BRAIN (Source of Truth):\\nSignal: {{ $json.signal }}\\nRisk Score: {{$json.risk_score}}/100\\nHeadline: {{$json.headline}}\\nTrade Setup: {{JSON.stringify($json.trade_setup)}}\\nRationale: {{$json.report_markdown}}\\nMETRICS:\\n{{JSON.stringify($('Data Clean and Debug').item.json.metrics)}}\\n\\nANALYSIS SUMMARIES:\\n{{$('Data Clean and Debug').item.json.macro}}\\n{{$('Data Clean and Debug').item.json.meso}}\\n{{$('Data Clean and Debug').item.json.micro}}\\n{{$('Data Clean and Debug').item.json.topbottom}}\\n\\nNEWS:\\n{{$('Data Clean and Debug').item.json.news}}\\n\\nInstructions:\\n1. **Cycle Signal Authority:** You MUST align your \"CYCLE SIGNAL\" and \"TACTICAL STANCE\" with the 'QUANT_BRAIN' data above.\\n   - If Quant says SELL, do not write a bullish stance.\\n   - If Quant says ACCUMULATE, highlight the opportunity.\\n\\n2. Write a \"Tactical Stance\" (1 concise paragraph).\\n   - Start with the Quant's Headline.\\n   - If 'Trade Setup' is present (not null), you MUST include the <b>Entry</b>, <b>Stop Loss</b>, and <b>Target</b> prices in this paragraph.\\n   - Use <b>bold</b> for all price levels.\\n\\n3. Write an \"Analyst Rationale\" (1 dense technical sentence).\\n   - Synthesize the 'Quant Rationale' with the Macro/Meso context.\\n   - Example: \"Despite macro headwinds, the Graham model detected a deep value variance (Risk Score: 25), triggering an accumulation signal.\"\\n\\n4. Select the top 3 most relevant News headlines.\\n\\n5. If the Risk Score has changed by less than 5 points, you MUST acknowledge this as \"Stabilization\" rather than a trend change. Bad: \"Market flipped bearish!\" (Score went 55 -> 53) Good: \"Market maintains stability, slightly softening from yesterday.\\n</context>\\n\\n<planning_process>\\nExplicitly state your step-by-step reasoning inside this tag BEFORE generating the final output. Formulate the Tactical Stance, Analyst Rationale, and pick headlines while strictly following the HTML rules.\\n</planning_process>\\n\\n<task>\\nOutput the result using this EXACT HTML template (do not change the structure, just fill the slots):\\n\\n<b>\ud83d\udcc5 CRYPTO ANALYSIS</b> <i>{{$('Data Clean and Debug').item.json.metrics.date}}</i>\\n\\n<b>\ud83d\uded1 CYCLE SIGNAL:</b> <b>{{$json.signal}}</b> (Score: {{$json.risk_score}})\\n\\n\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\\n\\n<b>\ud83c\udf0a MACRO &amp; LIQUIDITY</b> \u2022 <b>Regime:</b> {{$('Data Clean and Debug').item.json.metrics.macro_bias}} \u2022 <b>Liquidity:</b> {{$('Data Clean and Debug').item.json.metrics.liquidity_trend}} \u2022 <b>10Y Yield:</b> <code>{{$('Data Clean and Debug').item.json.metrics.yield10y}}</code>\\n\\n<b>\ud83d\udd04 MESO &amp; ROTATION</b> \u2022 <b>Regime:</b> {{$('Data Clean and Debug').item.json.metrics.market_regime}} \u2022 <b>ETH/BTC:</b> <code>{{$('Data Clean and Debug').item.json.metrics.eth_btc_price}}</code>\\n\\n<b>\ud83d\udd2c MICRO &amp; SENTIMENT</b> \u2022 <b>Funding:</b> <code>{{$('Data Clean and Debug').item.json.metrics.funding_rate}}</code> \u2022 <b>Fear &amp; Greed:</b> {{$('Data Clean and Debug').item.json.metrics.fear_greed_index}}\\n\\n<b>\u2696\ufe0f TOP &amp; BOTTOM</b> \u2022 <b>vs 200WMA:</b> <code>{{$('Data Clean and Debug').item.json.metrics.dist_to_200_wma}}%</code> \u2022 <b>Drawdown:</b> <code>{{$('Data Clean and Debug').item.json.metrics.drawdown_percent}}%</code>\\n\\n\\n\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\u2796\\n\\n<b>\ud83c\udfaf TACTICAL STANCE</b> [Insert Your Escaped Tactical Stance Here. Include Trade Levels if available!]\\n\\n<b>\ud83e\udde0 ANALYST RATIONALE</b> <i>[Insert Your Escaped Rationale Here]</i>\\n\\n\ud83d\udcf0 <b>HEADLINES</b> [Insert Top 3 Headlines as bullet points. Ensure no naked '&' symbols exist here!]\\n</task>"
+              "content": "=<role>\nYou are an institutional quantitative analyst.\n</role>\n\n<rules>\n- You must only use the provided data.\n- You must not hallucinate.\n- NEVER use the '&' character on its own. You MUST write it as '&amp;' every single time.\\n- Escape < and > as &lt; and &gt;.\\n- Do not use Markdown. Use only HTML tags (<b>, <i>, <code>).\n- NEVER use <ul>, <li>, or <br> tags.\n</rules>\n\n<context>\nAct as the Chief Editor of the \"Crypto Analysis with Tom Tucker\".\nYour task is to synthesize the provided metrics and analysis into a final HTML report for Telegram.\n\nCONTEXTUAL CONSISTENCY RULES:\nYesterday's Signal: {{ $('Fetch Memory').first().json.prev_signal }} (Score: {{ $('Fetch Memory').first().json.prev_risk_score }})\n\nCurrent Signal: {{ $json.signal }} (Score: {{ $json.risk_score }})\n\nInput Data:\nQUANT_BRAIN (Source of Truth):\nSignal: {{ $json.signal }}\nRisk Score: {{$json.risk_score}}/100\nHeadline: {{$json.headline}}\nTrade Setup: {{JSON.stringify($json.trade_setup)}}\nRationale: {{$json.report_markdown}}\nMETRICS:\n{{JSON.stringify($('Data Clean and Debug').item.json.metrics)}}\n\nANALYSIS SUMMARIES:\n{{$('Data Clean and Debug').item.json.macro}}\n{{$('Data Clean and Debug').item.json.meso}}\n{{$('Data Clean and Debug').item.json.micro}}\n{{$('Data Clean and Debug').item.json.topbottom}}\n\nNEWS:\n{{$('Data Clean and Debug').item.json.news}}\n\nInstructions:\n1. **Cycle Signal Authority:** You MUST align your \"CYCLE SIGNAL\" and \"TACTICAL STANCE\" with the 'QUANT_BRAIN' data above.\n- If Quant says SELL, do not write a bullish stance.\n- If Quant says ACCUMULATE, highlight the opportunity.\n\n2. Write a \"Tactical Stance\" (1 concise paragraph).\n- Start with the Quant's Headline.\n- If 'Trade Setup' is present (not null), you MUST include the <b>Entry</b>, <b>Stop Loss</b>, and <b>Target</b> prices in this paragraph.\\\n- Use <b>bold</b> for all price levels.\n\n3. Write an \"Analyst Rationale\" (1 dense technical sentence).\n- Synthesize the 'Quant Rationale' with the Macro/Meso context.\n- Example: \"Despite macro headwinds, the Graham model detected a deep value variance (Risk Score: 25), triggering an accumulation signal.\"\n\n4. Select the top 3 most relevant News headlines.\n\n5. If the Risk Score has changed by less than 5 points, you MUST acknowledge this as \"Stabilization\" rather than a trend change. Bad: \"Market flipped bearish!\" (Score went 55 -> 53) Good: \"Market maintains stability, slightly softening from yesterday.\n</context>\n\n<task>\nOutput the result using this EXACT HTML template (do not change the structure, just fill the slots):\n\n<b>📅 CRYPTO ANALYSIS</b> <i>{{$('Data Clean and Debug').item.json.metrics.date}}</i>\n\n<b>🛑 CYCLE SIGNAL:</b> <b>{{$json.signal}}</b> (Score: {{$json.risk_score}})\n\n➖➖➖➖➖➖➖➖➖➖➖\n\n<b>🌊 MACRO &amp; LIQUIDITY</b> • <b>Regime:</b> {{$('Data Clean and Debug').item.json.metrics.macro_bias}} • <b>Liquidity:</b> {{$('Data Clean and Debug').item.json.metrics.liquidity_trend}} • <b>10Y Yield:</b> <code>{{$('Data Clean and Debug').item.json.metrics.yield10y}}</code>\n\n<b>🔄 MESO &amp; ROTATION</b> • <b>Regime:</b> {{$('Data Clean and Debug').item.json.metrics.market_regime}} • <b>ETH/BTC:</b> <code>{{$('Data Clean and Debug').item.json.metrics.eth_btc_price}}</code>\n\n<b>🔬 MICRO &amp; SENTIMENT</b> • <b>Funding:</b> <code>{{$('Data Clean and Debug').item.json.metrics.funding_rate}}</code> • <b>Fear &amp; Greed:</b> {{$('Data Clean and Debug').item.json.metrics.fear_greed_index}}\n\n<b>⚖️ TOP &amp; BOTTOM</b> • <b>vs 200WMA:</b> <code>{{$('Data Clean and Debug').item.json.metrics.dist_to_200_wma}}%</code> • <b>Drawdown:</b> <code>{{$('Data Clean and Debug').item.json.metrics.drawdown_percent}}%</code>\n\n\n➖➖➖➖➖➖➖➖➖➖➖\n\n<b>🎯 TACTICAL STANCE</b> [Insert Your Escaped Tactical Stance Here. Include Trade Levels if available!]\n\n<b>🧠 ANALYST RATIONALE</b> <i>[Insert Your Escaped Rationale Here]</i>\n\n📰 <b>HEADLINES</b> [Insert Top 3 Headlines as bullet points. Ensure no naked '&' symbols exist here!]\n</task>"
             }
           ]
         },
@@ -771,10 +771,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        5744,
-        272
+        5952,
+        448
       ],
-      "id": "c2da8172-cc8c-4f0b-9cbb-5177c25a3b8e",
+      "id": "88284b59-71d4-448f-99d4-df8d34199c7c",
       "name": "Market Stance1",
       "credentials": {
         "googlePalmApi": {
@@ -790,10 +790,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        6112,
-        -16
+        6320,
+        160
       ],
-      "id": "28a9ecf8-b822-4a76-823f-19161a5b74e7",
+      "id": "4c6906d2-6245-4ab4-b5fb-7e2547aee0a2",
       "name": "Update Last Telegram Time"
     },
     {
@@ -803,10 +803,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1904,
-        304
+        2112,
+        480
       ],
-      "id": "bc1e8a0c-d975-49ed-97b5-325c15541603",
+      "id": "a7bedee2-8f7c-465e-98d7-0fbd4b15703f",
       "name": "Merge1"
     },
     {
@@ -816,10 +816,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2160,
-        352
+        2368,
+        528
       ],
-      "id": "dddcd771-190f-445a-885e-0572ec1b1fbf",
+      "id": "772b13f3-f355-414c-94ea-c4fb946a8167",
       "name": "Clean Merge1"
     },
     {
@@ -829,10 +829,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1920,
-        -192
+        2128,
+        -16
       ],
-      "id": "07220e37-dc59-481c-b193-81c0665c89e7",
+      "id": "5b2fa955-38f7-4bdc-9ae5-22fc6e278a41",
       "name": "Merge4"
     },
     {
@@ -842,10 +842,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2144,
-        -176
+        2352,
+        0
       ],
-      "id": "0da8c83f-b464-431f-bc07-81786d12b919",
+      "id": "70c851f5-2e83-4a6d-8b70-e3c3bac327c1",
       "name": "Clean Merge4"
     },
     {
@@ -860,10 +860,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        1040
+        272,
+        1216
       ],
-      "id": "2c63e176-485e-4376-a423-98ea014ac68e",
+      "id": "be71bb65-85c7-432d-9cfb-f0a8c4b560f7",
       "name": "Fetch ETHBTC Weekly",
       "continueOnFail": true
     },
@@ -875,10 +875,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        1504
+        272,
+        1680
       ],
-      "id": "9d05e786-3dca-417a-8ba1-e6a4e700f5d0",
+      "id": "9c896690-ec5a-449f-ace5-4b3119243c6a",
       "name": "Fetch Hashrate",
       "continueOnFail": true
     },
@@ -890,10 +890,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        1680
+        272,
+        1856
       ],
-      "id": "ede2fc68-61cf-4cd5-8d72-04a302a43d14",
+      "id": "8bc8b33c-4c8e-4255-9d71-deaf24f44a82",
       "name": "Fetch Liquidity",
       "continueOnFail": true
     },
@@ -904,10 +904,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1344,
-        1680
+        1552,
+        1856
       ],
-      "id": "81cf1749-d099-4b2c-82b9-31ff4570e243",
+      "id": "266278d4-1ceb-41f5-b7c8-ffaade9fc1dc",
       "name": "liquidity_trend"
     },
     {
@@ -999,10 +999,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        6256,
-        608
+        6464,
+        784
       ],
-      "id": "aa312d70-71c7-4ec0-b685-9cd729a3dbe0",
+      "id": "15c98c0d-6966-4321-ab2a-3105e1c87795",
       "name": "Append row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -1016,10 +1016,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1.1,
       "position": [
-        2160,
-        1456
+        2368,
+        1632
       ],
-      "id": "9bfff6c8-dd3c-457a-9b91-350d127e5509",
+      "id": "732a9d98-e7e9-4b5f-b568-df8c0d86fe0c",
       "name": "Think"
     },
     {
@@ -1027,10 +1027,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1.1,
       "position": [
-        3728,
-        416
+        3936,
+        592
       ],
-      "id": "9e4efe95-6117-4f01-8d69-59b9db905e39",
+      "id": "0f5475c5-3ce9-4559-bac0-f0bca3fa0d45",
       "name": "Think1"
     },
     {
@@ -1038,10 +1038,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1.1,
       "position": [
-        3712,
-        1440
+        3920,
+        1616
       ],
-      "id": "9508cebf-de97-4a36-8a90-77ba5cfc77fa",
+      "id": "a903172f-3b5d-43f1-9e68-96199ac873cc",
       "name": "Think2"
     },
     {
@@ -1049,10 +1049,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1.1,
       "position": [
-        4960,
-        832
+        5168,
+        1008
       ],
-      "id": "6157e1bc-e67c-4c2a-960a-68dffb773151",
+      "id": "88db3e77-8336-4c3e-b320-9cd04157e181",
       "name": "Think3"
     },
     {
@@ -1060,10 +1060,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1.1,
       "position": [
-        5840,
-        480
+        6048,
+        656
       ],
-      "id": "f20065b5-7c84-461b-9b25-06d1cbe099a1",
+      "id": "0f6d4ced-b3a4-4226-9002-53b5390cf1a6",
       "name": "Think4"
     },
     {
@@ -1077,7 +1077,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro \u201cwind\u201d implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  \u2022 Liquidity Fuel (USDT 30d trend)\n  \u2022 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  \u2022 Fed Funds (current; 3m and 6m change)  \n  \u2022 M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  \u2022 USD via dxy_proxy (if absent: \"USD: not provided\")  \n  \u2022 Gold (7d/30d/90d % changes)  \n  \u2022 WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates \u2191 while long yields \u2193).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
+              "content": "=You are a macro strategist for crypto.\n\nGoal: Produce a precise, compact macro brief + 2 short bullets on what this macro “wind” implies for BTC/ETH. This is a signal filter, not a trade call.\n\nInput JSON:\n{{ JSON.stringify($json, null, 2) }}\n\nRules:\n- Use ONLY numbers/fields present in the JSON; if a value is missing, write \"not provided\".\n- Prioritize numeric fields; IGNORE any long narrative strings under keys like \"message\", \"content\", \"summary\" unless they contain unique numeric facts.\n- Always assess: \n  • Liquidity Fuel (USDT 30d trend)\n  • 10Y Treasury (current; biggest % move among 30/90/180d and its direction)  \n  • Fed Funds (current; 3m and 6m change)  \n  • M2 (YoY; and whether 3m vs 6m shows acceleration or deceleration)  \n  • USD via dxy_proxy (if absent: \"USD: not provided\")  \n  • Gold (7d/30d/90d % changes)  \n  • WTI (latest; 7d and 30d % changes)\n- Call out any regime conflict (e.g., short rates ↑ while long yields ↓).\n- Round: rates to 2 decimals; % moves to 1 decimal. Plain language, no equations, no ticker spam.\n- Keep macro focus; do NOT give specific trade entries/targets/stops.\n- Max 220 words total.\n\nOutput EXACTLY this structure (no extra text/markdown):\n\ntitle: \"Macro Market Analysis\"\nmacroBrief:\n1) Rates & liquidity: [...]\n2) USD, Gold, Oil: [...]\n3) Risk tone: [...]\nriskAssetsCrypto:\n- BTC: [...]\n- ETH: [...]\nmacroBias: [\"risk-on\",\"risk-off\",\"mixed\"]\nhorizon: [\"days\",\"weeks\",\"months\"]"
             }
           ]
         },
@@ -1086,10 +1086,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        2064,
-        1248
+        2272,
+        1424
       ],
-      "id": "e88355ab-8581-4daf-99a0-ee7cd1e05c74",
+      "id": "976fe7dc-d85e-4750-a4f8-70b471c55590",
       "name": "Macro Market Analysis1",
       "credentials": {
         "googlePalmApi": {
@@ -1110,10 +1110,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        5488,
-        272
+        5696,
+        448
       ],
-      "id": "b583680b-35c2-44d1-a8dc-0078f5fba69b",
+      "id": "397e019a-c6f7-409d-a7df-bad94e37797f",
       "name": "HTTP Request"
     },
     {
@@ -1123,10 +1123,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        5744,
-        848
+        5952,
+        1024
       ],
-      "id": "6a0e8368-7683-4232-96e9-1c8f14d9bd5e",
+      "id": "4ae8fcc3-c0cf-4174-9b95-9f81b987dc1b",
       "name": "Code in JavaScript"
     },
     {
@@ -1134,10 +1134,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        5792,
-        608
+        6000,
+        784
       ],
-      "id": "c13583b1-44ba-40c6-827f-2b5b17355121",
+      "id": "935d25ed-3cdc-4a22-a837-da96d14ac770",
       "name": "Merge6"
     },
     {
@@ -1194,10 +1194,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        6000,
-        608
+        6208,
+        784
       ],
-      "id": "23196a21-d012-4215-a622-a00b945868c4",
+      "id": "861c87a4-7253-4961-8369-981d2ce5c539",
       "name": "Edit Fields",
       "executeOnce": true
     },
@@ -1208,10 +1208,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2720,
-        912
+        2928,
+        1088
       ],
-      "id": "0426dd68-2f79-4c95-b517-f71343f13fba",
+      "id": "c3b1a85d-bfa8-497d-96d7-6ff86a988fda",
       "name": "graham_value_check"
     },
     {
@@ -1221,10 +1221,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3248,
-        1824
+        3456,
+        2000
       ],
-      "id": "57476ee1-67dd-4817-ad6b-3be921f1d55d",
+      "id": "1ef88bc2-6c54-49ef-b00c-9b967c85a273",
       "name": "Fetch Memory"
     },
     {
@@ -1236,10 +1236,10 @@
       "type": "n8n-nodes-base.xml",
       "typeVersion": 1,
       "position": [
-        336,
-        624
+        544,
+        800
       ],
-      "id": "030c65e1-8da2-4309-850e-ec2bd31f6364",
+      "id": "09f2fcac-13d9-4dc0-b1c8-af541bb10f9b",
       "name": "XML"
     },
     {
@@ -1250,10 +1250,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        1900
+        272,
+        2080
       ],
-      "id": "dc2bde7c-9fd8-47c8-8f45-175d5ca5386d",
+      "id": "fe8d019e-4423-4b7c-a094-f8166fa51dab",
       "name": "Fetch Stablecoins",
       "continueOnFail": true
     },
@@ -1265,34 +1265,25 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        1800
+        272,
+        1984
       ],
-      "id": "a9bc6c32-2c3c-46e3-83c1-18849b1bf45b",
+      "id": "5d3ac318-c09d-4931-a23a-51d5c59984dc",
       "name": "Fetch Network Fees",
       "continueOnFail": true
     },
     {
       "parameters": {
         "url": "https://open-api-v4.coinglass.com/api/etf/bitcoin/flow-history",
-        "options": {
-          "headers": {
-            "parameter": [
-              {
-                "name": "accept",
-                "value": "application/json"
-              }
-            ]
-          }
-        }
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        64,
-        2000
+        272,
+        2176
       ],
-      "id": "bd6fa7d4-572c-493b-bc93-d81723f8ddfc",
+      "id": "6b0f8188-2600-446e-94e9-3a3f8f238140",
       "name": "Fetch ETF Flows",
       "continueOnFail": true
     }
@@ -1894,11 +1885,6 @@
         ]
       ]
     },
-    "Send a text message": {
-      "main": [
-        []
-      ]
-    },
     "Top & Bottom Watchout1": {
       "main": [
         [
@@ -2134,11 +2120,6 @@
         ]
       ]
     },
-    "Append row in sheet": {
-      "main": [
-        []
-      ]
-    },
     "Merge6": {
       "main": [
         [
@@ -2228,18 +2209,14 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
-    "executionOrder": "v1",
-    "timezone": "America/Bogota",
-    "callerPolicy": "workflowsFromSameOwner",
-    "availableInMCP": false
+    "executionOrder": "v1"
   },
-  "versionId": "4ce155a4-d62c-4163-af6d-72e5d24649ee",
+  "versionId": "5a327dc6-1ce7-48d1-ad38-0f1bae025be0",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "cd08d407a1e8137abf3f43af3ee7b7a9a766bf9fb6823062380e62bae765f6bd"
   },
-  "id": "bkRD1WLIigGRpU3f",
+  "id": "6Wsf8EY2uZAp6Oo1",
   "tags": []
 }
