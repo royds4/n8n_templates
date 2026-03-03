@@ -804,7 +804,7 @@
         "messages": {
           "values": [
             {
-              "content": "={{ JSON.stringify($json) }}"
+              "content": "={{ $('Generate Directory').first().json.output }}"
             }
           ]
         },
@@ -829,16 +829,217 @@
     },
     {
       "parameters": {
-        "command": "={{ \n(function() {\n  let script = '#!/bin/bash\\n';\n  let dir = $('Generate Directory').first().json.directory;\n  let baseDir = '/data/shared/' + dir;\n  script += 'mkdir -p ' + baseDir + '\\n';\n  \n  let entities = { tickers: [], macro_keywords: [] };\n  try {\n    let text = $('Analyze Entities AI').first().json.text || '{}';\n    text = text.replace(/```json/g, '').replace(/```/g, '');\n    entities = JSON.parse(text);\n  } catch(e) {}\n  \n  if (entities.tickers && entities.tickers.length > 0) {\n    let ticker = entities.tickers[0];\n    script += `curl -sL -o ${baseDir}/chart.png \"https://api.chart-img.com/v1/tradingview/advanced-chart?symbol=${ticker}\"\\n`;\n  }\n  \n  if (entities.macro_keywords && entities.macro_keywords.length > 0) {\n    let macro = encodeURIComponent(entities.macro_keywords[0]);\n    // Search DVIDS for video\n    // Assuming standard DVIDS API returns { results: [ { id: '...', image: '...', ... } ] } or something.\n    // Since the instruction didn't specify DVIDS response format perfectly, we'll try to find an mp4 URL in the response.\n    // Or perhaps the DVIDS API returns a 'url' to the asset page, not the raw mp4.\n    // Wait, the prompt says: \"query the DVIDS Search API... search the keyword, filter by type=video, sort by latest publish date...\"\n    // If it doesn't give a direct URL, we can use a dummy video or assume it has a 'video_url' field for simplicity, as we're proving the workflow structure.\n    // Better yet, just curl an API endpoint and parse an asset url.\n    script += `RES=$(curl -s \"https://api.dvidshub.net/search?q=${macro}&type=video&sort=date&max_results=1\")\\n`;\n    // Let's just assume the video URL is extracted safely with jq if available\n    script += `VID_URL=$(echo $RES | jq -r '.results[0].video_url // empty')\\n`;\n    script += `if [ -n \"$VID_URL\" ]; then curl -sL -o ${baseDir}/dvids.mp4 \"$VID_URL\"; else touch ${baseDir}/dvids.mp4; fi\\n`;\n  }\n  return script;\n})()\n}}"
+        "jsCode": "\nlet parsed = { tickers: [], macro_keywords: [] };\ntry {\n  let text = $input.first().json.text || '{}';\n  text = text.replace(/```json/g, '').replace(/```/g, '');\n  parsed = JSON.parse(text);\n} catch(e) {}\n\nreturn {\n  json: {\n    tickers: parsed.tickers || [],\n    macro_keywords: parsed.macro_keywords || [],\n    hasTickers: (parsed.tickers || []).length > 0,\n    hasMacro: (parsed.macro_keywords || []).length > 0\n  }\n};\n"
       },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
+      "id": "c7ee40c4-97ca-4298-9434-773fd46c4b1a",
+      "name": "Parse AI Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
         -800,
         1856
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "f31a62c3-cea3-4cef-a64f-383bd7497d2a",
+              "leftValue": "={{ $('Parse AI Output').first().json.hasTickers }}",
+              "rightValue": "={{ true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d216d35b-d714-4667-80bf-88a63045a484",
+      "name": "If (hasTickers)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 3,
+      "position": [
+        -600,
+        1856
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.chart-img.com/v1/tradingview/advanced-chart",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $('Parse AI Output').first().json.tickers[0] }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "f3e01c70-0e4f-4962-89b7-64e53873027f",
+      "name": "Download Chart",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -400,
+        1700
       ],
-      "id": "e2222222-3333-4444-5555-666666666666",
-      "name": "Fetch Dynamic Assets"
+      "retryOnFail": false,
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/shared/{{$('Generate Directory').first().json.directory}}/chart.png",
+        "dataPropertyName": "data",
+        "options": {}
+      },
+      "id": "0cf6e32e-e15e-4afd-8381-4a8a69cc5600",
+      "name": "Save Chart",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        1700
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "52adc2d4-bb28-4e4f-83f1-9a9d9df63cc8",
+              "leftValue": "={{ $('Parse AI Output').first().json.hasMacro }}",
+              "rightValue": "={{ true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0e5c5a8b-94c1-4ff1-9014-96042ddfa49f",
+      "name": "If (hasMacro)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 3,
+      "position": [
+        0,
+        1856
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.dvidshub.net/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $('Parse AI Output').first().json.macro_keywords[0] }}"
+            },
+            {
+              "name": "type",
+              "value": "video"
+            },
+            {
+              "name": "sort",
+              "value": "date"
+            },
+            {
+              "name": "max_results",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "0314fb00-5ec5-40ba-a77a-97b4781c45ee",
+      "name": "Search DVIDS JSON",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        200,
+        1700
+      ],
+      "retryOnFail": false,
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.results[0].video_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "44b2842a-9256-4ee2-99c3-4874ec79af30",
+      "name": "Download DVIDS Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        400,
+        1700
+      ],
+      "retryOnFail": false,
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/shared/{{$('Generate Directory').first().json.directory}}/dvids.mp4",
+        "dataPropertyName": "data",
+        "options": {}
+      },
+      "id": "94ffed21-daf6-45f5-8c86-37e900ebc59e",
+      "name": "Save DVIDS",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        600,
+        1700
+      ]
     }
   ],
   "pinData": {},
@@ -847,7 +1048,7 @@
       "main": [
         [
           {
-            "node": "Analyze Entities AI",
+            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           }
@@ -982,7 +1183,7 @@
       "main": [
         [
           {
-            "node": "Execute Command2",
+            "node": "Analyze Entities AI",
             "type": "main",
             "index": 0
           }
@@ -1257,18 +1458,109 @@
       "main": [
         [
           {
-            "node": "Fetch Dynamic Assets",
+            "node": "Parse AI Output",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Fetch Dynamic Assets": {
+    "Parse AI Output": {
       "main": [
         [
           {
-            "node": "Code in JavaScript",
+            "node": "If (hasTickers)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If (hasTickers)": {
+      "main": [
+        [
+          {
+            "node": "Download Chart",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If (hasMacro)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Chart": {
+      "main": [
+        [
+          {
+            "node": "Save Chart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Chart": {
+      "main": [
+        [
+          {
+            "node": "If (hasMacro)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If (hasMacro)": {
+      "main": [
+        [
+          {
+            "node": "Search DVIDS JSON",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search DVIDS JSON": {
+      "main": [
+        [
+          {
+            "node": "Download DVIDS Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download DVIDS Video": {
+      "main": [
+        [
+          {
+            "node": "Save DVIDS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save DVIDS": {
+      "main": [
+        [
+          {
+            "node": "Execute Command2",
             "type": "main",
             "index": 0
           }
