@@ -792,6 +792,123 @@
       ],
       "id": "a1b2c3d4-e5f6-7890-1234-56789abcdef0",
       "name": "Extract ElevenLabs Payload"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-pro-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-pro-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ JSON.stringify($json) }}"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "<role>\nYou are an expert quantitative crypto analyst and natural language processing specialist.\n</role>\n\n<rules>\n- You must output ONLY a valid JSON object.\n- Do not wrap the JSON in markdown blocks like ```json.\n- You must correctly identify cryptocurrency tickers (e.g., BTC, ETH, SOL) and macroeconomic keywords (e.g., Federal Reserve, inflation, interest rates).\n</rules>\n\n<context>\nThe user will provide you with the incoming news script text. Your task is to extract these specific entities and categorize them strictly into a JSON format.\n</context>\n\n<planning_process>\n1. Scan the text for cryptocurrency ticker symbols.\n2. Scan the text for macro-economic keywords.\n3. Construct the JSON output.\n</planning_process>\n\n<task>\nFormat your output exactly as this JSON structure:\n{\n  \"tickers\": [\"BTC\", \"ETH\", ...],\n  \"macro_keywords\": [\"Federal Reserve\", \"inflation\", ...]\n}\n</task>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1000,
+        1856
+      ],
+      "id": "a1111111-b222-c333-d444-e55555555555",
+      "name": "Analyze Entities AI",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3WcjGrEmVOgnUbOk",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "boolean",
+        "value1": "={{true}}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "={{JSON.parse($json.text).tickers.length > 0}}",
+              "output": 0
+            },
+            {
+              "value2": "={{JSON.parse($json.text).macro_keywords.length > 0}}",
+              "output": 1
+            }
+          ]
+        },
+        "fallbackOutput": -1
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -800,
+        1856
+      ],
+      "id": "e2222222-3333-4444-5555-666666666666",
+      "name": "Entity Router"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.chart-img.com/v1/tradingview/advanced-chart",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{JSON.parse($('Analyze Entities AI').item.json.text).tickers[0]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -600,
+        1756
+      ],
+      "id": "f3333333-4444-5555-6666-777777777777",
+      "name": "Fetch Chart-img"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.dvidshub.net/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{JSON.parse($('Analyze Entities AI').item.json.text).macro_keywords[0]}}"
+            },
+            {
+              "name": "type",
+              "value": "video"
+            },
+            {
+              "name": "sort",
+              "value": "date"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -600,
+        1956
+      ],
+      "id": "c4444444-5555-6666-7777-888888888888",
+      "name": "Fetch DVIDS Video"
     }
   ],
   "pinData": {},
@@ -800,7 +917,7 @@
       "main": [
         [
           {
-            "node": "Code in JavaScript",
+            "node": "Analyze Entities AI",
             "type": "main",
             "index": 0
           }
@@ -1200,6 +1317,57 @@
         [
           {
             "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Entities AI": {
+      "main": [
+        [
+          {
+            "node": "Entity Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entity Router": {
+      "main": [
+        [
+          {
+            "node": "Fetch Chart-img",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch DVIDS Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Chart-img": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch DVIDS Video": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           }
