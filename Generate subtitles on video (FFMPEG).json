@@ -563,70 +563,6 @@
     },
     {
       "parameters": {
-        "url": "https://www.googleapis.com/youtube/v3/search",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "youTubeOAuth2Api",
-        "sendQuery": true,
-        "specifyQuery": "json",
-        "jsonQuery": "={\n  \"part\": \"snippet\",\n  \"maxResults\": \"10\",\n  \"q\": \"'oddly satisfying'\",\n  \"type\": \"video\",\n  \"regionCode\":\"US\",\n  \"videoDuration\": \"short\",\n  \"videoLicense\": \"creativeCommon\",\n  \"order\": \"viewCount\",\n  \"publishedAfter\": \"{{$now.minus({days: 1}).toFormat('yyyy-MM-dd')}}T01:00:00Z\"\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        -688,
-        512
-      ],
-      "id": "5de68c23-6a62-46fc-a7fe-e1895d64d7f5",
-      "name": "HTTP Request2",
-      "credentials": {
-        "youTubeOAuth2Api": {
-          "id": "KymFSwgJoj33t08y",
-          "name": "YouTube account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Validates that we have items before trying to map them\nif (items[0].json.items && items[0].json.items.length > 0) {\n  const videoIds = items[0].json.items.map(item => item.id.videoId);\n  \n  return {\n    json: {\n      VideoIds: videoIds\n    }\n  };\n} else {\n  // Failsafe if YouTube returns no results\n  return {\n    json: {\n      VideoIds: []\n    }\n  };\n}"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -432,
-        496
-      ],
-      "id": "dab7efa7-8409-4666-85a9-96480e4857e7",
-      "name": "Code in JavaScript3"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://host.docker.internal:5227/api/Downloader/process-batch",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "VideoIds",
-              "value": "={{ $json.VideoIds }}"
-            }
-          ]
-        },
-        "options": {
-          "allowUnauthorizedCerts": true
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        -208,
-        496
-      ],
-      "id": "19f6cb39-bc19-4b28-bfe7-99fcde7a286c",
-      "name": "HTTP Request3"
-    },
-    {
-      "parameters": {
         "command": "=ffmpeg  -i '/data/shared/Full{{$('Code in JavaScript').first().json.signal }}.mp4' \\\n-vf \"scale=1080:835:force_original_aspect_ratio=increase,crop=1080:835:0:(ih-835)/4\" \\\n-c:v libx264 -c:a copy \\\n'/data/shared/{{ $('Generate Directory').first().json.directory }}/outputOllie.mp4' -y"
       },
       "type": "n8n-nodes-base.executeCommand",
@@ -803,6 +739,129 @@
           "name": "Google Sheets account"
         }
       }
+    },
+    {
+      "parameters": {
+        "url": "https://api.pexels.com/videos/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "YOUR_API_KEY"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $('Code in JavaScript1').first().json.visual_keywords[0] }}"
+            },
+            {
+              "name": "orientation",
+              "value": "portrait"
+            },
+            {
+              "name": "size",
+              "value": "medium"
+            },
+            {
+              "name": "per_page",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "e445037e-40af-4b8c-8f19-b221d603e911",
+      "name": "Pexels Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -688,
+        512
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "splitOutItems",
+        "fieldToSplitOut": "={{ $json.videos[0].video_files.filter(v => v.file_type === 'video/mp4').sort((a,b) => b.width - a.width) }}",
+        "options": {}
+      },
+      "id": "item-lists-extract-node-uuid",
+      "name": "Extract Pexels Video",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.link }}",
+        "responseFormat": "file",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "e7b0f69a-6a6c-4f9e-a89f-24d1a3e9c70a",
+      "name": "Download Pexels Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -208,
+        496
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://api.chart-img.com/v1/tradingview/advanced-chart",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $('Code in JavaScript1').first().json.primary_ticker }}"
+            },
+            {
+              "name": "interval",
+              "value": "1D"
+            },
+            {
+              "name": "theme",
+              "value": "dark"
+            },
+            {
+              "name": "width",
+              "value": "1080"
+            },
+            {
+              "name": "height",
+              "value": "960"
+            }
+          ]
+        },
+        "responseFormat": "file",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "c3a1b5c2-1e9a-4c8d-b7f2-a083d6a4c2b9",
+      "name": "Chart-IMG Download",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -688,
+        672
+      ],
+      "continueOnFail": true
     }
   ],
   "pinData": {},
@@ -823,11 +882,6 @@
         [
           {
             "node": "Message a model",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "HTTP Request2",
             "type": "main",
             "index": 0
           },
@@ -1015,6 +1069,16 @@
             "node": "Generate Directory",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Pexels Search",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Chart-IMG Download",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -1081,39 +1145,6 @@
             "node": "Append row in sheet",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request2": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code in JavaScript3": {
-      "main": [
-        [
-          {
-            "node": "HTTP Request3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request3": {
-      "main": [
-        [
-          {
-            "node": "Merge6",
-            "type": "main",
-            "index": 1
           }
         ]
       ]
@@ -1200,6 +1231,28 @@
         [
           {
             "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pexels Search": {
+      "main": [
+        [
+          {
+            "node": "Extract Pexels Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Pexels Video": {
+      "main": [
+        [
+          {
+            "node": "Download Pexels Video",
             "type": "main",
             "index": 0
           }
