@@ -335,7 +335,7 @@
     {
       "parameters": {
         "executeOnce": "={{ true }}",
-        "command": "=#!/bin/bash\nDIR=\"/data/shared/{{ $('Generate Directory').first().json.directory }}\"\nTOP_LOOP=\"/data/shared/Tom Tucker News.mp4\"\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.mp4\"\nVOICEOVER=\"$DIR/TomTuckerAudioFull.mp3\"\nCAPTIONS=\"$DIR/subtitles.ass\"\nOUTPUT=\"$DIR/final.mp4\"\n\nffmpeg -y -stream_loop -1 -i \"$TOP_LOOP\" -stream_loop -1 -i \"$BOTTOM_DYNAMIC\" -i \"$VOICEOVER\" -filter_complex \"[0:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vtop]; [1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vbot]; [vtop][vbot]vstack=inputs=2:shortest=1[stacked]; [stacked]subtitles=${CAPTIONS}:force_style='FontName=Arial,FontSize=24,Alignment=2,OutlineColour=&H100000000,MarginV=100'[final_video]\" -map \"[final_video]\" -map 2:a -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -shortest \"$OUTPUT\"\n"
+        "command": "=#!/bin/bash \nDIR=\"/data/shared/{{ $('Generate Directory').first().json.directory }}\" \nTOP_LOOP=\"/data/shared/Tom Tucker News.mp4\" \nVOICEOVER=\"$DIR/TomTuckerAudioFull.mp3\" \nCAPTIONS=\"$DIR/subtitles.ass\" \nOUTPUT=\"$DIR/final.mp4\" \n\nif [ -f \"$DIR/bottom_dynamic.mp4\" ]; then\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.mp4\"\nBOTTOM_FLAG=\"-stream_loop -1\"\nelse\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.png\"\nBOTTOM_FLAG=\"-loop 1\"\nfi\n\nffmpeg -y -stream_loop -1 -i \"$TOP_LOOP\" $BOTTOM_FLAG -i \"$BOTTOM_DYNAMIC\" -i \"$VOICEOVER\" -filter_complex \"[0:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vtop]; [1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vbot]; [vtop][vbot]vstack=inputs=2:shortest=1[stacked]; [stacked]subtitles=${CAPTIONS}:force_style='FontName=Arial,FontSize=24,Alignment=2,OutlineColour=&H100000000,MarginV=100'[final_video]\" -map \"[final_video]\" -map 2:a -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -shortest \"$OUTPUT\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -906,7 +906,7 @@
     {
       "parameters": {
         "operation": "write",
-        "fileName": "=/data/shared/{{ $('Generate Directory').first().json.directory }}/bottom_dynamic.mp4",
+        "fileName": "=/data/shared/{{ $('Generate Directory').first().json.directory }}/bottom_dynamic.{{ $binary.data.fileExtension }}",
         "dataPropertyName": "data",
         "options": {}
       },
