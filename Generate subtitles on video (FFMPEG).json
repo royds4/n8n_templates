@@ -227,46 +227,6 @@
     },
     {
       "parameters": {
-        "command": "=ffmpeg -stream_loop -1 -i '/data/shared/Tom Tucker News.mp4' \\\n-i '/data/shared/{{ $('Generate Directory').first().json.directory }}/TomTuckerAudio.mp3' \\\n-vf \"scale=1080:835:force_original_aspect_ratio=increase,crop=1080:835:0:(ih-835)/4\" \\\n-map 0:v:0 -map 1:a:0 \\\n-c:v libx264 -c:a aac -shortest \\\n'/data/shared/{{ $('Generate Directory').first().json.directory }}/output.mp4' -y"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        432,
-        -48
-      ],
-      "id": "d4fee5ec-4085-4657-9f56-4467adadff6a",
-      "name": "Execute Command"
-    },
-    {
-      "parameters": {
-        "command": "=ffmpeg -i '/data/shared/{{ $('Generate Directory').first().json.directory }}/output_joined.mp4' -i '/data/shared/{{ $('Generate Directory').first().json.directory }}/output_background.mp4' -filter_complex \\\n\"[0:v]scale=1080:-2[v0]; \\\n [1:v]scale=1080:-2[v1]; \\\n [v0]pad=iw:ih+250:0:0:black[v0_padded]; \\\n [v0_padded][v1]vstack=inputs=2[v_stacked]; \\\n [v_stacked]scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black[v_final];\" \\\n-map \"[v_final]\" -map 0:a \\\n-c:v libx264 -preset slow -crf 7 -c:a aac -b:a 192k \\\n-r 30 '/data/shared/{{ $('Generate Directory').first().json.directory }}/output_reel.mp4'"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        1264,
-        240
-      ],
-      "id": "640d09be-901b-4091-a5f2-68b22b1e1156",
-      "name": "Execute Command2"
-    },
-    {
-      "parameters": {
-        "command": "=#!/bin/bash\n\n# 1. SETUP PATHS\nfile_path=\"{{$('HTTP Request3').first().json.path}}\"\nfilename=$(basename \"$(echo \"$file_path\" | tr '\\\\' '/')\")\n\nSOURCE=\"/data/shared/ViralVideos/$filename\"\nREFERENCE=\"/data/shared/{{ $('Generate Directory').first().json.directory }}/output_joined.mp4\"\nOUTPUT=\"/data/shared/{{ $('Generate Directory').first().json.directory }}/output_background.mp4\"\n\n# 2. GET DURATION (The Robust Fix)\n# Instead of relying on -shortest, we ask ffprobe for the exact duration of the reference video.\n# This prevents the \"infinite loop\" bug entirely.\nDURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"$REFERENCE\")\n\n# 3. RUN FFMPEG FAST\n# -t \"$DURATION\": Explicitly stops exactly when the reference ends.\n# -preset ultrafast: Trades a tiny bit of file size for massive encoding speed (essential for n8n).\nffmpeg -stream_loop -1 -i \"$SOURCE\" \\\n-t \"$DURATION\" \\\n-map 0:v \\\n-vf \"scale=1080:835:force_original_aspect_ratio=increase,crop=1080:835:0:(ih-835)/4\" \\\n-c:v libx264 -preset ultrafast -an \"$OUTPUT\" -y"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        1088,
-        240
-      ],
-      "id": "1447abe3-f6a1-4878-a2a4-cae56f4e1857",
-      "name": "Execute Command3",
-      "executeOnce": false
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "=http://whisper:9000/asr?encode=true&task=transcribe&vad_filter=false&word_timestamps=true&output=json",
         "sendQuery": true,
@@ -560,30 +520,6 @@
       ],
       "id": "24d9712c-f89d-4415-acd1-213de6fae1d1",
       "name": "Merge1"
-    },
-    {
-      "parameters": {
-        "command": "=ffmpeg  -i '/data/shared/Full{{$('Code in JavaScript').first().json.signal }}.mp4' \\\n-vf \"scale=1080:835:force_original_aspect_ratio=increase,crop=1080:835:0:(ih-835)/4\" \\\n-c:v libx264 -c:a copy \\\n'/data/shared/{{ $('Generate Directory').first().json.directory }}/outputOllie.mp4' -y"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        432,
-        192
-      ],
-      "id": "30a607e9-a375-4b88-800a-0db03f2b3617",
-      "name": "Execute Command6"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [
-        592,
-        80
-      ],
-      "id": "e2d0033e-880b-4324-9c0c-9c819ab8213a",
-      "name": "Merge4"
     },
     {
       "parameters": {
@@ -1167,16 +1103,6 @@
       "main": [
         [
           {
-            "node": "Execute Command",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Execute Command6",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Execute Command8",
             "type": "main",
             "index": 0
@@ -1200,39 +1126,6 @@
         [
           {
             "node": "Execute Command1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Command": {
-      "main": [
-        [
-          {
-            "node": "Merge4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Command2": {
-      "main": [
-        [
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Execute Command3": {
-      "main": [
-        [
-          {
-            "node": "Execute Command2",
             "type": "main",
             "index": 0
           }
@@ -1365,28 +1258,6 @@
         [
           {
             "node": "Append row in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Command6": {
-      "main": [
-        [
-          {
-            "node": "Merge4",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Merge4": {
-      "main": [
-        [
-          {
-            "node": "Execute Command7",
             "type": "main",
             "index": 0
           }
