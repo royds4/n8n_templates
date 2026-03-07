@@ -335,7 +335,7 @@
     {
       "parameters": {
         "executeOnce": "={{ true }}",
-        "command": "=#!/bin/bash \nDIR=\"/data/shared/{{ $('Generate Directory').first().json.directory }}\" \nTOP_LOOP=\"/data/shared/Tom Tucker News.mp4\" \nVOICEOVER=\"$DIR/TomTuckerAudioFull.mp3\" \nCAPTIONS=\"$DIR/subtitles.ass\" \nOUTPUT=\"$DIR/final.mp4\" \n\nif [ -f \"$DIR/bottom_dynamic.mp4\" ]; then\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.mp4\"\nBOTTOM_FLAG=\"-stream_loop -1\"\nelse\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.png\"\nBOTTOM_FLAG=\"-loop 1\"\nfi\n\nffmpeg -y -stream_loop -1 -i \"$TOP_LOOP\" $BOTTOM_FLAG -i \"$BOTTOM_DYNAMIC\" -i \"$VOICEOVER\" -filter_complex \"[0:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vtop]; [1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vbot]; [vtop][vbot]vstack=inputs=2:shortest=1[stacked]; [stacked]subtitles=${CAPTIONS}:force_style='FontName=Arial,FontSize=24,Alignment=2,OutlineColour=&H100000000,MarginV=100'[final_video]\" -map \"[final_video]\" -map 2:a -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -shortest \"$OUTPUT\"\n"
+        "command": "=#!/bin/bash \nDIR=\"/data/shared/{{ $('Generate Directory').first().json.directory }}\" \nTOP_LOOP=\"/data/shared/Tom Tucker News.mp4\" \nVOICEOVER=\"$DIR/TomTuckerAudioFull.mp3\" \nCAPTIONS=\"$DIR/subtitles.ass\" \nOUTPUT=\"$DIR/final.mp4\" \n\nif [ -f \"$DIR/bottom_dynamic.mp4\" ]; then\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.mp4\"\nBOTTOM_FLAG=\"-stream_loop -1\"\nelse\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.png\"\nBOTTOM_FLAG=\"-loop 1\"\nfi\n\nffmpeg -y -stream_loop -1 -i \"$TOP_LOOP\" $BOTTOM_FLAG -i \"$BOTTOM_DYNAMIC\" -i \"$VOICEOVER\" -filter_complex \"[0:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vtop]; [1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vbot]; [vtop][vbot]vstack=inputs=2:shortest=1[stacked]; [stacked]subtitles=${CAPTIONS}:force_style='FontName=Arial,FontSize=24,PrimaryColour={{ $('Merge Sentiment').first().json.sub_color }},Alignment=2,OutlineColour=&H100000000,MarginV=100'[final_video]\" -map \"[final_video]\" -map 2:a -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -shortest \"$OUTPUT\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -984,6 +984,116 @@
         -500,
         900
       ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.market_sentiment }}",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": "bullish"
+            },
+            {
+              "operation": "equal",
+              "value2": "bearish"
+            },
+            {
+              "operation": "equal",
+              "value2": "neutral"
+            }
+          ]
+        }
+      },
+      "id": "1f02c88c-f667-44d5-9500-bdc9ea7ca17a",
+      "name": "Sentiment Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        -350,
+        -50
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "51cf72be-cec4-4cf9-bfdf-ac3b8f611b72",
+              "name": "sub_color",
+              "value": "&H0000FF00",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0871bd98-e7ce-466a-8d75-e3728903a715",
+      "name": "Set Bullish Color",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -150,
+        -150
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c813d16b-358e-4b2b-b81e-32883f14f998",
+              "name": "sub_color",
+              "value": "&H000000FF",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "acb1d48c-188a-4dfa-a009-17ef9f475024",
+      "name": "Set Bearish Color",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -150,
+        -50
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "22ddead2-81d6-4d61-9477-0bb693a51fee",
+              "name": "sub_color",
+              "value": "&H00FFFFFF",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6392a215-3104-43d3-aff7-31b144bdc5c2",
+      "name": "Set Neutral Color",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -150,
+        50
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "8105d6aa-c1f0-4395-865a-5cc9aa82e19c",
+      "name": "Merge Sentiment",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        0,
+        -50
+      ]
     }
   ],
   "pinData": {},
@@ -1188,12 +1298,7 @@
       "main": [
         [
           {
-            "node": "Generate Directory",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Pexels Search",
+            "node": "Sentiment Switch",
             "type": "main",
             "index": 0
           }
@@ -1479,6 +1584,81 @@
         [
           {
             "node": "Chart-IMG Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentiment Switch": {
+      "main": [
+        [
+          {
+            "node": "Set Bullish Color",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Bearish Color",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Neutral Color",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Set Bullish Color": {
+      "main": [
+        [
+          {
+            "node": "Merge Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Bearish Color": {
+      "main": [
+        [
+          {
+            "node": "Merge Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Neutral Color": {
+      "main": [
+        [
+          {
+            "node": "Merge Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Sentiment": {
+      "main": [
+        [
+          {
+            "node": "Generate Directory",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pexels Search",
             "type": "main",
             "index": 0
           }
