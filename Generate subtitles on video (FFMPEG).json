@@ -227,46 +227,6 @@
     },
     {
       "parameters": {
-        "command": "=ffmpeg -stream_loop -1 -i '/data/shared/Tom Tucker News.mp4' \\\n-i '/data/shared/{{ $('Generate Directory').first().json.directory }}/TomTuckerAudio.mp3' \\\n-vf \"scale=1080:835:force_original_aspect_ratio=increase,crop=1080:835:0:(ih-835)/4\" \\\n-map 0:v:0 -map 1:a:0 \\\n-c:v libx264 -c:a aac -shortest \\\n'/data/shared/{{ $('Generate Directory').first().json.directory }}/output.mp4' -y"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        432,
-        -48
-      ],
-      "id": "d4fee5ec-4085-4657-9f56-4467adadff6a",
-      "name": "Execute Command"
-    },
-    {
-      "parameters": {
-        "command": "=ffmpeg -i '/data/shared/{{ $('Generate Directory').first().json.directory }}/output_joined.mp4' -i '/data/shared/{{ $('Generate Directory').first().json.directory }}/output_background.mp4' -filter_complex \\\n\"[0:v]scale=1080:-2[v0]; \\\n [1:v]scale=1080:-2[v1]; \\\n [v0]pad=iw:ih+250:0:0:black[v0_padded]; \\\n [v0_padded][v1]vstack=inputs=2[v_stacked]; \\\n [v_stacked]scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black[v_final];\" \\\n-map \"[v_final]\" -map 0:a \\\n-c:v libx264 -preset slow -crf 7 -c:a aac -b:a 192k \\\n-r 30 '/data/shared/{{ $('Generate Directory').first().json.directory }}/output_reel.mp4'"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        1264,
-        240
-      ],
-      "id": "640d09be-901b-4091-a5f2-68b22b1e1156",
-      "name": "Execute Command2"
-    },
-    {
-      "parameters": {
-        "command": "=#!/bin/bash\n\n# 1. SETUP PATHS\nfile_path=\"{{$('HTTP Request3').first().json.path}}\"\nfilename=$(basename \"$(echo \"$file_path\" | tr '\\\\' '/')\")\n\nSOURCE=\"/data/shared/ViralVideos/$filename\"\nREFERENCE=\"/data/shared/{{ $('Generate Directory').first().json.directory }}/output_joined.mp4\"\nOUTPUT=\"/data/shared/{{ $('Generate Directory').first().json.directory }}/output_background.mp4\"\n\n# 2. GET DURATION (The Robust Fix)\n# Instead of relying on -shortest, we ask ffprobe for the exact duration of the reference video.\n# This prevents the \"infinite loop\" bug entirely.\nDURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"$REFERENCE\")\n\n# 3. RUN FFMPEG FAST\n# -t \"$DURATION\": Explicitly stops exactly when the reference ends.\n# -preset ultrafast: Trades a tiny bit of file size for massive encoding speed (essential for n8n).\nffmpeg -stream_loop -1 -i \"$SOURCE\" \\\n-t \"$DURATION\" \\\n-map 0:v \\\n-vf \"scale=1080:835:force_original_aspect_ratio=increase,crop=1080:835:0:(ih-835)/4\" \\\n-c:v libx264 -preset ultrafast -an \"$OUTPUT\" -y"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        1088,
-        240
-      ],
-      "id": "1447abe3-f6a1-4878-a2a4-cae56f4e1857",
-      "name": "Execute Command3",
-      "executeOnce": false
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "=http://whisper:9000/asr?encode=true&task=transcribe&vad_filter=false&word_timestamps=true&output=json",
         "sendQuery": true,
@@ -335,7 +295,7 @@
     {
       "parameters": {
         "executeOnce": "={{ true }}",
-        "command": "=#!/bin/bash\nDIR=\"/data/shared/{{ $('Generate Directory').first().json.directory }}\"\nTOP_LOOP=\"/data/shared/Tom Tucker News.mp4\"\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.mp4\"\nVOICEOVER=\"$DIR/TomTuckerAudioFull.mp3\"\nCAPTIONS=\"$DIR/subtitles.ass\"\nOUTPUT=\"$DIR/final.mp4\"\n\nffmpeg -y -stream_loop -1 -i \"$TOP_LOOP\" -stream_loop -1 -i \"$BOTTOM_DYNAMIC\" -i \"$VOICEOVER\" -filter_complex \"[0:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vtop]; [1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vbot]; [vtop][vbot]vstack=inputs=2:shortest=1[stacked]; [stacked]subtitles=${CAPTIONS}:force_style='FontName=Arial,FontSize=24,Alignment=2,OutlineColour=&H100000000,MarginV=100'[final_video]\" -map \"[final_video]\" -map 2:a -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -shortest \"$OUTPUT\"\n"
+        "command": "=#!/bin/bash \nDIR=\"/data/shared/{{ $('Generate Directory').first().json.directory }}\" \nTOP_LOOP=\"/data/shared/Tom Tucker News.mp4\" \nVOICEOVER=\"$DIR/TomTuckerAudioFull.mp3\" \nCAPTIONS=\"$DIR/subtitles.ass\" \nOUTPUT=\"$DIR/final.mp4\" \n\nif [ -f \"$DIR/bottom_dynamic.mp4\" ]; then\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.mp4\"\nBOTTOM_FLAG=\"-stream_loop -1\"\nelse\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.png\"\nBOTTOM_FLAG=\"-loop 1\"\nfi\n\nffmpeg -y -stream_loop -1 -i \"$TOP_LOOP\" $BOTTOM_FLAG -i \"$BOTTOM_DYNAMIC\" -i \"$VOICEOVER\" -filter_complex \"[0:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vtop]; [1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vbot]; [vtop][vbot]vstack=inputs=2:shortest=1[stacked]; [stacked]subtitles=${CAPTIONS}:force_style='FontName=Arial,FontSize=24,PrimaryColour={{ $('Merge Sentiment').first().json.sub_color }},Alignment=2,OutlineColour=&H100000000,MarginV=100'[final_video]\" -map \"[final_video]\" -map 2:a -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -shortest \"$OUTPUT\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -560,30 +520,6 @@
       ],
       "id": "24d9712c-f89d-4415-acd1-213de6fae1d1",
       "name": "Merge1"
-    },
-    {
-      "parameters": {
-        "command": "=ffmpeg  -i '/data/shared/Full{{$('Code in JavaScript').first().json.signal }}.mp4' \\\n-vf \"scale=1080:835:force_original_aspect_ratio=increase,crop=1080:835:0:(ih-835)/4\" \\\n-c:v libx264 -c:a copy \\\n'/data/shared/{{ $('Generate Directory').first().json.directory }}/outputOllie.mp4' -y"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        432,
-        192
-      ],
-      "id": "30a607e9-a375-4b88-800a-0db03f2b3617",
-      "name": "Execute Command6"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [
-        592,
-        80
-      ],
-      "id": "e2d0033e-880b-4324-9c0c-9c819ab8213a",
-      "name": "Merge4"
     },
     {
       "parameters": {
@@ -828,7 +764,7 @@
           "parameters": [
             {
               "name": "symbol",
-              "value": "={{ $('Code in JavaScript1').first().json.primary_ticker }}"
+              "value": "={{ $json.ticker }}"
             },
             {
               "name": "interval",
@@ -858,8 +794,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -688,
-        672
+        -250,
+        800
       ],
       "continueOnFail": true
     },
@@ -906,7 +842,7 @@
     {
       "parameters": {
         "operation": "write",
-        "fileName": "=/data/shared/{{ $('Generate Directory').first().json.directory }}/bottom_dynamic.mp4",
+        "fileName": "=/data/shared/{{ $('Generate Directory').first().json.directory }}/bottom_dynamic.{{ $binary.data.fileExtension }}",
         "dataPropertyName": "data",
         "options": {}
       },
@@ -917,6 +853,182 @@
       "position": [
         1120,
         240
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Code in JavaScript1').first().json.primary_ticker }}",
+              "value2": "NULL"
+            }
+          ]
+        }
+      },
+      "id": "4390a93a-b345-4a6c-aa36-a2ee25984f15",
+      "name": "Check Ticker Null",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        750
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0c96159c-ccfe-4357-afae-7b6481363529",
+              "name": "ticker",
+              "value": "SPY",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "796f006b-b2c1-4a5b-b5d7-0ce3cd2488c1",
+      "name": "Set Ticker SPY",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -500,
+        750
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "492b0c23-4b9f-4379-8e86-51b72fc1e633",
+              "name": "ticker",
+              "value": "={{ $('Code in JavaScript1').first().json.primary_ticker }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f44cfc4b-3ace-4de8-8264-69b1eaae8f5b",
+      "name": "Keep Ticker Original",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -500,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.market_sentiment }}",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": "bullish"
+            },
+            {
+              "operation": "equal",
+              "value2": "bearish"
+            },
+            {
+              "operation": "equal",
+              "value2": "neutral"
+            }
+          ]
+        }
+      },
+      "id": "1f02c88c-f667-44d5-9500-bdc9ea7ca17a",
+      "name": "Sentiment Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        -350,
+        -50
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "51cf72be-cec4-4cf9-bfdf-ac3b8f611b72",
+              "name": "sub_color",
+              "value": "&H0000FF00",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0871bd98-e7ce-466a-8d75-e3728903a715",
+      "name": "Set Bullish Color",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -150,
+        -150
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c813d16b-358e-4b2b-b81e-32883f14f998",
+              "name": "sub_color",
+              "value": "&H000000FF",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "acb1d48c-188a-4dfa-a009-17ef9f475024",
+      "name": "Set Bearish Color",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -150,
+        -50
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "22ddead2-81d6-4d61-9477-0bb693a51fee",
+              "name": "sub_color",
+              "value": "&H00FFFFFF",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6392a215-3104-43d3-aff7-31b144bdc5c2",
+      "name": "Set Neutral Color",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -150,
+        50
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "8105d6aa-c1f0-4395-865a-5cc9aa82e19c",
+      "name": "Merge Sentiment",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        0,
+        -50
       ]
     }
   ],
@@ -991,16 +1103,6 @@
       "main": [
         [
           {
-            "node": "Execute Command",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Execute Command6",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Execute Command8",
             "type": "main",
             "index": 0
@@ -1024,39 +1126,6 @@
         [
           {
             "node": "Execute Command1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Command": {
-      "main": [
-        [
-          {
-            "node": "Merge4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Command2": {
-      "main": [
-        [
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Execute Command3": {
-      "main": [
-        [
-          {
-            "node": "Execute Command2",
             "type": "main",
             "index": 0
           }
@@ -1122,12 +1191,7 @@
       "main": [
         [
           {
-            "node": "Generate Directory",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Pexels Search",
+            "node": "Sentiment Switch",
             "type": "main",
             "index": 0
           }
@@ -1194,28 +1258,6 @@
         [
           {
             "node": "Append row in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Command6": {
-      "main": [
-        [
-          {
-            "node": "Merge4",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Merge4": {
-      "main": [
-        [
-          {
-            "node": "Execute Command7",
             "type": "main",
             "index": 0
           }
@@ -1321,7 +1363,7 @@
         ],
         [
           {
-            "node": "Chart-IMG Download",
+            "node": "Check Ticker Null",
             "type": "main",
             "index": 0
           }
@@ -1350,7 +1392,7 @@
         ],
         [
           {
-            "node": "Chart-IMG Download",
+            "node": "Check Ticker Null",
             "type": "main",
             "index": 0
           }
@@ -1375,6 +1417,121 @@
             "node": "Merge",
             "type": "main",
             "index": 1
+          }
+        ]
+      ]
+    },
+    "Check Ticker Null": {
+      "main": [
+        [
+          {
+            "node": "Set Ticker SPY",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Keep Ticker Original",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Ticker SPY": {
+      "main": [
+        [
+          {
+            "node": "Chart-IMG Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Ticker Original": {
+      "main": [
+        [
+          {
+            "node": "Chart-IMG Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentiment Switch": {
+      "main": [
+        [
+          {
+            "node": "Set Bullish Color",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Bearish Color",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Neutral Color",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Set Bullish Color": {
+      "main": [
+        [
+          {
+            "node": "Merge Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Bearish Color": {
+      "main": [
+        [
+          {
+            "node": "Merge Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Neutral Color": {
+      "main": [
+        [
+          {
+            "node": "Merge Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Sentiment": {
+      "main": [
+        [
+          {
+            "node": "Generate Directory",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pexels Search",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
