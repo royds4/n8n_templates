@@ -94,7 +94,46 @@
         "promptType": "define",
         "text": "=Macro: {{$('Code in JavaScript').first().json.macro}}\nLiquidity: {{$('Code in JavaScript').first().json.metrics.liquidity_trend}}\nNews: {{$('Code in JavaScript').first().json.news}}\n\nPrevious analysis:\n{{ $json.allRows.map(c=> c.TomTucker).join(', ') }}",
         "options": {
-          "systemMessage": "***Role***\nAct as anchorman Tom Tucker from Family guy. You are telling viral  short-format crypto news in 50-60 seconds (200 words).\n\n***Rules***\nDon't describe what you do. \nSimple plain text. \nYou can do jokes and sharp observations as original Tom Tucker, but avoid references to Griffith family. \nYou can use retrospective humor based on current trends, hot topics and what's working best in this niche right now.\nMake sure to include a strong hook to grab attention, an engaging script to keep people watching.\nYou MUST NOT use \\n, \", quote marks in the output\nYou must analyze the previous analysis you have done before so you know exactly how the macro and liquidity updated compared to previous days. Also check it so you don't repeat jokes or observations.\n\n***Format***\nYou MUST NOT use \\n, \", quote marks or other special characters as this output will be used in a JSON response"
+          "systemMessage": "***Role***\nAct as anchorman Tom Tucker from Family guy. You are an Elite Short-Form Financial Content Strategist specializing in Youtube shorts and Instagram Reels algorithms.\n\n***Rules***\nDon't describe what you do. \nSimple plain text. \nYou can do jokes and sharp observations as original Tom Tucker, but avoid references to Griffith family. \nYou can use retrospective humor based on current trends, hot topics and what's working best in this niche right now.\n\nMake sure to include a strong hook to grab attention, an engaging script to keep people watching.\nStructure the script into four parts: a 3-second hook (using 'Unexpected Confession' or 'Data Reversal' frameworks), a 10-second Value Drop, an Analytical Payoff, and a strong Call to Action.\nEnsure the script length is strictly 140-160 words.\n\nYou must analyze the previous analysis you have done before so you know exactly how the macro and liquidity updated compared to previous days. Also check it so you don't repeat jokes or observations.\n\n***Format***\nYou MUST output strictly in JSON format. The JSON schema must output exactly four keys:\n- script_content: the spoken text only\n- primary_ticker: the exact stock ticker, or 'NULL'\n- visual_keywords: an array of 3-5 descriptive keywords for stock footage\n- market_sentiment: strictly 'bullish', 'bearish', or 'neutral'\n"
+        },
+        "hasOutputParser": true,
+        "outputParser": {
+          "type": "json",
+          "jsonSchema": {
+            "type": "object",
+            "properties": {
+              "script_content": {
+                "type": "string",
+                "description": "the spoken text only"
+              },
+              "primary_ticker": {
+                "type": "string",
+                "description": "the exact stock ticker, or 'NULL'"
+              },
+              "visual_keywords": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "an array of 3-5 descriptive keywords for stock footage"
+              },
+              "market_sentiment": {
+                "type": "string",
+                "enum": [
+                  "bullish",
+                  "bearish",
+                  "neutral"
+                ],
+                "description": "strictly 'bullish', 'bearish', or 'neutral'"
+              }
+            },
+            "required": [
+              "script_content",
+              "primary_ticker",
+              "visual_keywords",
+              "market_sentiment"
+            ]
+          }
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -296,7 +335,7 @@
     {
       "parameters": {
         "executeOnce": "={{ true }}",
-        "command": "=#!/bin/bash\n\n# Configuration\n\nFOLDER=\"/data/shared/{{$('Generate Directory').item.json.directory}}\"\n\nINPUT_VIDEO=\"$FOLDER/output_reel.mp4\"\n\nOUTPUT_VIDEO=\"$FOLDER/final.mp4\"\n\nSUBTITLE_FILE=\"$FOLDER/subtitles.ass\"\n\nFONTS_DIR=\"$FOLDER/fonts/\"\n\nFONT_NAME=\"DynaPuff\"\n\n\n\n# Run FFmpeg to burn subtitles into the video using specific styling options\n\nffmpeg -y -i \"$INPUT_VIDEO\" -vf \"subtitles=${SUBTITLE_FILE}:fontsdir=${FONTS_DIR}:force_style='FontName=${FONT_NAME},Alignment=2,MarginV=840'\" -c:v libx264 -crf 7 -preset slow -c:a copy \"$OUTPUT_VIDEO\""
+        "command": "=#!/bin/bash\nDIR=\"/data/shared/{{ $('Generate Directory').first().json.directory }}\"\nTOP_LOOP=\"/data/shared/Tom Tucker News.mp4\"\nBOTTOM_DYNAMIC=\"$DIR/bottom_dynamic.mp4\"\nVOICEOVER=\"$DIR/TomTuckerAudioFull.mp3\"\nCAPTIONS=\"$DIR/subtitles.ass\"\nOUTPUT=\"$DIR/final.mp4\"\n\nffmpeg -y -stream_loop -1 -i \"$TOP_LOOP\" -stream_loop -1 -i \"$BOTTOM_DYNAMIC\" -i \"$VOICEOVER\" -filter_complex \"[0:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vtop]; [1:v]scale=1080:960:force_original_aspect_ratio=increase,crop=1080:960,setsar=1[vbot]; [vtop][vbot]vstack=inputs=2:shortest=1[stacked]; [stacked]subtitles=${CAPTIONS}:force_style='FontName=Arial,FontSize=24,Alignment=2,OutlineColour=&H100000000,MarginV=100'[final_video]\" -map \"[final_video]\" -map 2:a -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -shortest \"$OUTPUT\"\n"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -322,7 +361,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const cleanedOutput = $input.first().json.output.replace(/[\\n\"]/g, '');\n\nreturn {\n  json:{\n    output : cleanedOutput\n  }\n}"
+        "jsCode": "const cleanedOutput = $input.first().json.script_content.replace(/[\\n\"]/g, '');\n\nreturn {\n  json:{\n    output : cleanedOutput,\n    primary_ticker: $input.first().json.primary_ticker,\n    visual_keywords: $input.first().json.visual_keywords,\n    market_sentiment: $input.first().json.market_sentiment\n  }\n}"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -524,70 +563,6 @@
     },
     {
       "parameters": {
-        "url": "https://www.googleapis.com/youtube/v3/search",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "youTubeOAuth2Api",
-        "sendQuery": true,
-        "specifyQuery": "json",
-        "jsonQuery": "={\n  \"part\": \"snippet\",\n  \"maxResults\": \"10\",\n  \"q\": \"'oddly satisfying'\",\n  \"type\": \"video\",\n  \"regionCode\":\"US\",\n  \"videoDuration\": \"short\",\n  \"videoLicense\": \"creativeCommon\",\n  \"order\": \"viewCount\",\n  \"publishedAfter\": \"{{$now.minus({days: 1}).toFormat('yyyy-MM-dd')}}T01:00:00Z\"\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        -688,
-        512
-      ],
-      "id": "5de68c23-6a62-46fc-a7fe-e1895d64d7f5",
-      "name": "HTTP Request2",
-      "credentials": {
-        "youTubeOAuth2Api": {
-          "id": "KymFSwgJoj33t08y",
-          "name": "YouTube account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Validates that we have items before trying to map them\nif (items[0].json.items && items[0].json.items.length > 0) {\n  const videoIds = items[0].json.items.map(item => item.id.videoId);\n  \n  return {\n    json: {\n      VideoIds: videoIds\n    }\n  };\n} else {\n  // Failsafe if YouTube returns no results\n  return {\n    json: {\n      VideoIds: []\n    }\n  };\n}"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -432,
-        496
-      ],
-      "id": "dab7efa7-8409-4666-85a9-96480e4857e7",
-      "name": "Code in JavaScript3"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "http://host.docker.internal:5227/api/Downloader/process-batch",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "VideoIds",
-              "value": "={{ $json.VideoIds }}"
-            }
-          ]
-        },
-        "options": {
-          "allowUnauthorizedCerts": true
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        -208,
-        496
-      ],
-      "id": "19f6cb39-bc19-4b28-bfe7-99fcde7a286c",
-      "name": "HTTP Request3"
-    },
-    {
-      "parameters": {
         "command": "=ffmpeg  -i '/data/shared/Full{{$('Code in JavaScript').first().json.signal }}.mp4' \\\n-vf \"scale=1080:835:force_original_aspect_ratio=increase,crop=1080:835:0:(ih-835)/4\" \\\n-c:v libx264 -c:a copy \\\n'/data/shared/{{ $('Generate Directory').first().json.directory }}/outputOllie.mp4' -y"
       },
       "type": "n8n-nodes-base.executeCommand",
@@ -764,6 +739,185 @@
           "name": "Google Sheets account"
         }
       }
+    },
+    {
+      "parameters": {
+        "url": "https://api.pexels.com/videos/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "YOUR_API_KEY"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $('Code in JavaScript1').first().json.visual_keywords[0] }}"
+            },
+            {
+              "name": "orientation",
+              "value": "portrait"
+            },
+            {
+              "name": "size",
+              "value": "medium"
+            },
+            {
+              "name": "per_page",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "e445037e-40af-4b8c-8f19-b221d603e911",
+      "name": "Pexels Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -688,
+        512
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "splitOutItems",
+        "fieldToSplitOut": "={{ $json.videos[0].video_files.filter(v => v.file_type === 'video/mp4').sort((a,b) => b.width - a.width) }}",
+        "options": {}
+      },
+      "id": "item-lists-extract-node-uuid",
+      "name": "Extract Pexels Video",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.link }}",
+        "responseFormat": "file",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "e7b0f69a-6a6c-4f9e-a89f-24d1a3e9c70a",
+      "name": "Download Pexels Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -208,
+        496
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://api.chart-img.com/v1/tradingview/advanced-chart",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $('Code in JavaScript1').first().json.primary_ticker }}"
+            },
+            {
+              "name": "interval",
+              "value": "1D"
+            },
+            {
+              "name": "theme",
+              "value": "dark"
+            },
+            {
+              "name": "width",
+              "value": "1080"
+            },
+            {
+              "name": "height",
+              "value": "960"
+            }
+          ]
+        },
+        "responseFormat": "file",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "c3a1b5c2-1e9a-4c8d-b7f2-a083d6a4c2b9",
+      "name": "Chart-IMG Download",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -688,
+        672
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.total_results > 0 }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-pexels-has-results",
+      "name": "Pexels Has Results?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ Object.keys($items().binary || {}).length > 0 }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-pexels-download-success",
+      "name": "Pexels Download Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        0,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/shared/{{ $('Generate Directory').first().json.directory }}/bottom_dynamic.mp4",
+        "dataPropertyName": "data",
+        "options": {}
+      },
+      "id": "write-dynamic-asset",
+      "name": "Save Dynamic Asset",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        240
+      ]
     }
   ],
   "pinData": {},
@@ -784,11 +938,6 @@
         [
           {
             "node": "Message a model",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "HTTP Request2",
             "type": "main",
             "index": 0
           },
@@ -976,6 +1125,11 @@
             "node": "Generate Directory",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Pexels Search",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -1046,39 +1200,6 @@
         ]
       ]
     },
-    "HTTP Request2": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code in JavaScript3": {
-      "main": [
-        [
-          {
-            "node": "HTTP Request3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request3": {
-      "main": [
-        [
-          {
-            "node": "Merge6",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
     "Execute Command6": {
       "main": [
         [
@@ -1138,7 +1259,7 @@
       "main": [
         [
           {
-            "node": "Execute Command3",
+            "node": "Save Dynamic Asset",
             "type": "main",
             "index": 0
           }
@@ -1163,6 +1284,97 @@
             "node": "AI Agent",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Pexels Search": {
+      "main": [
+        [
+          {
+            "node": "Pexels Has Results?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Pexels Video": {
+      "main": [
+        [
+          {
+            "node": "Download Pexels Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pexels Has Results?": {
+      "main": [
+        [
+          {
+            "node": "Extract Pexels Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Chart-IMG Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Pexels Video": {
+      "main": [
+        [
+          {
+            "node": "Pexels Download Success?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pexels Download Success?": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Chart-IMG Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chart-IMG Download": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Save Dynamic Asset": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
