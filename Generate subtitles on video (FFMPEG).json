@@ -828,7 +828,7 @@
           "parameters": [
             {
               "name": "symbol",
-              "value": "={{ $('Code in JavaScript1').first().json.primary_ticker }}"
+              "value": "={{ $json.ticker }}"
             },
             {
               "name": "interval",
@@ -858,8 +858,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -688,
-        672
+        -250,
+        800
       ],
       "continueOnFail": true
     },
@@ -917,6 +917,72 @@
       "position": [
         1120,
         240
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Code in JavaScript1').first().json.primary_ticker }}",
+              "value2": "NULL"
+            }
+          ]
+        }
+      },
+      "id": "4390a93a-b345-4a6c-aa36-a2ee25984f15",
+      "name": "Check Ticker Null",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        750
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0c96159c-ccfe-4357-afae-7b6481363529",
+              "name": "ticker",
+              "value": "SPY",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "796f006b-b2c1-4a5b-b5d7-0ce3cd2488c1",
+      "name": "Set Ticker SPY",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -500,
+        750
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "492b0c23-4b9f-4379-8e86-51b72fc1e633",
+              "name": "ticker",
+              "value": "={{ $('Code in JavaScript1').first().json.primary_ticker }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f44cfc4b-3ace-4de8-8264-69b1eaae8f5b",
+      "name": "Keep Ticker Original",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -500,
+        900
       ]
     }
   ],
@@ -1321,7 +1387,7 @@
         ],
         [
           {
-            "node": "Chart-IMG Download",
+            "node": "Check Ticker Null",
             "type": "main",
             "index": 0
           }
@@ -1350,7 +1416,7 @@
         ],
         [
           {
-            "node": "Chart-IMG Download",
+            "node": "Check Ticker Null",
             "type": "main",
             "index": 0
           }
@@ -1375,6 +1441,46 @@
             "node": "Merge",
             "type": "main",
             "index": 1
+          }
+        ]
+      ]
+    },
+    "Check Ticker Null": {
+      "main": [
+        [
+          {
+            "node": "Set Ticker SPY",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Keep Ticker Original",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Ticker SPY": {
+      "main": [
+        [
+          {
+            "node": "Chart-IMG Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep Ticker Original": {
+      "main": [
+        [
+          {
+            "node": "Chart-IMG Download",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
