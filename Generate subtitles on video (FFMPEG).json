@@ -862,6 +862,46 @@
         672
       ],
       "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.total_results > 0 }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-pexels-has-results",
+      "name": "Pexels Has Results?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ Object.keys($items().binary || {}).length > 0 }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-pexels-download-success",
+      "name": "Pexels Download Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        0,
+        496
+      ]
     }
   ],
   "pinData": {},
@@ -1074,11 +1114,6 @@
             "node": "Pexels Search",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Chart-IMG Download",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -1241,7 +1276,7 @@
       "main": [
         [
           {
-            "node": "Extract Pexels Video",
+            "node": "Pexels Has Results?",
             "type": "main",
             "index": 0
           }
@@ -1255,6 +1290,64 @@
             "node": "Download Pexels Video",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Pexels Has Results?": {
+      "main": [
+        [
+          {
+            "node": "Extract Pexels Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Chart-IMG Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Pexels Video": {
+      "main": [
+        [
+          {
+            "node": "Pexels Download Success?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pexels Download Success?": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Chart-IMG Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chart-IMG Download": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
