@@ -130,26 +130,11 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.elevenlabs.io/v1/text-to-speech/ErY7LHzfLsSke1gl7t6I/with-timestamps",
+        "url": "http://localhost:5678/webhook/generate-voice",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"text\":\"{{ $('Generate Directory').item.json.output }}\"\n}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "xi-api-key",
-              "value": "={{$env.ELEVENLABS_API_KEY}}"
-            }
-          ]
-        },
-        "options": {
-          "response": {
-            "response": {
-              "responseFormat": "json"
-            }
-          }
-        }
+        "jsonBody": "={\n  \"voice_id\":\"ErY7LHzfLsSke1gl7t6I\",\n  \"text\":\"{{ $('Generate Directory').item.json.output }}\"\n}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
@@ -216,7 +201,7 @@
     },
     {
       "parameters": {
-        "command": "={{\n  (function() {\n    const dir = $('Generate Directory').first().json.directory;\n    const baseDir = '/data/shared/' + dir;\n    const joinedMp4 = baseDir + '/output_joined.mp4';\n    const bgVideo = baseDir + '/output_background.mp4';\n    \n    // We'll assume the files are saved with these names if the respective branches executed\n    const chartImg = baseDir + '/chart.png';\n    const dvidsVideo = baseDir + '/dvids.mp4';\n    const outMp4 = baseDir + '/output_reel.mp4';\n    \n    // Fallback parsing for AI entities\n    let entities = { tickers: [], macro_keywords: [] };\n    try {\n      // Analyze Entities AI output\n      let text = $('Analyze Entities AI').first().json.text || '{}';\n      // Some AI models output Markdown code blocks\n      text = text.replace(/\\x60\\x60\\x60json/g, '').replace(/\\x60\\x60\\x60/g, '');\n      entities = JSON.parse(text);\n    } catch(e) {}\n    \n    const words = $('Extract ElevenLabs Payload').first().json.words || [];\n    \n    // Build inputs string\n    let inputs = `-i '${joinedMp4}' -stream_loop -1 -i '${bgVideo}'`;\n    let chartInputIndex = -1;\n    let dvidsInputIndex = -1;\n    let inputCount = 2;\n    \n    if (entities.tickers && entities.tickers.length > 0) {\n      inputs += ` -loop 1 -t 60 -i '${chartImg}'`;\n      chartInputIndex = inputCount;\n      inputCount++;\n    }\n    if (entities.macro_keywords && entities.macro_keywords.length > 0) {\n      inputs += ` -stream_loop -1 -i '${dvidsVideo}'`;\n      dvidsInputIndex = inputCount;\n      inputCount++;\n    }\n    \n    // Build filter_complex\n    // 1080x1920 canvas: Tom Tucker top half (1080x960), Default background bottom half (1080x960)\n    let filters = [];\n    filters.push('[0:v]scale=1080:960[top]');\n    filters.push('[1:v]scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(ow-iw)/2:(oh-ih)/2:black[default_bg]');\n    \n    // Process additional inputs\n    if (chartInputIndex > -1) {\n      filters.push(`[${chartInputIndex}:v]scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(ow-iw)/2:(oh-ih)/2:black[chart_bg]`);\n    }\n    if (dvidsInputIndex > -1) {\n      filters.push(`[${dvidsInputIndex}:v]scale=1080:960:force_original_aspect_ratio=decrease,pad=1080:960:(ow-iw)/2:(oh-ih)/2:black[dvids_bg]`);\n    }\n    \n    // Assemble canvas: top and default_bg\n    // We can use vstack to combine top and default_bg\n    filters.push('[top][default_bg]vstack=inputs=2[canvas0]');\n    \n    let currentCanvas = 'canvas0';\n    let overlayCount = 1;\n    \n    // Create overlays for words\n    // We iterate through the words and map to enable expressions on the bottom half (y=960)\n    for (let i = 0; i < words.length; i++) {\n      const wInfo = words[i];\n      // clean word to match entities (e.g. \"BTC,\" -> \"BTC\")\n      const cleanWord = wInfo.word.replace(/[^a-zA-Z0-9]/g, '');\n      let srcLayer = null;\n      \n      if (entities.tickers && entities.tickers.includes(cleanWord) && chartInputIndex > -1) {\n        srcLayer = 'chart_bg';\n      } else if (entities.macro_keywords && entities.macro_keywords.includes(cleanWord) && dvidsInputIndex > -1) {\n        srcLayer = 'dvids_bg';\n      }\n      \n      if (srcLayer) {\n        const nextCanvas = 'canvas' + overlayCount;\n        filters.push(`[${currentCanvas}][${srcLayer}]overlay=0:960:enable='between(t,${wInfo.start},${wInfo.end})'[${nextCanvas}]`);\n        currentCanvas = nextCanvas;\n        overlayCount++;\n      }\n    }\n    \n    const filterString = filters.join('; ');\n    \n    return `ffmpeg -y ${inputs} -filter_complex \"${filterString}\" -map \"[${currentCanvas}]\" -map 0:a -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 192k -shortest -r 30 '${outMp4}'`;\n  })()\n}}"
+        "command": "=ffmpeg -i '/data/shared/{{ $('Generate Directory').first().json.directory }}/output_joined.mp4' -i '/data/shared/{{ $('Generate Directory').first().json.directory }}/output_background.mp4' -filter_complex \\\n\"[0:v]scale=1080:-2[v0]; \\\n [1:v]scale=1080:-2[v1]; \\\n [v0]pad=iw:ih+250:0:0:black[v0_padded]; \\\n [v0_padded][v1]vstack=inputs=2[v_stacked]; \\\n [v_stacked]scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black[v_final];\" \\\n-map \"[v_final]\" -map 0:a \\\n-c:v libx264 -preset slow -crf 7 -c:a aac -b:a 192k \\\n-r 30 '/data/shared/{{ $('Generate Directory').first().json.directory }}/output_reel.mp4'"
       },
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
@@ -779,267 +764,6 @@
           "name": "Google Sheets account"
         }
       }
-    },
-    {
-      "parameters": {
-        "jsCode": "const item = $input.first();\nconst audioBase64 = item.json.audio_base64;\nconst alignment = item.json.alignment;\n\nif (!audioBase64) {\n  throw new Error('No audio_base64 found in the ElevenLabs response.');\n}\n\nlet words = [];\nif (alignment && alignment.characters) {\n  let currentWord = \"\";\n  let currentStart = null;\n  let currentEnd = null;\n  \n  for (let i = 0; i < alignment.characters.length; i++) {\n    const char = alignment.characters[i];\n    const start = alignment.character_start_times_seconds[i];\n    const end = alignment.character_end_times_seconds[i];\n    \n    // Group based on spaces and punctuation\n    // Punctuation characters: .,?!;:()[]{}\"'\n    if (/[\\s.,?!;:()\\[\\]{}\"']/.test(char)) {\n      if (currentWord.length > 0) {\n        words.push({\n          word: currentWord,\n          start: currentStart,\n          end: currentEnd\n        });\n        currentWord = \"\";\n        currentStart = null;\n        currentEnd = null;\n      }\n    } else {\n      if (currentWord.length === 0) {\n        currentStart = start;\n      }\n      currentWord += char;\n      currentEnd = end;\n    }\n  }\n  \n  if (currentWord.length > 0) {\n    words.push({\n      word: currentWord,\n      start: currentStart,\n      end: currentEnd\n    });\n  }\n}\n\nreturn {\n  json: {\n    alignment: alignment,\n    words: words\n  },\n  binary: {\n    data: {\n      data: audioBase64,\n      mimeType: 'audio/mpeg',\n      fileName: 'TomTuckerAudio.mp3'\n    }\n  }\n};\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        64,
-        80
-      ],
-      "id": "a1b2c3d4-e5f6-7890-1234-56789abcdef0",
-      "name": "Extract ElevenLabs Payload"
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "models/gemini-3-pro-preview",
-          "mode": "list",
-          "cachedResultName": "models/gemini-3-pro-preview"
-        },
-        "messages": {
-          "values": [
-            {
-              "content": "={{ $('Generate Directory').first().json.output }}"
-            }
-          ]
-        },
-        "options": {
-          "systemMessage": "<role>\nYou are an expert quantitative crypto analyst and natural language processing specialist.\n</role>\n\n<rules>\n- You must output ONLY a valid JSON object.\n- Do not wrap the JSON in markdown blocks like ```json.\n- You must correctly identify cryptocurrency tickers (e.g., BTC, ETH, SOL) and macroeconomic keywords (e.g., Federal Reserve, inflation, interest rates).\n</rules>\n\n<context>\nThe user will provide you with the incoming news script text. Your task is to extract these specific entities and categorize them strictly into a JSON format.\n</context>\n\n<planning_process>\n1. Scan the text for cryptocurrency ticker symbols.\n2. Scan the text for macro-economic keywords.\n3. Construct the JSON output.\n</planning_process>\n\n<task>\nFormat your output exactly as this JSON structure:\n{\n  \"tickers\": [\"BTC\", \"ETH\", ...],\n  \"macro_keywords\": [\"Federal Reserve\", \"inflation\", ...]\n}\n</task>"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.googleGemini",
-      "typeVersion": 1,
-      "position": [
-        -1000,
-        1856
-      ],
-      "id": "a1111111-b222-c333-d444-e55555555555",
-      "name": "Analyze Entities AI",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "3WcjGrEmVOgnUbOk",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "\nlet parsed = { tickers: [], macro_keywords: [] };\ntry {\n  let text = $input.first().json.text || '{}';\n  text = text.replace(/```json/g, '').replace(/```/g, '');\n  parsed = JSON.parse(text);\n} catch(e) {}\n\nreturn {\n  json: {\n    tickers: parsed.tickers || [],\n    macro_keywords: parsed.macro_keywords || [],\n    hasTickers: (parsed.tickers || []).length > 0,\n    hasMacro: (parsed.macro_keywords || []).length > 0\n  }\n};\n"
-      },
-      "id": "c7ee40c4-97ca-4298-9434-773fd46c4b1a",
-      "name": "Parse AI Output",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -800,
-        1856
-      ]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "f31a62c3-cea3-4cef-a64f-383bd7497d2a",
-              "leftValue": "={{ $('Parse AI Output').first().json.hasTickers }}",
-              "rightValue": "={{ true }}",
-              "operator": {
-                "type": "boolean",
-                "operation": "true"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "d216d35b-d714-4667-80bf-88a63045a484",
-      "name": "If (hasTickers)",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 3,
-      "position": [
-        -600,
-        1856
-      ]
-    },
-    {
-      "parameters": {
-        "url": "https://api.chart-img.com/v1/tradingview/advanced-chart",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "symbol",
-              "value": "={{ $('Parse AI Output').first().json.tickers[0] }}"
-            }
-          ]
-        },
-        "options": {
-          "response": {
-            "response": {
-              "responseFormat": "file"
-            }
-          },
-          "allowUnauthorizedCerts": true
-        }
-      },
-      "id": "f3e01c70-0e4f-4962-89b7-64e53873027f",
-      "name": "Download Chart",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        -400,
-        1700
-      ],
-      "retryOnFail": false,
-      "alwaysOutputData": false,
-      "executeOnce": false,
-      "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "operation": "write",
-        "fileName": "=/data/shared/{{$('Generate Directory').first().json.directory}}/chart.png",
-        "dataPropertyName": "data",
-        "options": {}
-      },
-      "id": "0cf6e32e-e15e-4afd-8381-4a8a69cc5600",
-      "name": "Save Chart",
-      "type": "n8n-nodes-base.readWriteFile",
-      "typeVersion": 1,
-      "position": [
-        -200,
-        1700
-      ]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "52adc2d4-bb28-4e4f-83f1-9a9d9df63cc8",
-              "leftValue": "={{ $('Parse AI Output').first().json.hasMacro }}",
-              "rightValue": "={{ true }}",
-              "operator": {
-                "type": "boolean",
-                "operation": "true"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "0e5c5a8b-94c1-4ff1-9014-96042ddfa49f",
-      "name": "If (hasMacro)",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 3,
-      "position": [
-        0,
-        1856
-      ]
-    },
-    {
-      "parameters": {
-        "url": "https://api.dvidshub.net/search",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "q",
-              "value": "={{ $('Parse AI Output').first().json.macro_keywords[0] }}"
-            },
-            {
-              "name": "type",
-              "value": "video"
-            },
-            {
-              "name": "sort",
-              "value": "date"
-            },
-            {
-              "name": "max_results",
-              "value": "1"
-            }
-          ]
-        },
-        "options": {
-          "response": {
-            "response": {
-              "responseFormat": "json"
-            }
-          },
-          "allowUnauthorizedCerts": true
-        }
-      },
-      "id": "0314fb00-5ec5-40ba-a77a-97b4781c45ee",
-      "name": "Search DVIDS JSON",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        200,
-        1700
-      ],
-      "retryOnFail": false,
-      "alwaysOutputData": false,
-      "executeOnce": false,
-      "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "url": "={{ $json.results[0].video_url }}",
-        "options": {
-          "response": {
-            "response": {
-              "responseFormat": "file"
-            }
-          },
-          "allowUnauthorizedCerts": true
-        }
-      },
-      "id": "44b2842a-9256-4ee2-99c3-4874ec79af30",
-      "name": "Download DVIDS Video",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        400,
-        1700
-      ],
-      "retryOnFail": false,
-      "alwaysOutputData": false,
-      "executeOnce": false,
-      "onError": "continueErrorOutput"
-    },
-    {
-      "parameters": {
-        "operation": "write",
-        "fileName": "=/data/shared/{{$('Generate Directory').first().json.directory}}/dvids.mp4",
-        "dataPropertyName": "data",
-        "options": {}
-      },
-      "id": "94ffed21-daf6-45f5-8c86-37e900ebc59e",
-      "name": "Save DVIDS",
-      "type": "n8n-nodes-base.readWriteFile",
-      "typeVersion": 1,
-      "position": [
-        600,
-        1700
-      ]
     }
   ],
   "pinData": {},
@@ -1107,7 +831,7 @@
       "main": [
         [
           {
-            "node": "Extract ElevenLabs Payload",
+            "node": "Read/Write Files from Disk",
             "type": "main",
             "index": 0
           }
@@ -1183,7 +907,7 @@
       "main": [
         [
           {
-            "node": "Analyze Entities AI",
+            "node": "Execute Command2",
             "type": "main",
             "index": 0
           }
@@ -1437,130 +1161,6 @@
         [
           {
             "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Extract ElevenLabs Payload": {
-      "main": [
-        [
-          {
-            "node": "Read/Write Files from Disk",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Analyze Entities AI": {
-      "main": [
-        [
-          {
-            "node": "Parse AI Output",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Parse AI Output": {
-      "main": [
-        [
-          {
-            "node": "If (hasTickers)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If (hasTickers)": {
-      "main": [
-        [
-          {
-            "node": "Download Chart",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "If (hasMacro)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Download Chart": {
-      "main": [
-        [
-          {
-            "node": "Save Chart",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Save Chart": {
-      "main": [
-        [
-          {
-            "node": "If (hasMacro)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If (hasMacro)": {
-      "main": [
-        [
-          {
-            "node": "Search DVIDS JSON",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Execute Command2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Search DVIDS JSON": {
-      "main": [
-        [
-          {
-            "node": "Download DVIDS Video",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Download DVIDS Video": {
-      "main": [
-        [
-          {
-            "node": "Save DVIDS",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Save DVIDS": {
-      "main": [
-        [
-          {
-            "node": "Execute Command2",
             "type": "main",
             "index": 0
           }
