@@ -94,7 +94,46 @@
         "promptType": "define",
         "text": "=Macro: {{$('Code in JavaScript').first().json.macro}}\nLiquidity: {{$('Code in JavaScript').first().json.metrics.liquidity_trend}}\nNews: {{$('Code in JavaScript').first().json.news}}\n\nPrevious analysis:\n{{ $json.allRows.map(c=> c.TomTucker).join(', ') }}",
         "options": {
-          "systemMessage": "***Role***\nAct as anchorman Tom Tucker from Family guy. You are telling viral  short-format crypto news in 50-60 seconds (200 words).\n\n***Rules***\nDon't describe what you do. \nSimple plain text. \nYou can do jokes and sharp observations as original Tom Tucker, but avoid references to Griffith family. \nYou can use retrospective humor based on current trends, hot topics and what's working best in this niche right now.\nMake sure to include a strong hook to grab attention, an engaging script to keep people watching.\nYou MUST NOT use \\n, \", quote marks in the output\nYou must analyze the previous analysis you have done before so you know exactly how the macro and liquidity updated compared to previous days. Also check it so you don't repeat jokes or observations.\n\n***Format***\nYou MUST NOT use \\n, \", quote marks or other special characters as this output will be used in a JSON response"
+          "systemMessage": "***Role***\nAct as anchorman Tom Tucker from Family guy. You are an Elite Short-Form Financial Content Strategist specializing in Youtube shorts and Instagram Reels algorithms.\n\n***Rules***\nDon't describe what you do. \nSimple plain text. \nYou can do jokes and sharp observations as original Tom Tucker, but avoid references to Griffith family. \nYou can use retrospective humor based on current trends, hot topics and what's working best in this niche right now.\n\nMake sure to include a strong hook to grab attention, an engaging script to keep people watching.\nStructure the script into four parts: a 3-second hook (using 'Unexpected Confession' or 'Data Reversal' frameworks), a 10-second Value Drop, an Analytical Payoff, and a strong Call to Action.\nEnsure the script length is strictly 140-160 words.\n\nYou must analyze the previous analysis you have done before so you know exactly how the macro and liquidity updated compared to previous days. Also check it so you don't repeat jokes or observations.\n\n***Format***\nYou MUST output strictly in JSON format. The JSON schema must output exactly four keys:\n- script_content: the spoken text only\n- primary_ticker: the exact stock ticker, or 'NULL'\n- visual_keywords: an array of 3-5 descriptive keywords for stock footage\n- market_sentiment: strictly 'bullish', 'bearish', or 'neutral'\n"
+        },
+        "hasOutputParser": true,
+        "outputParser": {
+          "type": "json",
+          "jsonSchema": {
+            "type": "object",
+            "properties": {
+              "script_content": {
+                "type": "string",
+                "description": "the spoken text only"
+              },
+              "primary_ticker": {
+                "type": "string",
+                "description": "the exact stock ticker, or 'NULL'"
+              },
+              "visual_keywords": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "an array of 3-5 descriptive keywords for stock footage"
+              },
+              "market_sentiment": {
+                "type": "string",
+                "enum": [
+                  "bullish",
+                  "bearish",
+                  "neutral"
+                ],
+                "description": "strictly 'bullish', 'bearish', or 'neutral'"
+              }
+            },
+            "required": [
+              "script_content",
+              "primary_ticker",
+              "visual_keywords",
+              "market_sentiment"
+            ]
+          }
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -322,7 +361,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const cleanedOutput = $input.first().json.output.replace(/[\\n\"]/g, '');\n\nreturn {\n  json:{\n    output : cleanedOutput\n  }\n}"
+        "jsCode": "const cleanedOutput = $input.first().json.script_content.replace(/[\\n\"]/g, '');\n\nreturn {\n  json:{\n    output : cleanedOutput,\n    primary_ticker: $input.first().json.primary_ticker,\n    visual_keywords: $input.first().json.visual_keywords,\n    market_sentiment: $input.first().json.market_sentiment\n  }\n}"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
