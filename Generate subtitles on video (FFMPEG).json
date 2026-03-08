@@ -1087,6 +1087,51 @@
         1600,
         -100
       ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "fileName": "=/data/shared/{{ $('Generate Directory').first().json.directory }}/final.mp4",
+        "dataPropertyName": "data",
+        "options": {}
+      },
+      "id": "3eb59c29-73ed-4666-997a-08c43a57546d",
+      "name": "Read Final Video",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1912,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Edit Fields').first().json.video_title }}",
+        "description": "={{ $('Edit Fields').first().json.video_description }}",
+        "tags": "={{ $('Edit Fields').first().json.video_tags }}",
+        "binaryPropertyName": "data",
+        "options": {
+          "privacyStatus": "public",
+          "categoryId": "22"
+        },
+        "categoryId": "22"
+      },
+      "id": "ecbb956a-3f09-4bf1-88b9-8d88e002a891",
+      "name": "YouTube",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        32
+      ],
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "placeholder",
+          "name": "YouTube OAuth2 API"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -1229,6 +1274,11 @@
             "node": "Merge1",
             "type": "main",
             "index": 1
+          },
+          {
+            "node": "Read Final Video",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -1598,6 +1648,17 @@
         [
           {
             "node": "FFMPEG: make new video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Final Video": {
+      "main": [
+        [
+          {
+            "node": "YouTube",
             "type": "main",
             "index": 0
           }
