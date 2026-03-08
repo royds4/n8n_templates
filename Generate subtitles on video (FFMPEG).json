@@ -30,10 +30,10 @@
       "type": "n8n-nodes-base.googleSheetsTrigger",
       "typeVersion": 1,
       "position": [
-        -2128,
-        400
+        -928,
+        -64
       ],
-      "id": "602be28d-af05-48b6-bf9a-8c046dca7a9d",
+      "id": "f18ae31c-9f62-420f-80c2-ca8a3c1e3936",
       "name": "Google Sheets Trigger",
       "credentials": {
         "googleSheetsTriggerOAuth2Api": {
@@ -49,10 +49,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1888,
-        400
+        -688,
+        -64
       ],
-      "id": "cf678021-d942-424c-8930-901386718351",
+      "id": "ed580e6e-8e82-4250-b8cc-d88752c5a12f",
       "name": "Code in JavaScript"
     },
     {
@@ -76,93 +76,16 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        2928,
-        -272
+        4080,
+        -800
       ],
-      "id": "a747dd3f-7980-4626-9f8c-d41811a7a112",
+      "id": "f9c2a2c5-9d4a-4917-936f-dc8654ac86ff",
       "name": "Delete rows or columns from sheet",
       "executeOnce": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "kgqYZcCukQ7mQM3O",
           "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "=Macro: {{$('Code in JavaScript').first().json.macro}}\nLiquidity: {{$('Code in JavaScript').first().json.metrics.liquidity_trend}}\nNews: {{$('Code in JavaScript').first().json.news}}\n\nPrevious analysis:\n{{ $json.allRows.map(c=> c.TomTucker).join(', ') }}",
-        "options": {
-          "systemMessage": "You are Tom Tucker, an Elite Short-Form Financial Content Strategist. Before writing the script, internally simulate a debate between a highly optimistic Bull Market Investor and a pessimistic Bear Market Analyst regarding the provided data. Synthesize their conflicting views into a single, punchy script. Start with a hook that highlights this conflict (e.g., 'Everyone is panicking about X, but they are missing the real story...'). Ensure the script maintains a fast pace, uses 3-5 word sentences, and strictly outputs the required JSON schema."
-        },
-        "hasOutputParser": true,
-        "outputParser": {
-          "type": "json",
-          "jsonSchema": {
-            "type": "object",
-            "properties": {
-              "script_content": {
-                "type": "string",
-                "description": "the spoken text only"
-              },
-              "primary_ticker": {
-                "type": "string",
-                "description": "the exact stock ticker, or 'NULL'"
-              },
-              "visual_keywords": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "an array of 3-5 descriptive keywords for stock footage"
-              },
-              "market_sentiment": {
-                "type": "string",
-                "enum": [
-                  "bullish",
-                  "bearish",
-                  "neutral"
-                ],
-                "description": "strictly 'bullish', 'bearish', or 'neutral'"
-              }
-            },
-            "required": [
-              "script_content",
-              "primary_ticker",
-              "visual_keywords",
-              "market_sentiment"
-            ]
-          }
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3,
-      "position": [
-        -784,
-        80
-      ],
-      "id": "c8d24e60-5785-4d78-9f28-a5ae51edda7b",
-      "name": "AI Agent",
-      "executeOnce": true
-    },
-    {
-      "parameters": {
-        "modelName": "models/gemini-3-pro-preview",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        -784,
-        288
-      ],
-      "id": "04ca7474-d44a-4246-ac12-8c1eb649301b",
-      "name": "Google Gemini Chat Model1",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "cvjWBK1EVgETmooe",
-          "name": "Google Gemini(PaLM) Api account"
         }
       }
     },
@@ -178,10 +101,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        -16,
-        80
+        1184,
+        -384
       ],
-      "id": "73564e7d-b7a6-42ed-a1d1-a096c2125cf0",
+      "id": "907ed62e-90c5-40c4-9349-332333dd254a",
       "name": "HTTP Request"
     },
     {
@@ -193,10 +116,10 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        144,
-        80
+        1344,
+        -384
       ],
-      "id": "bcf4d0a9-ace1-48e4-a393-9ce9dcfbc32d",
+      "id": "fa8d497f-dd2d-4a6f-8ba1-702cfa1711d6",
       "name": "Read/Write Files from Disk"
     },
     {
@@ -206,10 +129,10 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        -208,
-        80
+        992,
+        -384
       ],
-      "id": "ea2664ed-dbd4-4e9d-8ab5-7353a00dc570",
+      "id": "81e7a41f-3311-495a-9f0f-71375ebdf731",
       "name": "Execute Command1"
     },
     {
@@ -219,10 +142,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -368,
-        80
+        832,
+        -384
       ],
-      "id": "e82d54ae-c45b-42b7-ba41-4f6264dbcd2d",
+      "id": "f73aa1cb-9c0a-4f81-a2f5-f688d6162f99",
       "name": "Generate Directory"
     },
     {
@@ -255,10 +178,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        752,
-        -256
+        1952,
+        -720
       ],
-      "id": "6eb5cff4-cdeb-4bc8-b023-4d82b0368c0a",
+      "id": "28d50c31-899e-4950-92ce-03d3fdfbda42",
       "name": "TS Audio"
     },
     {
@@ -273,23 +196,23 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1120,
-        -256
+        2320,
+        -720
       ],
-      "id": "c795b8bd-65cd-445b-b705-d4957b06f947",
+      "id": "39e5f4fc-d9fa-4d7a-b70f-18f5287f58bf",
       "name": "Save ass"
     },
     {
       "parameters": {
-        "jsCode": "// ===== CONFIGURATION VARIABLES =====\nconst CONFIG = {\n  // Number of words to display on screen at a time\n  wordsToShow: 3,\n  \n  // General subtitle styling\n  fontName: 'Arial',          // Font face\n  fontSize: 100,               // Base font size\n  fontColor: $('Merge Sentiment').first().json.sub_color,        // Regular text color in BGR format\n  outlineColor: '000000',     // Text outline color in BGR format\n  backgroundColor: '000000',  // Background color in BGR format\n  \n  // Highlight styling\n  highlightFontSize: 120,      // Highlighted word font size\n  highlightColor: '00FFFF',   // Highlight color in BGR format (cyan)\n  \n  // Text appearance\n  bold: 0,                    // 0 = off, 1 = on\n  italic: 0,                  // 0 = off, 1 = on\n  underline: 0,               // 0 = off, 1 = on\n  strikeout: 0,               // 0 = off, 1 = on\n  \n  // Text scaling and positioning\n  scaleX: 100,                // Horizontal scaling (%)\n  scaleY: 100,                // Vertical scaling (%)\n  spacing: 0,                 // Letter spacing\n  angle: 0,                   // Rotation angle\n  \n  // Border options\n  borderStyle: 1,             // 1 = outline+drop shadow, 3 = opaque box\n  outline: 10,                 // Outline thickness\n  shadow: 1,                  // Shadow distance\n  \n  // Alignment and margins\n  alignment: 2,               // Position (1-9), see ASS documentation\n  marginL: 10,                // Left margin\n  marginR: 10,                // Right margin\n  marginV: 300,               // Vertical margin\n  \n  // Video dimensions\n  videoWidth: 1080,\n  videoHeight: 1920,\n  \n  \n  // Maximum gap time between words (in milliseconds) before considering it a new phrase\n  maxGapTimeMs: 2000,\n\n  \n  // Output file name\n  outputFileName: 'sentence_aware_subtitles.ass'\n};\n\n// Parse input JSON data\nconst response = JSON.parse($input.first().json.data);\nconst segments = response.segments;\n\n// ASS Header\nlet ass = `[Script Info]\nTitle: Sentence-Aware Fixed Position Subtitles\nScriptType: v4.00+\nPlayResX: ${CONFIG.videoWidth}\nPlayResY: ${CONFIG.videoHeight}\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,${CONFIG.fontName},${CONFIG.fontSize},&H${CONFIG.fontColor},&H${CONFIG.outlineColor},&H${CONFIG.outlineColor},&H${CONFIG.backgroundColor},${CONFIG.bold},${CONFIG.italic},${CONFIG.underline},${CONFIG.strikeout},${CONFIG.scaleX},${CONFIG.scaleY},${CONFIG.spacing},${CONFIG.angle},${CONFIG.borderStyle},${CONFIG.outline},${CONFIG.shadow},${CONFIG.alignment},${CONFIG.marginL},${CONFIG.marginR},${CONFIG.marginV},1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;\n\n/**\n * Helper: convert seconds to ASS time format (H:MM:SS.cs)\n * @param {number} sec - Time in seconds\n * @return {string} Formatted time string\n */\nfunction formatTime(sec) {\n  const h = Math.floor(sec / 3600);\n  const m = Math.floor((sec % 3600) / 60);\n  const s = Math.floor(sec % 60);\n  const cs = Math.floor((sec - Math.floor(sec)) * 100);\n  return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${cs.toString().padStart(2, '0')}`;\n}\n\n/**\n * Creates the subtitle text with the specified word highlighted within a fixed group\n * @param {Array} wordGroup - Array of word objects to display in fixed positions\n * @param {number} highlightIndex - Index of the word to highlight within the group (0-based)\n * @return {string} Formatted subtitle text with highlight tags\n */\nfunction createSubtitleText(wordGroup, highlightIndex) {\n  let line = '';\n  const emojis = ['\ud83d\udcc8', '\ud83d\udcc9', '\ud83d\ude80', '\ud83d\udcb0', '\ud83c\udfe6', '\ud83d\udc3b', '\ud83d\udc02', '\ud83d\udcb8', '\ud83d\udd25'];\n  \n  wordGroup.forEach((word, i) => {\n    // Add space between words (not before the first word)\n    if (i > 0) line += ' ';\n    \n    // Apply highlight to the specified word\n    if (i === highlightIndex) {\n      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];\n      line += `{\\\\fs${CONFIG.highlightFontSize}\\\\c&H${CONFIG.highlightColor}&}${word.word.trim()}${randomEmoji}{\\\\r}`;\n    } else {\n      line += word.word.trim();\n    }\n  });\n  \n  return line;\n}\n\n// Process all segments together to handle pauses between segments\nlet allWords = [];\nsegments.forEach(segment => {\n  allWords = allWords.concat(segment.words);\n});\n\n// Sort all words by start time (should already be sorted, but just to be safe)\nallWords.sort((a, b) => a.start - b.start);\n\n// Create groups of words that respect sentence boundaries\nfunction createSentenceAwareGroups(words) {\n  const groups = [];\n  let currentGroup = [];\n  \n  for (let i = 0; i < words.length; i++) {\n    const currentWord = words[i];\n    currentGroup.push(currentWord);\n    \n    // Check if this word ends with a period (sentence boundary)\n    const endsWithPeriod = currentWord.word.trim().endsWith('.');\n    \n    // Start a new group if:\n    // 1. We've reached the maximum words per group, OR\n    // 2. We've encountered a period (end of sentence), OR\n    // 3. We're at the last word\n    if (currentGroup.length >= CONFIG.wordsToShow || endsWithPeriod || i === words.length - 1) {\n      if (currentGroup.length > 0) {\n        groups.push([...currentGroup]);\n        currentGroup = [];\n      }\n    }\n  }\n  \n  // Add any remaining words\n  if (currentGroup.length > 0) {\n    groups.push(currentGroup);\n  }\n  \n  return groups;\n}\n\n// Create word groups that respect sentence boundaries\nconst wordGroups = createSentenceAwareGroups(allWords);\nlet dialogueLines = [];\n\n// Track which group and position each word belongs to\nlet currentGroupIndex = 0;\nlet positionInGroup = 0;\n\nfor (let i = 0; i < allWords.length; i++) {\n  const currentWord = allWords[i];\n  \n  // Find which group contains this word\n  let groupIndex = -1;\n  let positionIndex = -1;\n  \n  for (let g = 0; g < wordGroups.length; g++) {\n    const wordIndex = wordGroups[g].findIndex(w => \n      w.start === currentWord.start && w.end === currentWord.end && w.word === currentWord.word);\n    \n    if (wordIndex !== -1) {\n      groupIndex = g;\n      positionIndex = wordIndex;\n      break;\n    }\n  }\n  \n  if (groupIndex === -1) continue; // Skip if not found (should never happen)\n  \n  const wordGroup = wordGroups[groupIndex];\n  \n  // Create subtitle with the correct word highlighted\n  const startTime = currentWord.start;\n  const endTime = currentWord.end;\n  const formattedStart = formatTime(startTime);\n  const formattedEnd = formatTime(endTime);\n  const subtitleText = createSubtitleText(wordGroup, positionIndex);\n  \n  // Add this subtitle to our list\n  dialogueLines.push({\n    start: startTime,\n    end: endTime,\n    formattedStart,\n    formattedEnd,\n    text: subtitleText,\n    group: groupIndex,\n    position: positionIndex\n  });\n}\n\n// Now, fill in any gaps between dialogues of the same word group\nfor (let i = 0; i < dialogueLines.length - 1; i++) {\n  const current = dialogueLines[i];\n  const next = dialogueLines[i + 1];\n  \n  // If they're in the same group and there's a gap\n  if (current.group === next.group && next.start - current.end > 0 && next.start - current.end <= CONFIG.maxGapTimeMs / 1000) {\n    // Fill the gap by extending the current line's end time\n    current.end = next.start;\n    current.formattedEnd = formatTime(current.end);\n  }\n}\n\n// Write all dialogue lines to the ASS file\ndialogueLines.forEach(line => {\n  ass += `Dialogue: 0,${line.formattedStart},${line.formattedEnd},Default,,0,0,0,,${line.text}\\n`;\n});\n\n// Return as binary file\nreturn [{\n  json: {},\n  binary: {\n    data: {\n      data: Buffer.from(ass).toString('base64'),\n      mimeType: 'text/ass',\n      fileName: CONFIG.outputFileName\n    }\n  }\n}];"
+        "jsCode": "// ===== CONFIGURATION VARIABLES =====\nconst CONFIG = {\n  // Number of words to display on screen at a time\n  wordsToShow: 3,\n  \n  // General subtitle styling\n  fontName: 'Arial',          // Font face\n  fontSize: 100,               // Base font size\n  fontColor: $('Merge Sentiment').first().json.sub_color,        // Regular text color in BGR format\n  outlineColor: '000000',     // Text outline color in BGR format\n  backgroundColor: '000000',  // Background color in BGR format\n  \n  // Highlight styling\n  highlightFontSize: 120,      // Highlighted word font size\n  highlightColor: '00FFFF',   // Highlight color in BGR format (cyan)\n  \n  // Text appearance\n  bold: 0,                    // 0 = off, 1 = on\n  italic: 0,                  // 0 = off, 1 = on\n  underline: 0,               // 0 = off, 1 = on\n  strikeout: 0,               // 0 = off, 1 = on\n  \n  // Text scaling and positioning\n  scaleX: 100,                // Horizontal scaling (%)\n  scaleY: 100,                // Vertical scaling (%)\n  spacing: 0,                 // Letter spacing\n  angle: 0,                   // Rotation angle\n  \n  // Border options\n  borderStyle: 1,             // 1 = outline+drop shadow, 3 = opaque box\n  outline: 10,                 // Outline thickness\n  shadow: 1,                  // Shadow distance\n  \n  // Alignment and margins\n  alignment: 2,               // Position (1-9), see ASS documentation\n  marginL: 10,                // Left margin\n  marginR: 10,                // Right margin\n  marginV: 300,               // Vertical margin\n  \n  // Video dimensions\n  videoWidth: 1080,\n  videoHeight: 1920,\n  \n  \n  // Maximum gap time between words (in milliseconds) before considering it a new phrase\n  maxGapTimeMs: 2000,\n\n  \n  // Output file name\n  outputFileName: 'sentence_aware_subtitles.ass'\n};\n\n// Parse input JSON data\nconst response = JSON.parse($input.first().json.data);\nconst segments = response.segments;\n\n// ASS Header\nlet ass = `[Script Info]\nTitle: Sentence-Aware Fixed Position Subtitles\nScriptType: v4.00+\nPlayResX: ${CONFIG.videoWidth}\nPlayResY: ${CONFIG.videoHeight}\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,${CONFIG.fontName},${CONFIG.fontSize},&H${CONFIG.fontColor},&H${CONFIG.outlineColor},&H${CONFIG.outlineColor},&H${CONFIG.backgroundColor},${CONFIG.bold},${CONFIG.italic},${CONFIG.underline},${CONFIG.strikeout},${CONFIG.scaleX},${CONFIG.scaleY},${CONFIG.spacing},${CONFIG.angle},${CONFIG.borderStyle},${CONFIG.outline},${CONFIG.shadow},${CONFIG.alignment},${CONFIG.marginL},${CONFIG.marginR},${CONFIG.marginV},1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n`;\n\n/**\n * Helper: convert seconds to ASS time format (H:MM:SS.cs)\n * @param {number} sec - Time in seconds\n * @return {string} Formatted time string\n */\nfunction formatTime(sec) {\n  const h = Math.floor(sec / 3600);\n  const m = Math.floor((sec % 3600) / 60);\n  const s = Math.floor(sec % 60);\n  const cs = Math.floor((sec - Math.floor(sec)) * 100);\n  return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${cs.toString().padStart(2, '0')}`;\n}\n\n/**\n * Creates the subtitle text with the specified word highlighted within a fixed group\n * @param {Array} wordGroup - Array of word objects to display in fixed positions\n * @param {number} highlightIndex - Index of the word to highlight within the group (0-based)\n * @return {string} Formatted subtitle text with highlight tags\n */\nfunction createSubtitleText(wordGroup, highlightIndex) {\n  let line = '';\n  const emojis = ['📈', '📉', '🚀', '💰', '🏦', '🐻', '🐂', '💸', '🔥'];\n  \n  wordGroup.forEach((word, i) => {\n    // Add space between words (not before the first word)\n    if (i > 0) line += ' ';\n    \n    // Apply highlight to the specified word\n    if (i === highlightIndex) {\n      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];\n      line += `{\\\\fs${CONFIG.highlightFontSize}\\\\c&H${CONFIG.highlightColor}&}${word.word.trim()}${randomEmoji}{\\\\r}`;\n    } else {\n      line += word.word.trim();\n    }\n  });\n  \n  return line;\n}\n\n// Process all segments together to handle pauses between segments\nlet allWords = [];\nsegments.forEach(segment => {\n  allWords = allWords.concat(segment.words);\n});\n\n// Sort all words by start time (should already be sorted, but just to be safe)\nallWords.sort((a, b) => a.start - b.start);\n\n// Create groups of words that respect sentence boundaries\nfunction createSentenceAwareGroups(words) {\n  const groups = [];\n  let currentGroup = [];\n  \n  for (let i = 0; i < words.length; i++) {\n    const currentWord = words[i];\n    currentGroup.push(currentWord);\n    \n    // Check if this word ends with a period (sentence boundary)\n    const endsWithPeriod = currentWord.word.trim().endsWith('.');\n    \n    // Start a new group if:\n    // 1. We've reached the maximum words per group, OR\n    // 2. We've encountered a period (end of sentence), OR\n    // 3. We're at the last word\n    if (currentGroup.length >= CONFIG.wordsToShow || endsWithPeriod || i === words.length - 1) {\n      if (currentGroup.length > 0) {\n        groups.push([...currentGroup]);\n        currentGroup = [];\n      }\n    }\n  }\n  \n  // Add any remaining words\n  if (currentGroup.length > 0) {\n    groups.push(currentGroup);\n  }\n  \n  return groups;\n}\n\n// Create word groups that respect sentence boundaries\nconst wordGroups = createSentenceAwareGroups(allWords);\nlet dialogueLines = [];\n\n// Track which group and position each word belongs to\nlet currentGroupIndex = 0;\nlet positionInGroup = 0;\n\nfor (let i = 0; i < allWords.length; i++) {\n  const currentWord = allWords[i];\n  \n  // Find which group contains this word\n  let groupIndex = -1;\n  let positionIndex = -1;\n  \n  for (let g = 0; g < wordGroups.length; g++) {\n    const wordIndex = wordGroups[g].findIndex(w => \n      w.start === currentWord.start && w.end === currentWord.end && w.word === currentWord.word);\n    \n    if (wordIndex !== -1) {\n      groupIndex = g;\n      positionIndex = wordIndex;\n      break;\n    }\n  }\n  \n  if (groupIndex === -1) continue; // Skip if not found (should never happen)\n  \n  const wordGroup = wordGroups[groupIndex];\n  \n  // Create subtitle with the correct word highlighted\n  const startTime = currentWord.start;\n  const endTime = currentWord.end;\n  const formattedStart = formatTime(startTime);\n  const formattedEnd = formatTime(endTime);\n  const subtitleText = createSubtitleText(wordGroup, positionIndex);\n  \n  // Add this subtitle to our list\n  dialogueLines.push({\n    start: startTime,\n    end: endTime,\n    formattedStart,\n    formattedEnd,\n    text: subtitleText,\n    group: groupIndex,\n    position: positionIndex\n  });\n}\n\n// Now, fill in any gaps between dialogues of the same word group\nfor (let i = 0; i < dialogueLines.length - 1; i++) {\n  const current = dialogueLines[i];\n  const next = dialogueLines[i + 1];\n  \n  // If they're in the same group and there's a gap\n  if (current.group === next.group && next.start - current.end > 0 && next.start - current.end <= CONFIG.maxGapTimeMs / 1000) {\n    // Fill the gap by extending the current line's end time\n    current.end = next.start;\n    current.formattedEnd = formatTime(current.end);\n  }\n}\n\n// Write all dialogue lines to the ASS file\ndialogueLines.forEach(line => {\n  ass += `Dialogue: 0,${line.formattedStart},${line.formattedEnd},Default,,0,0,0,,${line.text}\\n`;\n});\n\n// Return as binary file\nreturn [{\n  json: {},\n  binary: {\n    data: {\n      data: Buffer.from(ass).toString('base64'),\n      mimeType: 'text/ass',\n      fileName: CONFIG.outputFileName\n    }\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        912,
-        -256
+        2112,
+        -720
       ],
-      "id": "3731d5fb-7134-4ec5-abbc-1a22995bc8c4",
+      "id": "d5a7df77-3743-408e-b395-42ff2da83d59",
       "name": "Create Ass"
     },
     {
@@ -300,10 +223,10 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        1712,
-        32
+        2992,
+        -480
       ],
-      "id": "3b61bfab-b579-44ca-b140-6c228dab59c6",
+      "id": "de75d76c-9074-40f1-9090-11d0e0af408e",
       "name": "FFMPEG: make new video",
       "executeOnce": false,
       "alwaysOutputData": true
@@ -313,10 +236,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1568,
-        32
+        2656,
+        -480
       ],
-      "id": "abca1104-6af2-4630-af20-5bfee8122cf4",
+      "id": "f1c8d10b-695d-4e8f-8ec7-f74bddc1e779",
       "name": "Merge"
     },
     {
@@ -326,22 +249,11 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -512,
-        80
+        176,
+        -160
       ],
-      "id": "6b230bd8-7156-49e2-be5c-8b444f4cfbd6",
+      "id": "ed57b7d5-3637-435f-9e75-5a4dd759f432",
       "name": "Code in JavaScript1"
-    },
-    {
-      "parameters": {},
-      "type": "@n8n/n8n-nodes-langchain.toolThink",
-      "typeVersion": 1.1,
-      "position": [
-        -640,
-        288
-      ],
-      "id": "6c783c1d-9746-4306-91b7-609854ca4540",
-      "name": "Think"
     },
     {
       "parameters": {
@@ -410,10 +322,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        2368,
-        -336
+        3568,
+        -800
       ],
-      "id": "b712ef16-5670-4d41-a932-db9be3347a03",
+      "id": "bb14acd2-b121-40f3-9413-4ce5ef4ffaed",
       "name": "Append row in sheet",
       "executeOnce": true,
       "credentials": {
@@ -428,19 +340,19 @@
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1.1,
       "position": [
-        -544,
-        -144
+        -160,
+        -640
       ],
-      "id": "eae4cc5b-6a0b-467e-83a5-7192cb88520e",
+      "id": "dd24229f-86fc-47df-9f8f-a30d487048b4",
       "name": "Think1"
     },
     {
       "parameters": {
         "modelId": {
           "__rl": true,
-          "value": "models/gemini-3-pro-preview",
+          "value": "models/gemini-2.5-pro",
           "mode": "list",
-          "cachedResultName": "models/gemini-3-pro-preview"
+          "cachedResultName": "models/gemini-2.5-pro"
         },
         "messages": {
           "values": [
@@ -451,44 +363,15 @@
         },
         "options": {
           "systemMessage": "#Role# \nYou are a social media expert administrator with proficiency in viral crypto news posts and videos. You can use retrospective humor based on current trends, hot topics and what's working best in this niche right now. Be sure to include strong hook to keep people attention and engage them to read.\n\n#Rules#\nYou are generating a description  for a #cryptonews video with Tom Tucker for different platforms like Instagram reels, Youtube shorts and TikTok.\n\nIt should follow this format:\n<Description>\n----------------------------------------------------------\nFollow @cryptom__tucker for daily news and macro analysis.\nSubscribe to telegram channel for a complete analysis https://whop.com/institutional-genesis-report/institutional-genesis-report-fe/\n\n<Hashtags>"
-        },
-        "hasOutputParser": true,
-        "outputParser": {
-          "type": "json",
-          "jsonSchema": {
-            "type": "object",
-            "properties": {
-              "video_title": {
-                "type": "string",
-                "description": "A highly clickable, clickbait-style title under 60 characters"
-              },
-              "video_description": {
-                "type": "string",
-                "description": "The 2-paragraph description with CTA"
-              },
-              "video_tags": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "An array of 5-7 highly targeted SEO keywords"
-              }
-            },
-            "required": [
-              "video_title",
-              "video_description",
-              "video_tags"
-            ]
-          }
         }
       },
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        -688,
-        -368
+        -304,
+        -816
       ],
-      "id": "4f62bc6f-0b1f-4ee6-a815-69f93f36f036",
+      "id": "05867e66-5b29-4ebd-a5d9-3402528381da",
       "name": "Message a model",
       "credentials": {
         "googlePalmApi": {
@@ -544,10 +427,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2128,
-        -336
+        3328,
+        -800
       ],
-      "id": "131a8a65-e332-4e8c-b6e0-e079d634538b",
+      "id": "81b8a347-bb12-4ccf-8d54-58c11e133cd5",
       "name": "Edit Fields",
       "executeOnce": true
     },
@@ -556,10 +439,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1904,
-        -336
+        3104,
+        -800
       ],
-      "id": "24d9712c-f89d-4415-acd1-213de6fae1d1",
+      "id": "b3653647-866d-4b93-b9cf-5f014e80d372",
       "name": "Merge1"
     },
     {
@@ -569,10 +452,10 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        752,
-        80
+        1952,
+        -384
       ],
-      "id": "993c01b0-35fb-44f6-80c5-8f75835f8748",
+      "id": "1f67ee19-a625-495f-97d8-d48085c2dc30",
       "name": "Execute Command7"
     },
     {
@@ -582,10 +465,10 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        448,
-        -256
+        1648,
+        -720
       ],
-      "id": "9ae99e2b-954b-4965-a768-c11a3db7cc87",
+      "id": "fba9880e-ba6a-4eb1-ad6e-73f40524a325",
       "name": "Execute Command8"
     },
     {
@@ -596,10 +479,10 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        592,
-        -256
+        1792,
+        -720
       ],
-      "id": "ea735c5f-a6ac-4bf3-a8be-95a6ba165a3d",
+      "id": "0f81e6c0-712a-4531-96ba-2cd28a4d3d0c",
       "name": "Read/Write Files from Disk1"
     },
     {
@@ -607,10 +490,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        928,
-        240
+        2128,
+        -224
       ],
-      "id": "cd28e521-5511-4eca-9650-35d70468fd93",
+      "id": "463f7312-65b5-4c45-a337-612798ccfe87",
       "name": "Merge6"
     },
     {
@@ -634,10 +517,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -1328,
-        320
+        -464,
+        -64
       ],
-      "id": "78be8f7a-672d-49ec-9f08-3528f6e9ae9e",
+      "id": "2045d8f6-022b-47c8-a99c-17960edbdcdc",
       "name": "Get row(s) in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -653,10 +536,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1072,
-        80
+        -304,
+        -64
       ],
-      "id": "affc5e82-8a46-468f-ba80-6916bd9062aa",
+      "id": "3fff09eb-11ac-4eef-bc76-99d9be86586e",
       "name": "Code in JavaScript4"
     },
     {
@@ -704,10 +587,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -288,
-        -176
+        176,
+        -368
       ],
-      "id": "c5484a0e-0fe8-4d77-b11f-d733571a2043",
+      "id": "91ec03ab-6405-467c-9130-40df3a0a87fd",
       "name": "Append row in sheet2",
       "executeOnce": true,
       "credentials": {
@@ -720,15 +603,6 @@
     {
       "parameters": {
         "url": "https://api.pexels.com/videos/search",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "YOUR_API_KEY"
-            }
-          ]
-        },
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
@@ -750,50 +624,57 @@
             }
           ]
         },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "YOUR_API_KEY"
+            }
+          ]
+        },
         "options": {
           "allowUnauthorizedCerts": true
         }
       },
-      "id": "e445037e-40af-4b8c-8f19-b221d603e911",
+      "id": "44766cd8-85d1-40a7-a550-09c209c15f58",
       "name": "Pexels Search",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -688,
-        512
+        864,
+        -64
       ],
       "continueOnFail": true
     },
     {
       "parameters": {
-        "operation": "splitOutItems",
         "fieldToSplitOut": "={{ $json.videos[0].video_files.filter(v => v.file_type === 'video/mp4').sort((a,b) => b.width - a.width) }}",
         "options": {}
       },
-      "id": "item-lists-extract-node-uuid",
+      "id": "e2d93cba-1af8-4a80-8c74-55fa0074463e",
       "name": "Extract Pexels Video",
       "type": "n8n-nodes-base.itemLists",
       "typeVersion": 1,
       "position": [
-        -432,
-        496
+        1200,
+        -144
       ]
     },
     {
       "parameters": {
         "url": "={{ $json.link }}",
-        "responseFormat": "file",
         "options": {
           "allowUnauthorizedCerts": true
         }
       },
-      "id": "e7b0f69a-6a6c-4f9e-a89f-24d1a3e9c70a",
+      "id": "e5dd13d7-72c0-466f-af59-6192e2c0de1b",
       "name": "Download Pexels Video",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -208,
-        496
+        1392,
+        -144
       ],
       "continueOnFail": true
     },
@@ -825,18 +706,17 @@
             }
           ]
         },
-        "responseFormat": "file",
         "options": {
           "allowUnauthorizedCerts": true
         }
       },
-      "id": "c3a1b5c2-1e9a-4c8d-b7f2-a083d6a4c2b9",
+      "id": "db40f555-739f-4f0a-85e6-4dafc6e685f6",
       "name": "Chart-IMG Download",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -250,
-        800
+        1984,
+        -16
       ],
       "continueOnFail": true
     },
@@ -851,13 +731,13 @@
           ]
         }
       },
-      "id": "if-pexels-has-results",
+      "id": "4b98e2b4-c55c-4cc2-8ebe-8fc27c2e8a84",
       "name": "Pexels Has Results?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        -500,
-        512
+        1024,
+        -64
       ]
     },
     {
@@ -871,29 +751,28 @@
           ]
         }
       },
-      "id": "if-pexels-download-success",
+      "id": "04139286-4b8e-4dc3-849d-5e0738049304",
       "name": "Pexels Download Success?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        0,
-        496
+        1552,
+        -144
       ]
     },
     {
       "parameters": {
         "operation": "write",
         "fileName": "=/data/shared/{{ $('Generate Directory').first().json.directory }}/bottom_dynamic.{{ $binary.data.fileExtension }}",
-        "dataPropertyName": "data",
         "options": {}
       },
-      "id": "write-dynamic-asset",
+      "id": "e281d81e-618e-426d-a858-dd0ae8c85f9d",
       "name": "Save Dynamic Asset",
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1120,
-        240
+        2320,
+        -224
       ]
     },
     {
@@ -907,13 +786,13 @@
           ]
         }
       },
-      "id": "4390a93a-b345-4a6c-aa36-a2ee25984f15",
+      "id": "1b9d54fa-3e9d-44bf-bf81-b05f6892a6d5",
       "name": "Check Ticker Null",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        -688,
-        750
+        1680,
+        -16
       ]
     },
     {
@@ -930,13 +809,13 @@
         },
         "options": {}
       },
-      "id": "796f006b-b2c1-4a5b-b5d7-0ce3cd2488c1",
+      "id": "e24a8e51-866f-4ca0-a3e1-70a07bb1c8dc",
       "name": "Set Ticker SPY",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -500,
-        750
+        1824,
+        -80
       ]
     },
     {
@@ -953,13 +832,13 @@
         },
         "options": {}
       },
-      "id": "f44cfc4b-3ace-4de8-8264-69b1eaae8f5b",
+      "id": "26d6a4b9-e57c-4d84-9c33-9db76fe6ce8d",
       "name": "Keep Ticker Original",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -500,
-        900
+        1824,
+        96
       ]
     },
     {
@@ -969,27 +848,24 @@
         "rules": {
           "rules": [
             {
-              "operation": "equal",
               "value2": "bullish"
             },
             {
-              "operation": "equal",
               "value2": "bearish"
             },
             {
-              "operation": "equal",
               "value2": "neutral"
             }
           ]
         }
       },
-      "id": "1f02c88c-f667-44d5-9500-bdc9ea7ca17a",
+      "id": "c26c5deb-9580-48ae-9103-0d4dc49793b5",
       "name": "Sentiment Switch",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 1,
       "position": [
-        -350,
-        -50
+        304,
+        -96
       ]
     },
     {
@@ -1006,13 +882,13 @@
         },
         "options": {}
       },
-      "id": "0871bd98-e7ce-466a-8d75-e3728903a715",
+      "id": "011fe3bb-7bd2-4e1e-8872-ee8250a63ca4",
       "name": "Set Bullish Color",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -150,
-        -150
+        496,
+        -224
       ]
     },
     {
@@ -1029,13 +905,13 @@
         },
         "options": {}
       },
-      "id": "acb1d48c-188a-4dfa-a009-17ef9f475024",
+      "id": "b096b945-9bf6-4cea-9829-b07ce06669b2",
       "name": "Set Bearish Color",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -150,
-        -50
+        496,
+        -80
       ]
     },
     {
@@ -1052,56 +928,50 @@
         },
         "options": {}
       },
-      "id": "6392a215-3104-43d3-aff7-31b144bdc5c2",
+      "id": "c2ed9f5f-008a-4576-a485-f556c69a0a2f",
       "name": "Set Neutral Color",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -150,
-        50
+        496,
+        80
       ]
     },
     {
       "parameters": {},
-      "id": "8105d6aa-c1f0-4395-865a-5cc9aa82e19c",
+      "id": "bbe4497e-4ca8-4173-9ff5-1f788fb7a4af",
       "name": "Merge Sentiment",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        0,
-        -50
+        688,
+        -64
       ]
     },
     {
       "parameters": {
-        "operation": "read",
-        "fileName": "/data/shared/background_music.mp3",
-        "dataPropertyName": "background_music",
         "options": {}
       },
-      "id": "72523ac0-4edc-40e0-bcf4-402c8e3588d1",
+      "id": "3d50e5cc-3b45-4457-b582-7aba5570f1f5",
       "name": "Read Background Music",
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1600,
-        -100
+        2832,
+        -480
       ]
     },
     {
       "parameters": {
-        "operation": "read",
-        "fileName": "=/data/shared/{{ $('Generate Directory').first().json.directory }}/final.mp4",
-        "dataPropertyName": "data",
         "options": {}
       },
-      "id": "3eb59c29-73ed-4666-997a-08c43a57546d",
+      "id": "0c494291-f024-453f-9329-88052bfbe579",
       "name": "Read Final Video",
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1912,
-        32
+        3216,
+        -480
       ]
     },
     {
@@ -1109,53 +979,89 @@
         "resource": "video",
         "operation": "upload",
         "title": "={{ $('Edit Fields').first().json.video_title }}",
-        "description": "={{ $('Edit Fields').first().json.video_description }}",
-        "tags": "={{ $('Edit Fields').first().json.video_tags }}",
-        "binaryPropertyName": "data",
+        "categoryId": "22",
         "options": {
-          "privacyStatus": "public",
-          "categoryId": "22"
-        },
-        "categoryId": "22"
+          "privacyStatus": "public"
+        }
       },
-      "id": "ecbb956a-3f09-4bf1-88b9-8d88e002a891",
+      "id": "d919f547-8acf-4910-82fb-1a071a17f5d4",
       "name": "YouTube",
       "type": "n8n-nodes-base.youTube",
       "typeVersion": 1,
       "position": [
-        2112,
-        32
-      ],
-      "credentials": {
-        "youTubeOAuth2Api": {
-          "id": "placeholder",
-          "name": "YouTube OAuth2 API"
-        }
-      }
+        3600,
+        -480
+      ]
     },
     {
       "parameters": {
-        "chatId": "YOUR_CHAT_ID",
         "operation": "sendDocument",
+        "chatId": "YOUR_CHAT_ID",
         "file": "data",
         "additionalFields": {
           "caption": "={{ $('Edit Fields').first().json.video_title }}\n\n{{ $('Edit Fields').first().json.video_description }}"
         }
       },
-      "id": "telegram-node-id",
+      "id": "6cfd28fb-77df-48e2-8cdf-845f82dfc831",
       "name": "Telegram",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        2112,
-        232
+        3600,
+        -288
       ],
+      "webhookId": "fa8f720d-1bb9-4ef1-9a17-3b6648ed64fa",
       "credentials": {
         "telegramApi": {
           "id": "yWamWgpJc1a6XCVw",
           "name": "Telegram account"
         }
       }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-pro-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-pro-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Macro: {{$('Code in JavaScript').first().json.macro}}\nLiquidity: {{$('Code in JavaScript').first().json.metrics.liquidity_trend}}\nNews: {{$('Code in JavaScript').first().json.news}}\n\nPrevious analysis:\n{{ $json.allRows.map(c=> c.TomTucker).join(', ') }}"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "***Role***\nAct as anchorman Tom Tucker from Family Guy and an Elite Short-Form Financial Content Strategist specializing in YouTube Shorts and Instagram Reels algorithms.\n\n***Rules***\n\nDon't describe what you do.\n\nMake sure to include a strong hook to grab attention (e.g., highlighting the conflict, an 'Unexpected Confession', or a 'Data Reversal').\n\nInternally simulate a debate between a highly optimistic Bull Market Investor and a pessimistic Bear Market Analyst regarding the provided data. Synthesize their conflicting views into a single, punchy script.\n\nYou can do jokes and sharp observations as the original Tom Tucker, but avoid references to the Griffith family.\n\nEnsure the script maintains a fast pace and occasionally uses punchy 3-5 word sentences.\n\nEnsure the script length is strictly 140-160 words.\n\nYou must analyze the previous analysis you have done before so you know exactly how the macro and liquidity updated compared to previous days. Also check it so you don't repeat jokes or observations.\n\n***Format***\n\nYou MUST output strictly in raw JSON format.\n\nDO NOT wrap the output in markdown code blocks (e.g., do not use json or ).\n\nThe output must start exactly with { and end exactly with }.\n\nThe JSON object must have exactly four keys:\n\n\"script_content\": the spoken text only. You MUST NOT use newlines (\\n), unescaped quote marks (\"), or other special characters inside this string as it will break the JSON response.\n\n\"primary_ticker\": the exact stock ticker, or \"NULL\".\n\n\"visual_keywords\": an array of 3-5 descriptive keywords for stock footage.\n\n\"market_sentiment\": strictly \"bullish\", \"bearish\", or \"neutral\".\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        -288
+      ],
+      "id": "04eb6db5-c1ff-4969-9eaa-05c8d0f1c491",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "cvjWBK1EVgETmooe",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -32,
+        -96
+      ],
+      "id": "bab3bdf2-86e3-4eaa-bc13-e959a7145a31",
+      "name": "Think"
     }
   ],
   "pinData": {},
@@ -1182,33 +1088,6 @@
           {
             "node": "Get row(s) in sheet",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "AI Agent": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Append row in sheet2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Google Gemini Chat Model1": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -1329,17 +1208,6 @@
         ]
       ]
     },
-    "Think": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Think1": {
       "ai_tool": [
         [
@@ -1454,7 +1322,7 @@
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "Message a model1",
             "type": "main",
             "index": 0
           }
@@ -1614,8 +1482,7 @@
             "type": "main",
             "index": 0
           }
-        ],
-        []
+        ]
       ]
     },
     "Set Bullish Color": {
@@ -1693,17 +1560,44 @@
           }
         ]
       ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "cd5a467f-d740-4927-b936-47b1337be295",
+  "versionId": "02743fac-44e0-4f0a-996c-c92219950dfe",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "cd08d407a1e8137abf3f43af3ee7b7a9a766bf9fb6823062380e62bae765f6bd"
   },
-  "id": "2vvzMB6TZoPzASTn",
+  "id": "wVvPOekC90A4vnaj",
   "tags": []
 }
