@@ -451,6 +451,35 @@
         },
         "options": {
           "systemMessage": "#Role# \nYou are a social media expert administrator with proficiency in viral crypto news posts and videos. You can use retrospective humor based on current trends, hot topics and what's working best in this niche right now. Be sure to include strong hook to keep people attention and engage them to read.\n\n#Rules#\nYou are generating a description  for a #cryptonews video with Tom Tucker for different platforms like Instagram reels, Youtube shorts and TikTok.\n\nIt should follow this format:\n<Description>\n----------------------------------------------------------\nFollow @cryptom__tucker for daily news and macro analysis.\nSubscribe to telegram channel for a complete analysis https://whop.com/institutional-genesis-report/institutional-genesis-report-fe/\n\n<Hashtags>"
+        },
+        "hasOutputParser": true,
+        "outputParser": {
+          "type": "json",
+          "jsonSchema": {
+            "type": "object",
+            "properties": {
+              "video_title": {
+                "type": "string",
+                "description": "A highly clickable, clickbait-style title under 60 characters"
+              },
+              "video_description": {
+                "type": "string",
+                "description": "The 2-paragraph description with CTA"
+              },
+              "video_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "An array of 5-7 highly targeted SEO keywords"
+              }
+            },
+            "required": [
+              "video_title",
+              "video_description",
+              "video_tags"
+            ]
+          }
         }
       },
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
@@ -485,16 +514,28 @@
               "type": "string"
             },
             {
-              "id": "0ecbbe99-7064-455d-9041-37cb82655b51",
-              "name": "description",
-              "value": "={{ $('Message a model').first().json.content.parts[0].text }}",
-              "type": "string"
-            },
-            {
               "id": "74dc0de4-ebd1-42de-bcdc-c541724730c3",
               "name": "isPremium",
               "value": false,
               "type": "boolean"
+            },
+            {
+              "id": "611019bb-06da-40be-bb62-dec40f79e663",
+              "name": "video_title",
+              "value": "={{ $('Message a model').first().json.video_title }}",
+              "type": "string"
+            },
+            {
+              "id": "6aec63ee-2c18-44d8-bbc0-b45d69f190f2",
+              "name": "video_description",
+              "value": "={{ $('Message a model').first().json.video_description }}",
+              "type": "string"
+            },
+            {
+              "id": "6ce9fb46-f9c9-463b-9a6f-9ca64e3ec5dc",
+              "name": "video_tags",
+              "value": "={{ $('Message a model').first().json.video_tags }}",
+              "type": "array"
             }
           ]
         },
